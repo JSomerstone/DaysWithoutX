@@ -1,0 +1,4 @@
+j_somerstone_days_without:
+    resource: "@JSomerstoneDaysWithoutBundle/Resources/config/routing.yml"
+    prefix:   /
+

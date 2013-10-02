@@ -1,0 +1,7 @@
+parameters:
+#    j_somerstone_days_without.example.class: JSomerstone\DaysWithoutBundle\Example
+
+services:
+#    j_somerstone_days_without.example:
+#        class: %j_somerstone_days_without.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
