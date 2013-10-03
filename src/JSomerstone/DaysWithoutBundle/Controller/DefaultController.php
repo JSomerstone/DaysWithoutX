@@ -1,13 +1,23 @@
 <?php
-
 namespace JSomerstone\DaysWithoutBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
-class DefaultController extends Controller
+class DefaultController extends BaseController
 {
-    public function indexAction($name)
+    /**
+     *
+     * @var array
+     */
+    protected $response = array(
+        'title' => 'Days Without X - front page'
+    );
+
+    public function indexAction()
     {
-        return $this->render('JSomerstoneDaysWithoutBundle:Default:index.html.twig', array('name' => $name));
+        $this->applyToResponse(['sample' => 'Smoking']);
+        
+        return $this->render(
+            'JSomerstoneDaysWithoutBundle:Default:index.html.twig',
+            $this->response
+        );
     }
 }

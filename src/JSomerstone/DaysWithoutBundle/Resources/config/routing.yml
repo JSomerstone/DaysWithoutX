@@ -1,3 +1,4 @@
-j_somerstone_days_without_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: JSomerstoneDaysWithoutBundle:Default:index }
+dwo_frontpage:
+    pattern: /
+    defaults: { _controller: JSomerstoneDaysWithoutBundle:Default:index}
+
