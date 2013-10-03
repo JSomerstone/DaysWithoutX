@@ -2,3 +2,12 @@ dwo_frontpage:
     pattern: /
     defaults: { _controller: JSomerstoneDaysWithoutBundle:Default:index}
 
+dwo_create_counter:
+    pattern: /create
+    defaults: { _controller: JSomerstoneDaysWithoutBundle:Counter:create }
+    methods: [POST]
+
+dwo_show_counter:
+    pattern: /{name}
+    defaults: { _controller: JSomerstoneDaysWithoutBundle:Counter:show }
+    methods: [GET]

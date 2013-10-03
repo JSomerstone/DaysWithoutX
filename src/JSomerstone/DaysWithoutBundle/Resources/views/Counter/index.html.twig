@@ -1,0 +1,30 @@
+{% extends 'JSomerstoneDaysWithoutBundle::layout.html.twig' %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ asset('bundles/jsomerstonedayswithout/css/dayswo.css') }}" type="text/css" media="all">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% endblock %}
+
+{% block title %} {{ counter.days }} Days w/o {{ counter.thing }}{% endblock %}
+
+{% block page_header %}{% endblock %}
+
+{% block content %}
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="offset2">
+                <h1 class="span6 counter">{{ counter.days }}</h1>
+            </div>
+            <p>Days Without <b>{{ counter.thing }}</b></p>
+            <p><i>http://dayswithout.local/{{ counter.name }}</i></p>
+            <form action="reset">
+                <input type="hidden" name="counter" value="{{ counter.name }}">
+                <button id="search-btn" class="btn btn-danger">Reset</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block bodyscripts %}
+    <script src="{{ asset('bundles/jsomerstonedayswithout/js/dayswo.js') }}"></script>
+{% endblock %}

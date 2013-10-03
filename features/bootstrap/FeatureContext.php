@@ -36,6 +36,11 @@ class FeatureContext extends BehatContext
      * @var Symfony\Component\HttpFoundation\Response
      */
     protected $response;
+
+    protected $post = array();
+    protected $get = array();
+    protected $server = array();
+
     /**
      * Initializes context.
      * Every scenario gets it's own context object.
@@ -47,6 +52,16 @@ class FeatureContext extends BehatContext
         $this->setKernel(new AppKernel('test', false));
         // Initialize your context here
     }
+
+    /** @BeforeFeature */
+    public static function prepareForTheFeature()
+    {
+        $command = __DIR__ . "/../../app/console cache:clear --env=test";
+        echo "Cleaning up cache ... ";
+        exec($command);
+        echo "Done\n\n";
+    }
+
 
     /**
      * @Given /^anonymeus user$/
@@ -61,11 +76,27 @@ class FeatureContext extends BehatContext
      */
     public function pageIsLoaded($uri)
     {
-        $this->request = new Request();
-        $this->request->create($uri);
+        $this->request = Request::create($uri);
         $this->response = $this->getKernel()->handle($this->request);
         //throw new PendingException();
     }
+
+    /**
+     * @When /^user posts new counter "([^"]*)"$/
+     */
+    public function userPostsNewCounter($counterName)
+    {
+        $post = array(
+            'thing' => $counterName
+        );
+        $this->request = Request::create(
+            '/create',
+            'POST',
+            $post
+        );
+        $this->response = $this->getKernel()->handle($this->request);
+    }
+
 
     /**
      * @Then /^page has "([^"]*)"$/
@@ -82,4 +113,27 @@ class FeatureContext extends BehatContext
         }
     }
 
+    /**
+     * @Given /^counter "([^"]*)" with "([^"]*)" days exists$/
+     */
+    public function counterWithDaysExists($thing, $days)
+    {
+        $reseted = time() - 60 * 60 * 24 * $days;
+        $counterModel = new JSomerstone\DaysWithoutBundle\Model\CounterModel(
+            $thing,
+            $days,
+            date('Y-m-d', $reseted)
+        );
+        $counterModel->persist('/tmp');
+    }
+
+    /**
+     * @Then /^the page exists$/
+     */
+    public function thePageExists()
+    {
+        if ($this->response->getStatusCode() === 404) {
+            throw new \Exception('Response returned with status 404');
+        }
+    }
 }

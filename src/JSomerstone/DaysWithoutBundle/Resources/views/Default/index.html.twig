@@ -1,10 +1,49 @@
-<html>
-    <head>
-        <title>{{ title }}</title>
-    </head>
-    <body>
-        <h1>Days Without X</h1>
+{% extends 'JSomerstoneDaysWithoutBundle::layout.html.twig' %}
 
-        <p>For example: # days without {{ sample }}</p>
-    </body>
-</html>
+{% block head %}
+    <link rel="stylesheet" href="{{ asset('bundles/jsomerstonedayswithout/css/dayswo.css') }}" type="text/css" media="all">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% endblock %}
+
+{% block title %}Days w/o {{ title }}{% endblock %}
+
+{% block page_header %}
+    <div class="row-fluid">
+        <div class="span12">
+            <h1 class="offset2"># Days Without &lt;thing&gt;</h1>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="row-fluid">
+        <div class="content span8 offset2">
+            <div class="row">
+                <h2>Start new counter:</h2>
+                <form action="create" method="POST">
+                    <div id="name-group" class="control-group">
+                        0 days without
+                        <input
+                            id="thing-field"
+                            name="thing"
+                            value="{{ sample }}"
+                            placeholder="thing"
+                            type="text"
+                            class="search-query"
+                            maxlength="64"
+                            required="required"
+                            autofocus="autofocus"
+                        />
+                        <button id="search-btn" class="btn btn-primary">Start</button>
+                        <br />
+                        <span id="name-field-help" class="help-inline"></span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block bodyscripts %}
+    <script src="{{ asset('bundles/jsomerstonedayswithout/js/dayswo.js') }}"></script>
+{% endblock %}
