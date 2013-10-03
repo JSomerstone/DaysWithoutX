@@ -6,6 +6,7 @@ use JSomerstone\DaysWithoutBundle\Model\CounterModel;
 
 class CounterController extends BaseController
 {
+    private $counterLocation = '/tmp';
     /**
      *
      * @var array
@@ -19,11 +20,20 @@ class CounterController extends BaseController
     {
         try
         {
-            $counterModel = new \JSomerstone\DaysWithoutBundle\Model\CounterModel(
-                $request->get('thing')
-            );
+            $thing = $request->get('thing');
+            if ( CounterModel::exists($this->counterLocation, $thing))
+            {
+                $counterModel = CounterModel::load($this->counterLocation, $thing);
+                $this->applyToResponse(array('notice' => 'Already existed'));
+            } else {
+                $counterModel = new CounterModel($thing);
+                $counterModel->persist($this->counterLocation);
 
-            $counterModel->persist('/tmp');
+                $this->applyToResponse(array(
+                    'message' => 'Counter created',
+                ));
+            }
+
 
             $this->applyToResponse(array('counter' => $counterModel->toArray()));
         }
@@ -43,9 +53,11 @@ class CounterController extends BaseController
 
     public function showAction($name)
     {
-        $counterModel = CounterModel::load('/tmp', $name);
+        $counterModel = CounterModel::load($this->counterLocation, $name);
 
-        $this->applyToResponse(array('counter' => $counterModel->toArray()));
+        $this->applyToResponse(array(
+            'counter' => $counterModel->toArray()
+        ));
 
         return $this->render(
             'JSomerstoneDaysWithoutBundle:Counter:index.html.twig',

@@ -15,8 +15,14 @@
             <div class="offset2">
                 <h1 class="span6 counter">{{ counter.days }}</h1>
             </div>
-            <p>Days Without <b>{{ counter.thing }}</b></p>
-            <p><i>http://dayswithout.local/{{ counter.name }}</i></p>
+            <p>Days without <b>{{ counter.thing }}</b></p>
+            <p>
+                <i>
+                    <a href="{{ url('dwo_show_counter', { 'name': counter.name }) }}">
+                        {{ url('dwo_show_counter', { 'name': counter.name }) }}
+                    </a>
+                </i>
+            </p>
             <form action="reset">
                 <input type="hidden" name="counter" value="{{ counter.name }}">
                 <button id="search-btn" class="btn btn-danger">Reset</button>

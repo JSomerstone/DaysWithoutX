@@ -119,9 +119,9 @@ class FeatureContext extends BehatContext
     public function counterWithDaysExists($thing, $days)
     {
         $reseted = time() - 60 * 60 * 24 * $days;
+
         $counterModel = new JSomerstone\DaysWithoutBundle\Model\CounterModel(
             $thing,
-            $days,
             date('Y-m-d', $reseted)
         );
         $counterModel->persist('/tmp');

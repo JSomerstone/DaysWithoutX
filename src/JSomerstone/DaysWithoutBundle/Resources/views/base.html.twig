@@ -6,15 +6,13 @@
         <meta name="robots" content="{% block robots %}noindex,nofollow{% endblock %}" />
         <title>{% block title %}{% endblock %}</title>
         <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.css') }}" type="text/css" media="all">
-        <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap-responsive.css') }}" type="text/css" media="all">
-        <link rel="stylesheet" href="{{ asset('bundles/feikkisite/css/normalize.css') }}" type="text/css" media="all">
         {% block head %}{% endblock %}
     </head>
     <body>
         <a href="/">[Home]</a><br>
         {% block body %}
         {% endblock %}
-        <script src="{{ asset('js/jquery-1.9.1.js') }}"></script>
+        <script src="{{ asset('js/jquery-2.0.3.min.js') }}"></script>
         <script src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
         {% block bodyscripts '' %}
     </body>
