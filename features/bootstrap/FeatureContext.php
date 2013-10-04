@@ -10,8 +10,9 @@ use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
 
 use Symfony\Component\HttpFoundation\Request;
-use JSomerstone\DaysWithoutBundle\Model\CounterModel;
-use JSomerstone\DaysWithoutBundle\Storage\CounterStorage;
+use JSomerstone\DaysWithoutBundle\Model\CounterModel,
+    JSomerstone\DaysWithoutBundle\Model\UserModel,
+    JSomerstone\DaysWithoutBundle\Storage\CounterStorage;
 
 //
 // Require 3rd-party libraries here:
@@ -45,6 +46,7 @@ class FeatureContext extends BehatContext
 
     private $counterStorage;
     private static $counterStoragePath = '/tmp/dayswithout-behat';
+    private static $testUserPassword = 'testpassword';
 
     /**
      * Initializes context.
@@ -145,15 +147,17 @@ class FeatureContext extends BehatContext
     }
 
     /**
-     * @Given /^counter "([^"]*)" with "([^"]*)" days exists$/
+     * @Given /^"([^"]*)" counter "([^"]*)" with "([^"]*)" days exists$/
      */
-    public function counterWithDaysExists($thing, $days)
+    public function counterWithDaysExists($nick, $thing, $days)
     {
         $reseted = time() - 60 * 60 * 24 * $days;
+        $user = $nick == 'public' ? null : new UserModel($nick, self::$testUserPassword);
 
         $counterModel = new CounterModel(
             $thing,
-            date('Y-m-d', $reseted)
+            date('Y-m-d', $reseted),
+            $user
         );
         $this->counterStorage->store($counterModel);
     }

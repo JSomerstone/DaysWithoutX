@@ -13,7 +13,7 @@ class DefaultController extends BaseController
 
     public function indexAction()
     {
-        $this->applyToResponse(['sample' => self::randomThing()]);
+        $this->applyToResponse(array('sample' => self::randomThing()));
 
         return $this->render(
             'JSomerstoneDaysWithoutBundle:Default:index.html.twig',

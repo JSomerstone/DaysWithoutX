@@ -8,26 +8,42 @@ class CounterModel
     private $name;
     private $thing;
 
-    public function __construct($thing, $reseted = null)
+    /**
+     *
+     * @var UserModel
+     */
+    private $owner;
+    private $public;
+
+    /**
+     *
+     * @param string $thing The headline of the counter
+     * @param string $reseted Optional, date in format YYYY-mm-dd
+     * @param \JSomerstone\DaysWithoutBundle\Model\UserModel $owner, Optional
+     */
+    public function __construct($thing, $reseted = null, UserModel $owner = null)
     {
         $this->thing = $thing;
         $this->reseted = is_null($reseted) ? date('Y-m-d') : $reseted;
         $this->name = self::getUrlSafe($thing);
+        $this->owner = $owner;
+        $this->public = is_null($owner);
     }
 
+    /**
+     *
+     * @return \JSomerstone\DaysWithoutBundle\Model\CounterModel
+     */
     public function reset()
     {
         $this->reseted = date('Y-m-d');
         return $this;
     }
 
-    public static function exists($path, $name)
-    {
-        $name = self::getUrlSafe($name);
-        $filename = "$path/$name.json";
-        return file_exists($filename);
-    }
-
+    /**
+     *
+     * @return array
+     */
     public function toArray()
     {
         return array(
@@ -53,6 +69,16 @@ class CounterModel
         return $this->reseted;
     }
 
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
+    public function getPublic()
+    {
+        return $this->public;
+    }
+
     public function getDays()
     {
         $now = time();
@@ -60,6 +86,10 @@ class CounterModel
         return floor(($now - $reseted)/(60*60*24));
     }
 
+    /**
+     *
+     * @return string JSON-notation
+     */
     public function toJson()
     {
         return json_encode($this->toArray());

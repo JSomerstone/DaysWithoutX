@@ -2,8 +2,9 @@
 namespace JSomerstone\DaysWithoutBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use JSomerstone\DaysWithoutBundle\Model\CounterModel;
-use JSomerstone\DaysWithoutBundle\Storage\CounterStorage;
+use JSomerstone\DaysWithoutBundle\Model\CounterModel,
+    JSomerstone\DaysWithoutBundle\Model\UserModel,
+    JSomerstone\DaysWithoutBundle\Storage\CounterStorage;
 
 class CounterController extends BaseController
 {
@@ -29,12 +30,14 @@ class CounterController extends BaseController
         try
         {
             $thing = $request->get('thing');
-            if ( $this->counterStorage->exists($thing))
+            $user = null;
+
+            if ( $this->counterStorage->exists($thing, $user))
             {
                 $this->applyToResponse(array('notice' => 'Already existed'));
                 $counterModel = $this->counterStorage->load($thing);
             } else {
-                $counterModel = new CounterModel($thing);
+                $counterModel = new CounterModel($thing, date('Y-m-d'), $user);
                 $this->counterStorage->store($counterModel);
 
                 $this->applyToResponse(array(
@@ -49,7 +52,6 @@ class CounterController extends BaseController
                 'title' => 'Error',
                 'message' => $e->getMessage()
             ));
-            return $this->redirect('/');
         }
 
         return $this->render(

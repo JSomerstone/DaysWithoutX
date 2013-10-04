@@ -11,14 +11,14 @@ Feature: Some site pages show stuff
         Then page has "Days without Smoking"
 
     Scenario: User views existing counter
-        Given counter "Foobar" with "19" days exists
+        Given "public" counter "Foobar" with "19" days exists
         When "/foobar" page is loaded
         Then the page exists
         And page has "19"
         And page has "Foobar"
 
     Scenario: User resets existing counter
-        Given counter "Resetme" with "1" days exists
+        Given "public" counter "Resetme" with "1" days exists
         When user resets counter "Resetme"
         Then page has "0"
         And page has "Resetme"

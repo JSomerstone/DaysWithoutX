@@ -15,12 +15,13 @@ class CounterStorage
     /**
      *
      * @param string $name
+     * @param string $owner Nick of the user owning counter, default "public"
      * @return \JSomerstone\DaysWithoutBundle\Model\CounterModel
      * @throws StorageException
      */
-    public function load($name)
+    public function load($name, $owner = 'public')
     {
-        $filename = $this->getFileName($name);
+        $filename = $this->getFileName($name, $owner);
         if ( ! file_exists($filename) || ! is_readable($filename))
         {
             throw new StorageException("Unable to read file from '$filename'");
@@ -35,9 +36,9 @@ class CounterStorage
      * @param string $name
      * @return bool
      */
-    public function exists($name)
+    public function exists($name, $owner = 'public')
     {
-        return file_exists($this->getFileName($name));
+        return file_exists($this->getFileName($name, $owner));
     }
 
     /**
@@ -47,17 +48,34 @@ class CounterStorage
      */
     public function store(CounterModel $counter)
     {
-        $filename = $this->getFileName($counter->getName());
+        $owner = is_null($counter->getOwner())
+                ? 'public'
+                : $counter->getOwner()->getNick();
 
+        $filePath = $this->getFilePath($owner);
+        $filename = $this->getFileName(
+            $counter->getName(),
+            $owner
+        );
+        if ( ! file_exists($filePath))
+        {
+            mkdir($filePath);
+        }
         if ( ! file_put_contents($filename, serialize($counter)))
         {
             throw new StorageException("Unable to perist counter to '$filename'");
         }
     }
 
-    private function getFileName($name)
+    private function getFilePath($owner)
     {
-        $safe = CounterModel::getUrlSafe($name);
-        return "$this->basePath/$safe.txt";
+        return "$this->basePath/$owner";
+    }
+
+    private function getFileName($name, $owner)
+    {
+        $counter = CounterModel::getUrlSafe($name);
+
+        return "$this->basePath/$owner/$counter.txt";
     }
 }
