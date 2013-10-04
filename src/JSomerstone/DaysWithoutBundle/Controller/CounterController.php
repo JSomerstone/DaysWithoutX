@@ -3,10 +3,18 @@ namespace JSomerstone\DaysWithoutBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use JSomerstone\DaysWithoutBundle\Model\CounterModel;
+use JSomerstone\DaysWithoutBundle\Storage\CounterStorage;
 
 class CounterController extends BaseController
 {
-    private $counterLocation = '/tmp';
+    private $counterLocation = '/tmp/dayswithout-behat';
+    private $counterStorage;
+
+    public function __construct()
+    {
+        $this->counterStorage = new CounterStorage($this->counterLocation);
+    }
+
     /**
      *
      * @var array
@@ -21,21 +29,19 @@ class CounterController extends BaseController
         try
         {
             $thing = $request->get('thing');
-            if ( CounterModel::exists($this->counterLocation, $thing))
+            if ( $this->counterStorage->exists($thing))
             {
-                $counterModel = CounterModel::load($this->counterLocation, $thing);
                 $this->applyToResponse(array('notice' => 'Already existed'));
+                $counterModel = $this->counterStorage->load($thing);
             } else {
                 $counterModel = new CounterModel($thing);
-                $counterModel->persist($this->counterLocation);
+                $this->counterStorage->store($counterModel);
 
                 $this->applyToResponse(array(
                     'message' => 'Counter created',
                 ));
             }
-
-
-            $this->applyToResponse(array('counter' => $counterModel->toArray()));
+            $this->applyToResponse(array('counter' => $counterModel));
         }
         catch (\Exception $e)
         {
@@ -43,6 +49,7 @@ class CounterController extends BaseController
                 'title' => 'Error',
                 'message' => $e->getMessage()
             ));
+            return $this->redirect('/');
         }
 
         return $this->render(
@@ -53,10 +60,33 @@ class CounterController extends BaseController
 
     public function showAction($name)
     {
-        $counterModel = CounterModel::load($this->counterLocation, $name);
+        $counterModel = $this->counterStorage->load($name);
 
         $this->applyToResponse(array(
-            'counter' => $counterModel->toArray()
+            'counter' => $counterModel
+        ));
+
+        return $this->render(
+            'JSomerstoneDaysWithoutBundle:Counter:index.html.twig',
+            $this->response
+        );
+    }
+
+    public function resetAction($name)
+    {
+        $request = $this->getRequest();
+
+        if ($request->get('reset') != 1)
+        {
+            return $this->showAction($name);
+        }
+
+        $counterModel = $this->counterStorage->load($name);
+        $counterModel->reset();
+        $this->counterStorage->store($counterModel);
+
+        $this->applyToResponse(array(
+            'counter' => $counterModel
         ));
 
         return $this->render(

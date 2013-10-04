@@ -11,3 +11,8 @@ dwo_show_counter:
     pattern: /{name}
     defaults: { _controller: JSomerstoneDaysWithoutBundle:Counter:show }
     methods: [GET]
+
+dwo_reset_counter:
+    pattern: /{name}
+    defaults: { _controller: JSomerstoneDaysWithoutBundle:Counter:reset }
+    methods: [POST]

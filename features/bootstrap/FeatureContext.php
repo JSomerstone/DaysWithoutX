@@ -10,6 +10,8 @@ use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
 
 use Symfony\Component\HttpFoundation\Request;
+use JSomerstone\DaysWithoutBundle\Model\CounterModel;
+use JSomerstone\DaysWithoutBundle\Storage\CounterStorage;
 
 //
 // Require 3rd-party libraries here:
@@ -41,6 +43,9 @@ class FeatureContext extends BehatContext
     protected $get = array();
     protected $server = array();
 
+    private $counterStorage;
+    private static $counterStoragePath = '/tmp/dayswithout-behat';
+
     /**
      * Initializes context.
      * Every scenario gets it's own context object.
@@ -49,6 +54,7 @@ class FeatureContext extends BehatContext
      */
     public function __construct(array $parameters)
     {
+        $this->counterStorage = new CounterStorage(self::$counterStoragePath);
         $this->setKernel(new AppKernel('test', false));
         // Initialize your context here
     }
@@ -60,6 +66,16 @@ class FeatureContext extends BehatContext
         echo "Cleaning up cache ... ";
         exec($command);
         echo "Done\n\n";
+        exec("rm -rf " . self::$counterStoragePath);
+        mkdir(self::$counterStoragePath);
+    }
+
+    /**
+     * @AfterFeature
+     */
+    public static function cleanupAfterFeature()
+    {
+        //exec("rm -rf " . self::$counterStoragePath);
     }
 
 
@@ -84,10 +100,10 @@ class FeatureContext extends BehatContext
     /**
      * @When /^user posts new counter "([^"]*)"$/
      */
-    public function userPostsNewCounter($counterName)
+    public function userPostsNewCounter($counterHeadline)
     {
         $post = array(
-            'thing' => $counterName
+            'thing' => $counterHeadline
         );
         $this->request = Request::create(
             '/create',
@@ -97,6 +113,20 @@ class FeatureContext extends BehatContext
         $this->response = $this->getKernel()->handle($this->request);
     }
 
+    /**
+     * @When /^user resets counter "([^"]*)"$/
+     */
+    public function userResetsCounter($counterHeadline)
+    {
+        $url = self::getCounterName($counterHeadline);
+        $this->request = Request::create(
+            "/$url",
+            'POST',
+            array('reset' => 1)
+        );
+        $this->response = $this->getKernel()->handle($this->request);
+
+    }
 
     /**
      * @Then /^page has "([^"]*)"$/
@@ -109,6 +139,7 @@ class FeatureContext extends BehatContext
         }
         if ( stripos($this->response->getContent(), $expectedString) === false)
         {
+            echo $this->response->getContent();
             throw new Exception("Page did not have expected '$expectedString");
         }
     }
@@ -120,11 +151,11 @@ class FeatureContext extends BehatContext
     {
         $reseted = time() - 60 * 60 * 24 * $days;
 
-        $counterModel = new JSomerstone\DaysWithoutBundle\Model\CounterModel(
+        $counterModel = new CounterModel(
             $thing,
             date('Y-m-d', $reseted)
         );
-        $counterModel->persist('/tmp');
+        $this->counterStorage->store($counterModel);
     }
 
     /**
@@ -135,5 +166,10 @@ class FeatureContext extends BehatContext
         if ($this->response->getStatusCode() === 404) {
             throw new \Exception('Response returned with status 404');
         }
+    }
+
+    private static function getCounterName($counterHeadline)
+    {
+        return CounterModel::getUrlSafe($counterHeadline);
     }
 }

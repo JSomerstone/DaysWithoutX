@@ -1,36 +1,34 @@
 {% extends 'JSomerstoneDaysWithoutBundle::layout.html.twig' %}
 
-{% block head %}
-    <link rel="stylesheet" href="{{ asset('bundles/jsomerstonedayswithout/css/dayswo.css') }}" type="text/css" media="all">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-{% endblock %}
-
 {% block title %} {{ counter.days }} Days w/o {{ counter.thing }}{% endblock %}
 
-{% block page_header %}{% endblock %}
+{% block page_header '' %}
 
 {% block content %}
-    <div class="row-fluid">
-        <div class="span12">
-            <div class="offset2">
-                <h1 class="span6 counter">{{ counter.days }}</h1>
-            </div>
-            <p>Days without <b>{{ counter.thing }}</b></p>
-            <p>
-                <i>
-                    <a href="{{ url('dwo_show_counter', { 'name': counter.name }) }}">
-                        {{ url('dwo_show_counter', { 'name': counter.name }) }}
-                    </a>
-                </i>
-            </p>
-            <form action="reset">
-                <input type="hidden" name="counter" value="{{ counter.name }}">
-                <button id="search-btn" class="btn btn-danger">Reset</button>
-            </form>
+    <h2>Days without {{ counter.thing }}:</h2>
+    <div class="row">
+        <div class="counterDays">
+            {{ counter.days }}
         </div>
     </div>
-{% endblock %}
-
-{% block bodyscripts %}
-    <script src="{{ asset('bundles/jsomerstonedayswithout/js/dayswo.js') }}"></script>
+    <div class="row">
+        <p>
+            <i>
+                <a href="{{ url('dwo_show_counter', { 'name': counter.name }) }}">
+                    {{ url('dwo_show_counter', { 'name': counter.name }) }}
+                </a>
+            </i>
+        </p>
+        <form action="{{ counter.name }}" method="POST">
+            <input type="hidden" name="reset" value="1">
+            <button
+                onClick="return confirm('Do you REALLY want to reset the counter?');"
+                id="search-btn"
+                class="btn btn-small btn-danger"
+                {% if counter.days == 0 %}
+                    disabled
+                {% endif %}
+            >Reset</button>
+        </form>
+    </div>
 {% endblock %}

@@ -15,14 +15,10 @@ class CounterModel
         $this->name = self::getUrlSafe($thing);
     }
 
-    public function persist($path)
+    public function reset()
     {
-        $filename = "$path/$this->name.json";
-
-        if ( ! file_put_contents($filename, $this->toJson()))
-        {
-            throw new \Exception("Unable to perist counter to '$filename'");
-        }
+        $this->reseted = date('Y-m-d');
+        return $this;
     }
 
     public static function exists($path, $name)
@@ -30,18 +26,6 @@ class CounterModel
         $name = self::getUrlSafe($name);
         $filename = "$path/$name.json";
         return file_exists($filename);
-    }
-
-    public static function load($path, $name)
-    {
-        $name = self::getUrlSafe($name);
-        $filename = "$path/$name.json";
-        if (!file_exists($filename)) {
-            throw new \Exception("Counter '$name' not found");
-        }
-        $arr = json_decode(file_get_contents($filename));
-        return new static($arr->thing, $arr->reseted);
-
     }
 
     public function toArray()
@@ -68,7 +52,7 @@ class CounterModel
     {
         return $this->reseted;
     }
-    
+
     public function getDays()
     {
         $now = time();
@@ -81,7 +65,7 @@ class CounterModel
         return json_encode($this->toArray());
     }
 
-    private static function getUrlSafe($unsafe)
+    public static function getUrlSafe($unsafe)
     {
         $lower = strtolower($unsafe);
         $clean = preg_replace('/[^a-z0-9_\ \-]/', '', $lower);

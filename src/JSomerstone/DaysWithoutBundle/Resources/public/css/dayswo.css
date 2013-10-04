@@ -1,0 +1,14 @@
+div.counterDays {
+    margin: 15px;
+    padding: 85px;
+    font-size: 96px;
+    text-align: center;
+    background-color: lightyellow;
+    border: darkgray solid 2px;
+    color: black;
+}
+
+body {
+    background-color: black;
+    color: ivory;
+}
