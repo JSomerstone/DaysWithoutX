@@ -45,7 +45,7 @@ class FeatureContext extends BehatContext
     protected $server = array();
 
     private $counterStorage;
-    private static $counterStoragePath = '/tmp/dayswithout-behat';
+    private static $counterStoragePath = '/tmp/dayswithout-test/counters';
     private static $testUserPassword = 'testpassword';
 
     /**

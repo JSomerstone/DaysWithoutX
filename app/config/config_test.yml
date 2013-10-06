@@ -14,3 +14,10 @@ web_profiler:
 
 swiftmailer:
     disable_delivery: true
+
+j_somerstone_days_without:
+    storage:
+        # Absolute path to store Counters to
+        counter_path: /tmp/dayswithout-test/counters
+        # Absolute path to store Users to
+        user_path: /tmp/dayswithout-test/users
