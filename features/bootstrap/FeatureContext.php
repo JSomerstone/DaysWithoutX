@@ -67,9 +67,11 @@ class FeatureContext extends BehatContext
         $command = __DIR__ . "/../../app/console cache:clear --env=test";
         echo "Cleaning up cache ... ";
         exec($command);
-        echo "Done\n\n";
+        echo "Done\n";
+        echo "Cleaning up temp-files ... ";
         exec("rm -rf " . self::$counterStoragePath);
-        mkdir(self::$counterStoragePath);
+        mkdir(self::$counterStoragePath, 0770, true);
+        echo "Done\n\n";
     }
 
     /**

@@ -29,3 +29,10 @@ assetic:
 
 #swiftmailer:
 #    delivery_address: me@example.com
+# JSomerstoneDaysWithoutBundleConfiguration
+j_somerstone_days_without:
+    storage:
+        # Absolute path to store Counters to
+        counter_path: /tmp/dayswithout-dev/counters
+        # Absolute path to store Users to
+        user_path: /tmp/dayswithout-dev/users
