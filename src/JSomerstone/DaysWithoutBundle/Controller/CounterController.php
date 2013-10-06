@@ -1,7 +1,8 @@
 <?php
 namespace JSomerstone\DaysWithoutBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Request,
+    Symfony\Component\DependencyInjection\ContainerInterface as Container;
 use JSomerstone\DaysWithoutBundle\Model\CounterModel,
     JSomerstone\DaysWithoutBundle\Model\UserModel,
     JSomerstone\DaysWithoutBundle\Storage\CounterStorage;
@@ -9,13 +10,25 @@ use JSomerstone\DaysWithoutBundle\Model\CounterModel,
 class CounterController extends BaseController
 {
     private $counterLocation = '/tmp/dayswithout-behat';
+
+    /**
+     *
+     * @var JSomerstone\DaysWithoutBundle\Storage\CounterStorage
+     */
     private $counterStorage;
 
-    public function __construct()
-    {
-        $this->counterStorage = new CounterStorage($this->counterLocation);
-    }
 
+    /**
+     *
+     * @return JSomerstone\DaysWithoutBundle\Storage\CounterStorage
+     */
+    private function getStorage()
+    {
+        if ( ! isset($this->counterStorage)) {
+            $this->counterStorage = $this->get('dayswithout.storage.counter');
+        }
+        return $this->counterStorage;
+    }
     /**
      *
      * @var array
@@ -31,14 +44,14 @@ class CounterController extends BaseController
         {
             $thing = $request->get('thing');
             $user = null;
-
-            if ( $this->counterStorage->exists($thing, $user))
+            $storage = $this->getStorage();
+            if ( $storage->exists($thing, $user))
             {
                 $this->applyToResponse(array('notice' => 'Already existed'));
-                $counterModel = $this->counterStorage->load($thing);
+                $counterModel = $storage->load($thing);
             } else {
                 $counterModel = new CounterModel($thing, date('Y-m-d'), $user);
-                $this->counterStorage->store($counterModel);
+                $storage->store($counterModel);
 
                 $this->applyToResponse(array(
                     'message' => 'Counter created',
@@ -62,7 +75,7 @@ class CounterController extends BaseController
 
     public function showAction($name)
     {
-        $counterModel = $this->counterStorage->load($name);
+        $counterModel = $this->getStorage()->load($name);
 
         $this->applyToResponse(array(
             'counter' => $counterModel
@@ -83,9 +96,9 @@ class CounterController extends BaseController
             return $this->showAction($name);
         }
 
-        $counterModel = $this->counterStorage->load($name);
+        $counterModel = $this->getStorage()->load($name);
         $counterModel->reset();
-        $this->counterStorage->store($counterModel);
+        $this->getStorage()->store($counterModel);
 
         $this->applyToResponse(array(
             'counter' => $counterModel

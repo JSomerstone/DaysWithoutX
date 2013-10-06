@@ -19,6 +19,19 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('j_somerstone_days_without');
+        $rootNode->children()
+            ->arrayNode('storage')
+                ->children()
+                    ->scalarNode('counter_path')
+                        ->info('Absolute path to store Counters to')
+                        ->cannotBeEmpty()
+                        ->end()
+                    ->scalarNode('user_path')
+                        ->info('Absolute path to store Users to')
+                        ->cannotBeEmpty()
+                        ->end()
+                ->end()
+            ->end();
 
         // Here you should define the parameters that are allowed to
         // configure your bundle. See the documentation linked above for

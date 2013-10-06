@@ -64,3 +64,11 @@ swiftmailer:
     username:  %mailer_user%
     password:  %mailer_password%
     spool:     { type: memory }
+
+# JSomerstoneDaysWithoutBundleConfiguration
+j_somerstone_days_without:
+    storage:
+        # Absolute path to store Counters to
+        counter_path: /tmp/dayswithout-behat/counters
+        # Absolute path to store Users to
+        user_path: /tmp/dayswithout-behat/users

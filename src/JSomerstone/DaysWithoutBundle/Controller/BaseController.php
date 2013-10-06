@@ -13,6 +13,11 @@ abstract class BaseController extends Controller
         'title' => 'Days Without X'
     );
 
+    protected function bindToResponse($variable, &$value)
+    {
+        $this->response[$variable] = $value;
+    }
+    
     protected function applyToResponse(array $array)
     {
         $this->response = array_merge($this->response, $array);
