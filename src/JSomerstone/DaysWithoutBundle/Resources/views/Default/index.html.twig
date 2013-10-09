@@ -3,24 +3,60 @@
 {% block title %}Days w/o {{ title }}{% endblock %}
 
 {% block content %}
-    <h2>Start new counter:</h2>
-    <form action="create" class="span6" method="POST">
-        <div id="name-group" class="control-group">
-            <p class="lead">
-                <b>0</b> days without
+<div class="row-fluid">
+    <div class="content span6 offset2">
+        <h2>Start new counter:</h2>
+        <form action="create" method="POST">
+            <div id="name-group" class="control-group">
+                <span class="lead"><b>0</b> days without</span>
+                    <input
+                        id="thing-field"
+                        name="thing"
+                        placeholder="... {{ sample }}?"
+                        type="text"
+                        minlength="3"
+                        maxlength="64"
+                        required="required"
+                        autofocus="autofocus"
+                        class="span6"
+                    />
+                <button
+                    name="start-public"
+                    class="btn btn-large btn-block btn-primary"
+                >Public</button>
+                <center>... or ...</center>
                 <input
-                    id="thing-field"
-                    name="thing"
-                    placeholder="... {{ sample }}?"
+                    name="nick"
+                    placeholder="Nick"
                     type="text"
-                    maxlength="64"
-                    required="required"
-                    autofocus="autofocus"
-                />
-            </p>
-            <button id="search-btn" class="btn btn-large btn-block btn-primary">Start</button>
-            <br />
-            <span id="name-field-help" class="help-inline"></span>
-        </div>
-    </form>
+                    minlength="3"
+                    maxlength="16"
+                    class="span6"
+                >
+                <input
+                    name="password"
+                    type="password"
+                    minlength="5"
+                    class="span6"
+                    placeholder="Password"
+                ><br/>
+                <button
+                    name="start-private"
+                    class="btn btn-large btn-block btn-success"
+                >Private</button>
+
+                <span id="name-field-help" class="help-inline"></span>
+            </div>
+        </form>
+    </div>
+    <div class="content span4">
+        <p>
+            <b>Public</b>-button will create a <u>public</u> counter that anyone can reset.
+        </p>
+        <p>
+            <b>Private</b> counter requires <b>nick</b> and <b>password</b> and that counter can only
+            be reseted using password.
+        </p>
+    </div>
+</div>
 {% endblock %}

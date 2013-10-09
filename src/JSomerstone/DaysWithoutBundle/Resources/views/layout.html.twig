@@ -10,10 +10,6 @@
 {% block body %}
     <a href="{{ url('dwo_frontpage') }}" class="btn btn-small btn-navbar">Home</a><br>
     <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="content span8 offset2">
-                {% block content '' %}
-            </div>
-        </div>
+        {% block content '' %}
     </div>
 {% endblock %}

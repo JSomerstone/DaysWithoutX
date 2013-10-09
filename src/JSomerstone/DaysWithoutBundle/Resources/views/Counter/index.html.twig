@@ -5,30 +5,34 @@
 {% block page_header '' %}
 
 {% block content %}
-    <h2>Days without {{ counter.thing }}:</h2>
-    <div class="row">
-        <div class="counterDays">
-            {{ counter.days }}
+<div class="row-fluid">
+    <div class="content span8 offset2">
+        <h2>Days without {{ counter.thing }}:</h2>
+        <div class="row">
+            <div class="counterDays">
+                {{ counter.days }}
+            </div>
+        </div>
+        <div class="row">
+            <p>
+                <i>
+                    <a href="{{ url('dwo_show_counter', { 'name': counter.name }) }}">
+                        {{ url('dwo_show_counter', { 'name': counter.name }) }}
+                    </a>
+                </i>
+            </p>
+            <form action="{{ counter.name }}" method="POST">
+                <input type="hidden" name="reset" value="1">
+                <button
+                    onClick="return confirm('Do you REALLY want to reset the counter?');"
+                    id="search-btn"
+                    class="btn btn-small btn-danger"
+                    {% if counter.days == 0 %}
+                        disabled
+                    {% endif %}
+                >Reset</button>
+            </form>
         </div>
     </div>
-    <div class="row">
-        <p>
-            <i>
-                <a href="{{ url('dwo_show_counter', { 'name': counter.name }) }}">
-                    {{ url('dwo_show_counter', { 'name': counter.name }) }}
-                </a>
-            </i>
-        </p>
-        <form action="{{ counter.name }}" method="POST">
-            <input type="hidden" name="reset" value="1">
-            <button
-                onClick="return confirm('Do you REALLY want to reset the counter?');"
-                id="search-btn"
-                class="btn btn-small btn-danger"
-                {% if counter.days == 0 %}
-                    disabled
-                {% endif %}
-            >Reset</button>
-        </form>
-    </div>
+</div>
 {% endblock %}

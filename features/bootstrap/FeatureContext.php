@@ -61,13 +61,20 @@ class FeatureContext extends BehatContext
         // Initialize your context here
     }
 
-    /** @BeforeFeature */
-    public static function prepareForTheFeature()
+    /**
+     * @BeforeSuite
+     */
+    public static function prepareForSuite()
     {
         $command = __DIR__ . "/../../app/console cache:clear --env=test";
         echo "Cleaning up cache ... ";
         exec($command);
         echo "Done\n";
+    }
+
+    /** @BeforeFeature */
+    public static function prepareForTheFeature()
+    {
         echo "Cleaning up temp-files ... ";
         exec("rm -rf " . self::$counterStoragePath);
         mkdir(self::$counterStoragePath, 0770, true);
@@ -171,6 +178,28 @@ class FeatureContext extends BehatContext
     {
         if ($this->response->getStatusCode() === 404) {
             throw new \Exception('Response returned with status 404');
+        }
+    }
+
+    /**
+     * @Given /^page has button "([^"]*)"$/
+     */
+    public function pageHasButton($textInButton)
+    {
+        $this->pageMatchesRegexp(
+            sprintf('|<button(.[^<>])*>%s</button>|i', $textInButton),
+            "Page did not have button '$textInButton'"
+        );
+    }
+
+    private function pageMatchesRegexp($regexp, $messageIfNot = null)
+    {
+        $content = str_replace("\n", ' ', $this->response->getContent());
+        if ( preg_match($regexp, $content) !== 1)
+        {
+            throw new Exception(
+                $messageIfNot ?: "Page did match regexp '$regexp'"
+            );
         }
     }
 
