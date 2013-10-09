@@ -9,7 +9,9 @@
 {% block content_header '' %}
 {% block body %}
     <a href="{{ url('dwo_frontpage') }}" class="btn btn-small btn-navbar">Home</a><br>
+
     <div class="container-fluid">
+        {% include 'JSomerstoneDaysWithoutBundle::notifications.html.twig' %}
         {% block content '' %}
     </div>
 {% endblock %}

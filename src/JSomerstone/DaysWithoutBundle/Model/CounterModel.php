@@ -1,15 +1,25 @@
 <?php
 namespace JSomerstone\DaysWithoutBundle\Model;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 class CounterModel
 {
     private $days;
     private $reseted;
+
+    /**
+     * @Assert\NotBlank()
+     */
     private $name;
+
+    /**
+     * @Assert\NotBlank()
+     */
     private $thing;
 
     /**
-     *
+     * @Assert\Type(type="JSomerstone\DaysWithoutBundle\Model\UserModel")
      * @var UserModel
      */
     private $owner;
@@ -54,9 +64,19 @@ class CounterModel
         );
     }
 
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
     public function getName()
     {
         return $this->name;
+    }
+
+    public function setThing($thing)
+    {
+        $this->thing = $thing;
+        $this->setName(self::getUrlSafe($thing));
     }
 
     public function getThing()
@@ -64,14 +84,27 @@ class CounterModel
         return $this->thing;
     }
 
+    public function setReseted($date)
+    {
+        $this->reseted = $date;
+    }
     public function getReseted()
     {
         return $this->reseted;
     }
 
+    public function setOwner(UserModel $user)
+    {
+        $this->owner = $user;
+    }
     public function getOwner()
     {
         return $this->owner;
+    }
+
+    public function setPublic($public)
+    {
+        $this->public = $public;
     }
 
     public function getPublic()

@@ -17,7 +17,6 @@ class CounterController extends BaseController
      */
     private $counterStorage;
 
-
     /**
      *
      * @return JSomerstone\DaysWithoutBundle\Storage\CounterStorage
@@ -29,57 +28,35 @@ class CounterController extends BaseController
         }
         return $this->counterStorage;
     }
-    /**
-     *
-     * @var array
-     */
-    protected $response = array(
-        'title' => '??',
-        'count' => 0
-    );
 
     public function createAction(Request $request)
     {
-        try
-        {
-            $thing = $request->get('thing');
-            $user = null;
-            $storage = $this->getStorage();
-            if ( $storage->exists($thing, $user))
-            {
-                $this->applyToResponse(array('notice' => 'Already existed'));
-                $counterModel = $storage->load($thing);
-            } else {
-                $counterModel = new CounterModel($thing, date('Y-m-d'), $user);
-                $storage->store($counterModel);
+        $form = $this->getCounterForm();
+        $form->handleRequest($request);
 
-                $this->applyToResponse(array(
-                    'message' => 'Counter created',
-                ));
-            }
-            $this->applyToResponse(array('counter' => $counterModel));
-        }
-        catch (\Exception $e)
+        if ( ! $form->isValid())
         {
-            $this->applyToResponse(array(
-                'title' => 'Error',
-                'message' => $e->getMessage()
-            ));
+            return $this->redirect($this->generateUrl('dwo_frontpage'));
         }
-
-        return $this->render(
-            'JSomerstoneDaysWithoutBundle:Counter:index.html.twig',
-            $this->response
-        );
+        $counter = $form->getData();
+        $user = null;
+        $storage = $this->getStorage();
+        if ( $storage->exists($counter->getName(), $user))
+        {
+            $this->addNotice('Already existed, showing it');
+            return $this->redirectToCounter($counter->getName());
+        } else {
+            $storage->store($counter);
+            $this->addMessage('Counter created');
+            return $this->redirectToCounter($counter->getName());
+        }
     }
 
     public function showAction($name)
     {
         $counterModel = $this->getStorage()->load($name);
 
-        $this->applyToResponse(array(
-            'counter' => $counterModel
-        ));
+        $this->setCounter($counterModel);
 
         return $this->render(
             'JSomerstoneDaysWithoutBundle:Counter:index.html.twig',
@@ -107,6 +84,23 @@ class CounterController extends BaseController
         return $this->render(
             'JSomerstoneDaysWithoutBundle:Counter:index.html.twig',
             $this->response
+        );
+    }
+
+    private function setCounter($counter)
+    {
+        $this->applyToResponse(array(
+            'counter' => $counter
+        ));
+    }
+
+    private function redirectToCounter($name)
+    {
+        return $this->redirect(
+            $this->generateUrl(
+                'dwo_show_counter',
+                array('name' => $name)
+            )
         );
     }
 }

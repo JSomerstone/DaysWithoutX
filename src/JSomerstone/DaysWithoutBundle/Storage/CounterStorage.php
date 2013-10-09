@@ -36,8 +36,9 @@ class CounterStorage
      * @param string $name
      * @return bool
      */
-    public function exists($name, $owner = 'public')
+    public function exists($name, $owner)
     {
+        $owner = empty($owner) ? 'public' : $owner;
         return file_exists($this->getFileName($name, $owner));
     }
 

@@ -3,17 +3,9 @@ namespace JSomerstone\DaysWithoutBundle\Controller;
 
 class DefaultController extends BaseController
 {
-    /**
-     *
-     * @var array
-     */
-    protected $response = array(
-        'title' => '<thing>'
-    );
-
     public function indexAction()
     {
-        $this->applyToResponse(array('sample' => self::randomThing()));
+        $this->setForm($this->getCounterForm());
 
         return $this->render(
             'JSomerstoneDaysWithoutBundle:Default:index.html.twig',
