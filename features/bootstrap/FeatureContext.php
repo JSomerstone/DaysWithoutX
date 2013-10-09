@@ -9,7 +9,8 @@ use Behat\Behat\Context\ClosuredContextInterface,
 use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
 
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Request,
+    Symfony\Component\HttpFoundation\Response;
 use JSomerstone\DaysWithoutBundle\Model\CounterModel,
     JSomerstone\DaysWithoutBundle\Model\UserModel,
     JSomerstone\DaysWithoutBundle\Storage\CounterStorage;
@@ -43,6 +44,9 @@ class FeatureContext extends BehatContext
     protected $post = array();
     protected $get = array();
     protected $server = array();
+    protected $requestToken;
+
+    protected $user;
 
     private $counterStorage;
     private static $counterStoragePath = '/tmp/dayswithout-test/counters';
@@ -105,7 +109,11 @@ class FeatureContext extends BehatContext
     {
         $this->request = Request::create($uri);
         $this->response = $this->getKernel()->handle($this->request);
-        //throw new PendingException();
+        $token = $this->getRequestTokenFromResponse($this->response);
+        if ($token)
+        {
+            $this->requestToken = $token;
+        }
     }
 
     /**
@@ -114,7 +122,33 @@ class FeatureContext extends BehatContext
     public function userPostsNewCounter($counterHeadline)
     {
         $post = array(
-            'thing' => $counterHeadline
+            'form' => array(
+                'thing' => $counterHeadline,
+                'public' => '',
+                '_token' => $this->requestToken
+            )
+        );
+        $this->request = Request::create(
+            '/create',
+            'POST',
+            $post
+        );
+        $this->response = $this->getKernel()->handle($this->request);
+    }
+
+    /**
+     * @When /^"([^"]*)" posts private counter "([^"]*)" with password "([^"]*)"$/
+     */
+    public function UserPostsPrivateCounter($nick, $headline, $password)
+    {
+        $post = array(
+            'form' => array(
+                'thing' => $headline,
+                'private' => '',
+                'nick' => $nick,
+                'password' => $password,
+                '_token' => $this->requestToken
+            )
         );
         $this->request = Request::create(
             '/create',
@@ -182,7 +216,7 @@ class FeatureContext extends BehatContext
     }
 
     /**
-     * @Given /^page has button "([^"]*)"$/
+     * @Then /^page has button "([^"]*)"$/
      */
     public function pageHasButton($textInButton)
     {
@@ -191,6 +225,48 @@ class FeatureContext extends BehatContext
             "Page did not have button '$textInButton'"
         );
     }
+
+    /**
+     * @Given /^user "([^"]*)" with password "([^"]*)"$/
+     */
+    public function userWithPassword($nick, $password)
+    {
+        $this->user = array(
+            'nick' => $nick,
+            'password' => $password
+        );
+    }
+
+    /**
+     * @Then /^the counter is "([^"]*)"$/
+     */
+    public function theCounterIs($arg1)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @Then /^page has link "([^"]*)"$/
+     */
+    public function pageHasLink($arg1)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @Then /^user is redirected to "([^"]*)"$/
+     */
+    public function userIsRedirectedTo($arg1)
+    {
+        var_dump(
+            $this->response->isRedirection(),
+            $this->response->isRedirect($arg1),
+            $this->response->getContent()
+        );
+        throw new PendingException();
+    }
+
+
 
     private function pageMatchesRegexp($regexp, $messageIfNot = null)
     {
@@ -206,5 +282,18 @@ class FeatureContext extends BehatContext
     private static function getCounterName($counterHeadline)
     {
         return CounterModel::getUrlSafe($counterHeadline);
+    }
+
+    private function getRequestTokenFromResponse(Response $response)
+    {
+        $matches = array();
+        preg_match(
+            '/name="form\[_token\]" value="(?P<token>[0-9a-z]+)"/',
+            $response->getContent(),
+            $matches
+        );
+        return isset($matches['token'])
+            ? $matches['token']
+            : null;
     }
 }

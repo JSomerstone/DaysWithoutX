@@ -5,13 +5,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class CounterModel
 {
-    private $days;
     private $reseted;
-
-    /**
-     * @Assert\NotBlank()
-     */
-    private $name;
 
     /**
      * @Assert\NotBlank()
@@ -19,10 +13,16 @@ class CounterModel
     private $thing;
 
     /**
+     * @Assert\NotBlank()
+     */
+    private $name;
+
+    /**
      * @Assert\Type(type="JSomerstone\DaysWithoutBundle\Model\UserModel")
      * @var UserModel
      */
     private $owner;
+
     private $public;
 
     /**
