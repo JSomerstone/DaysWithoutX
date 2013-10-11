@@ -73,7 +73,7 @@ class FeatureContext extends BehatContext
     {
         $command = __DIR__ . "/../../app/console cache:clear --env=test";
         echo "Cleaning up cache ... ";
-        exec($command);
+        //exec($command);
         echo "Done\n";
     }
 
@@ -179,15 +179,12 @@ class FeatureContext extends BehatContext
      */
     public function pageHas($expectedString)
     {
-        if ($this->response->isEmpty())
-        {
-            throw new Exception('Unexpected empty page');
-        }
-        if ( stripos($this->response->getContent(), $expectedString) === false)
-        {
-            echo $this->response->getContent();
-            throw new Exception("Page did not have expected '$expectedString");
-        }
+        Assert::false($this->response->isEmpty(), 'Unexpected empty page');
+        Assert::contains(
+            $expectedString,
+            $this->response->getContent(),
+            "Page did not have expected '$expectedString'"
+        );
     }
 
     /**
@@ -241,9 +238,12 @@ class FeatureContext extends BehatContext
     /**
      * @Then /^the counter is "([^"]*)"$/
      */
-    public function theCounterIs($arg1)
+    public function theCounterIs($counter)
     {
-        throw new PendingException();
+        $this->pageHas(
+            "<div class=\"counterDays\">$counter</div>",
+            "The page doesn't have counter at '$counter'"
+        );
     }
 
     /**
@@ -266,17 +266,10 @@ class FeatureContext extends BehatContext
         );
     }
 
-
-
     private function pageMatchesRegexp($regexp, $messageIfNot = null)
     {
         $content = str_replace("\n", ' ', $this->response->getContent());
-        if ( preg_match($regexp, $content) !== 1)
-        {
-            throw new Exception(
-                $messageIfNot ?: "Page did match regexp '$regexp'"
-            );
-        }
+        Assert::regexp($regexp, $content, $messageIfNot);
     }
 
     private static function getCounterName($counterHeadline)

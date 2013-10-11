@@ -14,12 +14,12 @@ Feature: Days Without counter works for anon user
         When user posts new counter "Smoking"
         Then user is redirected to "/smoking"
 
-#    Scenario: User views existing counter
-#        Given "public" counter "Foobar" with "19" days exists
-#        When "/foobar" page is loaded
-#        Then the page exists
-#        And page has "19"
-#        And page has "Foobar"
+    Scenario: User views existing counter
+        Given "public" counter "Foobar" with "19" days exists
+        When "/foobar" page is loaded
+        Then the page exists
+        And the counter is "19"
+        And page has "Days without Foobar"
 
 #    Scenario: User resets existing counter
 #        Given "public" counter "Resetme" with "1" days exists
