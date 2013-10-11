@@ -11,3 +11,4 @@
 /composer.phar
 vendor/
 doc/coverage/
+.idea/

@@ -1,0 +1,8 @@
+JSomerstone\DaysWithoutBundle\Model:
+    properties:
+        thing:
+            - NotBlank: ~
+        name:
+            - NotBlank: ~
+        owner:
+            - Type: JSomerstone\DaysWithoutBundle\Model\UserModel

@@ -15,6 +15,7 @@ use JSomerstone\DaysWithoutBundle\Model\CounterModel,
     JSomerstone\DaysWithoutBundle\Model\UserModel,
     JSomerstone\DaysWithoutBundle\Storage\CounterStorage;
 
+use AssertContext as Assert;
 //
 // Require 3rd-party libraries here:
 //
@@ -256,14 +257,13 @@ class FeatureContext extends BehatContext
     /**
      * @Then /^user is redirected to "([^"]*)"$/
      */
-    public function userIsRedirectedTo($arg1)
+    public function userIsRedirectedTo($redirUrl)
     {
-        var_dump(
-            $this->response->isRedirection(),
-            $this->response->isRedirect($arg1),
-            $this->response->getContent()
+        Assert::true($this->response->isRedirection(), 'Not a redirection');
+        Assert::true(
+            $this->response->isRedirect($redirUrl),
+            "Was not redirected to '$redirUrl'"
         );
-        throw new PendingException();
     }
 
 
@@ -296,4 +296,5 @@ class FeatureContext extends BehatContext
             ? $matches['token']
             : null;
     }
+
 }

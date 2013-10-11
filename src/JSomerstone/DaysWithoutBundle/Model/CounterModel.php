@@ -1,24 +1,16 @@
 <?php
 namespace JSomerstone\DaysWithoutBundle\Model;
 
-use Symfony\Component\Validator\Constraints as Assert;
 
 class CounterModel
 {
     private $reseted;
 
-    /**
-     * @Assert\NotBlank()
-     */
-    private $thing;
+    protected $thing;
+
+    protected $name;
 
     /**
-     * @Assert\NotBlank()
-     */
-    private $name;
-
-    /**
-     * @Assert\Type(type="JSomerstone\DaysWithoutBundle\Model\UserModel")
      * @var UserModel
      */
     private $owner;
