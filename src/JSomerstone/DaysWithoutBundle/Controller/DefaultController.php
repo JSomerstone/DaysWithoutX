@@ -12,18 +12,4 @@ class DefaultController extends BaseController
             $this->response
         );
     }
-
-    private static function randomThing()
-    {
-        $pool = array(
-            'Sweets',
-            'Drinking',
-            'Sex',
-            'Speeding ticket',
-            'Good deed',
-            'Farting in public',
-            'Smoking',
-        );
-        return $pool[rand(0, count($pool)-1)];
-    }
 }
