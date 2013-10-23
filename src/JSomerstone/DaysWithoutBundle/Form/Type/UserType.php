@@ -5,11 +5,13 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class OwnerType extends AbstractType
+class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('owner', new OwnerType());
+        $builder->add('nick', 'text', array('max_length' => 32, 'required' => false))
+            ->add('password', 'password', array('required' => false));
+
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)

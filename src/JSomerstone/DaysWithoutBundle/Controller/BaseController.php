@@ -1,7 +1,10 @@
 <?php
 namespace JSomerstone\DaysWithoutBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use JSomerstone\DaysWithoutBundle\Form\Type\CounterType,
+    JSomerstone\DaysWithoutBundle\Form\Type\OwnerType,
+    JSomerstone\DaysWithoutBundle\Model\CounterModel;
+use \Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 abstract class BaseController extends Controller
 {
@@ -66,13 +69,9 @@ abstract class BaseController extends Controller
      */
     protected function getCounterForm()
     {
-        $counter = new \JSomerstone\DaysWithoutBundle\Model\CounterModel(null);
-
-        $form = $this->createFormBuilder($counter)
-            ->setAction($this->generateUrl('dwo_create_counter'))
-            ->add('thing', 'text', array('max_length' => 64, 'required' => true))
-            ->add('public', 'submit')
-            ->getForm();
-        return $form;
+        return $this->createForm(
+            new CounterType(),
+            new CounterModel(null)
+        );
     }
 }

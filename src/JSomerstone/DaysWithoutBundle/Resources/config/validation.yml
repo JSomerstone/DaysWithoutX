@@ -5,4 +5,4 @@ JSomerstone\DaysWithoutBundle\Model:
         name:
             - NotBlank: ~
         owner:
-            - Type: JSomerstone\DaysWithoutBundle\Model\UserModel
+            - Type: \JSomerstone\DaysWithoutBundle\Model\UserModel

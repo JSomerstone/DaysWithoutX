@@ -73,7 +73,7 @@ class FeatureContext extends BehatContext
     {
         $command = __DIR__ . "/../../app/console cache:clear --env=test";
         echo "Cleaning up cache ... ";
-        //exec($command);
+        exec($command);
         echo "Done\n";
     }
 
@@ -219,7 +219,7 @@ class FeatureContext extends BehatContext
     public function pageHasButton($textInButton)
     {
         $this->pageMatchesRegexp(
-            sprintf('|<button(.[^<>])*>%s</button>|i', $textInButton),
+            sprintf('|<button.*>%s</button>|i', $textInButton),
             "Page did not have button '$textInButton'"
         );
     }

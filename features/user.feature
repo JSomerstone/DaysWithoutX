@@ -12,6 +12,10 @@ Feature: User can create & reset password protected counters
     Scenario: User creates private counter
         Given user "Mee" with password "fuubar123"
         When "Mee" posts private counter "being sober" with password "foobar123"
-        Then page has "Days without being sober:"
-            And the counter is "0"
-            And page has link "Mee"
+        Then user is redirected to "/being-sober"
+
+    Scenario: User opens private counter
+        Given user "Mee" with password "irrelevant"
+        When "Mee" opens counter "being-sober"
+        Then page has button "Reset"
+    

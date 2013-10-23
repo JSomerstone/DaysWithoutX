@@ -21,8 +21,8 @@ Feature: Days Without counter works for anon user
         And the counter is "19"
         And page has "Days without Foobar"
 
-#    Scenario: User resets existing counter
-#        Given "public" counter "Resetme" with "1" days exists
-#        When user resets counter "Resetme"
-#        Then page has "0"
-#        And page has "Resetme"
+    Scenario: User resets existing counter
+        Given "public" counter "Resetme" with "1" days exists
+        When user resets counter "Resetme"
+        And the counter is "0"
+        And page has "Days without Resetme"
