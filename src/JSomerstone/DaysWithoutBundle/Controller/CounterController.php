@@ -39,9 +39,16 @@ class CounterController extends BaseController
             return $this->redirect($this->generateUrl('dwo_frontpage'));
         }
         $counter = $form->getData();
-        $user = null;
+        if ($form->get('public')->isClicked())
+        {
+            $this->addNotice('Public');
+        } else {
+            $this->addNotice('Private');
+        }
+        $user = new UserModel('public');
         $storage = $this->getStorage();
-        if ( $storage->exists($counter->getName(), $user))
+        $counter->setOwner($user);
+        if ( $storage->exists($counter->getName(), $user->getNick()))
         {
             $this->addNotice('Already existed, showing it');
             return $this->redirectToCounter($counter->getName());

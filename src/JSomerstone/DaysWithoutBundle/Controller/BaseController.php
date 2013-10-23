@@ -71,7 +71,12 @@ abstract class BaseController extends Controller
     {
         return $this->createForm(
             new CounterType(),
-            new CounterModel(null)
+            new CounterModel(null),
+            array(
+                'action' => $this->generateUrl('dwo_create_counter'),
+                'method' => 'POST',
+            )
         );
+
     }
 }

@@ -11,8 +11,9 @@
             <span class="lead"><b>0</b> days without</span>
             {{ form_widget(form.thing, {'attr': {'class': 'span6', 'autofocus': 'autofocus', 'placeholder': '... what?' }}) }}
             {{ form_widget(form.public, {'attr': {'class': 'btn btn-large btn-block btn-primary' }}) }}
-            {{ form_widget(form.owner.nick, {'attr': {'class': 'span6' }}) }}
-            {{ form_widget(form.owner.password, {'attr': {'class': 'span6' }}) }}
+            <div style="text-align: center">~ or ~</div>
+            {{ form_widget(form.owner.nick, {'attr': {'class': 'span6', 'placeholder': 'Nick'}}) }}
+            {{ form_widget(form.owner.password, {'attr': {'class': 'span6', 'placeholder': 'Password' }}) }}
             {{ form_widget(form.private, {'attr': {'class': 'btn btn-large btn-block btn-danger' }}) }}
         {{ form_end(form) }}
     </div>

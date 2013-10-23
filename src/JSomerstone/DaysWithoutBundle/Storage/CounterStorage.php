@@ -34,6 +34,7 @@ class CounterStorage
     /**
      * Check if given counter exists or not
      * @param string $name
+     * @param string $owner
      * @return bool
      */
     public function exists($name, $owner)
@@ -64,7 +65,7 @@ class CounterStorage
         }
         if ( ! file_put_contents($filename, serialize($counter)))
         {
-            throw new StorageException("Unable to perist counter to '$filename'");
+            throw new StorageException("Unable to persist counter to '$filename'");
         }
     }
 

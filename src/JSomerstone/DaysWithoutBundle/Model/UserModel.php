@@ -6,10 +6,12 @@ class UserModel
     private $nick;
     private $password;
 
-    public function __construct($nick, $password)
+    public function __construct($nick = null, $password = null)
     {
         $this->nick = $nick;
-        $this->password = self::hashPassword($password, $nick);
+        $this->password = is_null($password)
+            ? null
+            : self::hashPassword($password, $nick);
     }
 
     public function getNick()
