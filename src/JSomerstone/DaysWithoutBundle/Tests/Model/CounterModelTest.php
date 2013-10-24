@@ -23,7 +23,7 @@ class CounterModelTest extends WebTestCase
     /**
      * @test
      */
-    public function counterCanBereseted()
+    public function counterCanBeReset()
     {
         $counter = new CounterModel(null, $this->yesterday);
 

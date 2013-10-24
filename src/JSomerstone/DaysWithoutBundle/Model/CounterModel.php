@@ -1,6 +1,7 @@
 <?php
 namespace JSomerstone\DaysWithoutBundle\Model;
 
+use JSomerstone\DaysWithoutBundle\Lib\StringFormatter;
 
 class CounterModel
 {
@@ -20,14 +21,14 @@ class CounterModel
     /**
      *
      * @param string $thing The headline of the counter
-     * @param string $reseted Optional, date in format YYYY-mm-dd
+     * @param string $resetDate Optional, date in format YYYY-mm-dd
      * @param \JSomerstone\DaysWithoutBundle\Model\UserModel $owner, Optional
      */
-    public function __construct($thing, $reseted = null, UserModel $owner = null)
+    public function __construct($thing, $resetDate = null, UserModel $owner = null)
     {
         $this->thing = $thing;
-        $this->reseted = is_null($reseted) ? date('Y-m-d') : $reseted;
-        $this->name = self::getUrlSafe($thing);
+        $this->reseted = is_null($resetDate) ? date('Y-m-d') : $resetDate;
+        $this->name = StringFormatter::getUrlSafe($thing);
         $this->owner = $owner;
         $this->public = is_null($owner);
     }
@@ -68,7 +69,7 @@ class CounterModel
     public function setThing($thing)
     {
         $this->thing = $thing;
-        $this->setName(self::getUrlSafe($thing));
+        $this->setName(StringFormatter::getUrlSafe($thing));
     }
 
     public function getThing()
@@ -120,10 +121,4 @@ class CounterModel
         return json_encode($this->toArray());
     }
 
-    public static function getUrlSafe($unsafe)
-    {
-        $lower = strtolower($unsafe);
-        $clean = preg_replace('/[^a-z0-9_\ \-]/', '', $lower);
-        return preg_replace('/[\ ]/', '-', $clean);
-    }
 }

@@ -1,12 +1,11 @@
 <?php
 namespace JSomerstone\DaysWithoutBundle\Storage;
 
-use JSomerstone\DaysWithoutBundle\Model\CounterModel;
+use JSomerstone\DaysWithoutBundle\Model\CounterModel,
+    JSomerstone\DaysWithoutBundle\Lib\StringFormatter;
 
 class CounterStorage
 {
-    private $basePath;
-
     public function __construct($basePath)
     {
         $this->basePath = $basePath;
@@ -76,7 +75,7 @@ class CounterStorage
 
     private function getFileName($name, $owner)
     {
-        $counter = CounterModel::getUrlSafe($name);
+        $counter = StringFormatter::getUrlSafe($name);
 
         return "$this->basePath/$owner/$counter.txt";
     }

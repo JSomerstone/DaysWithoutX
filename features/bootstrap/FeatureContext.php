@@ -13,7 +13,9 @@ use Symfony\Component\HttpFoundation\Request,
     Symfony\Component\HttpFoundation\Response;
 use JSomerstone\DaysWithoutBundle\Model\CounterModel,
     JSomerstone\DaysWithoutBundle\Model\UserModel,
-    JSomerstone\DaysWithoutBundle\Storage\CounterStorage;
+    JSomerstone\DaysWithoutBundle\Storage\CounterStorage,
+    JSomerstone\DaysWithoutBundle\Storage\UserStorage,
+    JSomerstone\DaysWithoutBundle\Lib\StringFormatter;
 
 use AssertContext as Assert;
 //
@@ -47,10 +49,23 @@ class FeatureContext extends BehatContext
     protected $server = array();
     protected $requestToken;
 
+    /**
+     * @var JSomerstone\DaysWithoutBundle\Model\UserModel
+     */
     protected $user;
 
+    /**
+     * @var JSomerstone\DaysWithoutBundle\Storage\CounterStorage
+     */
     private $counterStorage;
+
+    /**
+     * @var JSomerstone\DaysWithoutBundle\Storage\UserStorage
+     */
+    private $userStorage;
+
     private static $counterStoragePath = '/tmp/dayswithout-test/counters';
+    private static $userStoragePath = '/tmp/dayswithout-test/users';
     private static $testUserPassword = 'testpassword';
 
     /**
@@ -62,6 +77,8 @@ class FeatureContext extends BehatContext
     public function __construct(array $parameters)
     {
         $this->counterStorage = new CounterStorage(self::$counterStoragePath);
+        $this->userStorage = new UserStorage(self::$userStoragePath);
+
         $this->setKernel(new AppKernel('test', false));
         // Initialize your context here
     }
@@ -82,7 +99,9 @@ class FeatureContext extends BehatContext
     {
         echo "Cleaning up temp-files ... ";
         exec("rm -rf " . self::$counterStoragePath);
+        exec("rm -rf " . self::$userStoragePath);
         mkdir(self::$counterStoragePath, 0770, true);
+        mkdir(self::$userStoragePath, 0770, true);
         echo "Done\n\n";
     }
 
@@ -123,9 +142,13 @@ class FeatureContext extends BehatContext
     public function userPostsNewCounter($counterHeadline)
     {
         $post = array(
-            'form' => array(
+            'counter' => array(
                 'thing' => $counterHeadline,
                 'public' => '',
+                'owner' => array(
+                    'nick' => null,
+                    'password' => null,
+                ),
                 '_token' => $this->requestToken
             )
         );
@@ -143,11 +166,13 @@ class FeatureContext extends BehatContext
     public function UserPostsPrivateCounter($nick, $headline, $password)
     {
         $post = array(
-            'form' => array(
+            'counter' => array(
                 'thing' => $headline,
                 'private' => '',
-                'nick' => $nick,
-                'password' => $password,
+                'owner' => array(
+                    'nick' => $nick,
+                    'password' => $password,
+                ),
                 '_token' => $this->requestToken
             )
         );
@@ -173,6 +198,15 @@ class FeatureContext extends BehatContext
         $this->response = $this->getKernel()->handle($this->request);
 
     }
+
+    /**
+     * @When /^"([^"]*)" opens counter "([^"]*)"$/
+     */
+    public function opensCounter($arg1, $arg2)
+    {
+        throw new PendingException();
+    }
+
 
     /**
      * @Then /^page has "([^"]*)"$/
@@ -229,10 +263,8 @@ class FeatureContext extends BehatContext
      */
     public function userWithPassword($nick, $password)
     {
-        $this->user = array(
-            'nick' => $nick,
-            'password' => $password
-        );
+        $this->user = new UserModel($nick, $password);
+        $this->userStorage->store($this->user);
     }
 
     /**
@@ -274,7 +306,7 @@ class FeatureContext extends BehatContext
 
     private static function getCounterName($counterHeadline)
     {
-        return CounterModel::getUrlSafe($counterHeadline);
+        return StringFormatter::getUrlSafe($counterHeadline);
     }
 
     private function getRequestTokenFromResponse(Response $response)

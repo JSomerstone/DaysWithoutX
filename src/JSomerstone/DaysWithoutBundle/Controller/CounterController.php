@@ -41,14 +41,10 @@ class CounterController extends BaseController
         $counter = $form->getData();
         if ($form->get('public')->isClicked())
         {
-            $this->addNotice('Public');
-        } else {
-            $this->addNotice('Private');
+            $counter->setOwner(new UserModel('public'));
         }
-        $user = new UserModel('public');
         $storage = $this->getStorage();
-        $counter->setOwner($user);
-        if ( $storage->exists($counter->getName(), $user->getNick()))
+        if ( $storage->exists($counter->getName(), $counter->getOwner()->getNick()))
         {
             $this->addNotice('Already existed, showing it');
             return $this->redirectToCounter($counter->getName());
