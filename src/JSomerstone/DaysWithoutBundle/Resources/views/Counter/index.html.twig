@@ -10,12 +10,13 @@
         <h2>Days without {{ counter.thing }}:</h2>
         <div class="row">
             <div class="counterDays">{{ counter.days }}</div>
+            <span class="lead">by <b>{{ counter.owner.nick }}</b></span>
         </div>
         <div class="row">
             <p>
                 <i>
-                    <a href="{{ url('dwo_show_counter', { 'name': counter.name }) }}">
-                        {{ url('dwo_show_counter', { 'name': counter.name }) }}
+                    <a href="{{ url('dwo_show_counter', { 'name': counter.name, 'owner': counter.owner.nick }) }}">
+                        {{ url('dwo_show_counter', { 'name': counter.name, 'owner': counter.owner.nick }) }}
                     </a>
                 </i>
             </p>
@@ -24,7 +25,7 @@
                 <button
                     onClick="return confirm('Do you REALLY want to reset the counter?');"
                     id="search-btn"
-                    class="btn btn-small btn-danger"
+                    class="btn btn-big btn-danger"
                     {% if counter.days == 0 %}
                         disabled
                     {% endif %}

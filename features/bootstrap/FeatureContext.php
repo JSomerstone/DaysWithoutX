@@ -90,18 +90,18 @@ class FeatureContext extends BehatContext
     {
         $command = __DIR__ . "/../../app/console cache:clear --env=test";
         echo "Cleaning up cache ... ";
-        exec($command);
+        //exec($command);
         echo "Done\n";
+        exec("mkdir -p " . self::$counterStoragePath);
+        exec("mkdir -p " . self::$userStoragePath);
     }
 
     /** @BeforeFeature */
     public static function prepareForTheFeature()
     {
         echo "Cleaning up temp-files ... ";
-        exec("rm -rf " . self::$counterStoragePath);
-        exec("rm -rf " . self::$userStoragePath);
-        mkdir(self::$counterStoragePath, 0770, true);
-        mkdir(self::$userStoragePath, 0770, true);
+        exec("rm -rf " . self::$counterStoragePath . '/*');
+        exec("rm -rf " . self::$userStoragePath . '/*');
         echo "Done\n\n";
     }
 
@@ -146,8 +146,8 @@ class FeatureContext extends BehatContext
                 'thing' => $counterHeadline,
                 'public' => '',
                 'owner' => array(
-                    'nick' => null,
-                    'password' => null,
+                    'nick' => '',
+                    'password' => '',
                 ),
                 '_token' => $this->requestToken
             )
@@ -200,11 +200,11 @@ class FeatureContext extends BehatContext
     }
 
     /**
-     * @When /^"([^"]*)" opens counter "([^"]*)"$/
+     * @Given /^"([^"]*)" has counter "([^"]*)" with "([^"]*)" days$/
      */
-    public function opensCounter($arg1, $arg2)
+    public function hasCounterWithDays($nick, $headline, $days)
     {
-        throw new PendingException();
+
     }
 
 
@@ -313,7 +313,7 @@ class FeatureContext extends BehatContext
     {
         $matches = array();
         preg_match(
-            '/name="form\[_token\]" value="(?P<token>[0-9a-z]+)"/',
+            '/name="counter\[_token\]" value="(?P<token>[0-9a-z]+)"/',
             $response->getContent(),
             $matches
         );

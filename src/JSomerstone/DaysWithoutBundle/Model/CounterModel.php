@@ -60,6 +60,7 @@ class CounterModel
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
     }
     public function getName()
     {
@@ -70,6 +71,7 @@ class CounterModel
     {
         $this->thing = $thing;
         $this->setName(StringFormatter::getUrlSafe($thing));
+        return $this;
     }
 
     public function getThing()
@@ -80,6 +82,7 @@ class CounterModel
     public function setReseted($date)
     {
         $this->reseted = $date;
+        return $this;
     }
     public function getReseted()
     {
@@ -89,20 +92,12 @@ class CounterModel
     public function setOwner(UserModel $user)
     {
         $this->owner = $user;
+        return $this;
     }
+
     public function getOwner()
     {
         return $this->owner;
-    }
-
-    public function setPublic($public)
-    {
-        $this->public = $public;
-    }
-
-    public function getPublic()
-    {
-        return $this->public;
     }
 
     public function getDays()
@@ -110,6 +105,23 @@ class CounterModel
         $now = time();
         $reseted = strtotime($this->reseted);
         return floor(($now - $reseted)/(60*60*24));
+    }
+
+    public function setPublic()
+    {
+        $this->public = true;
+        return $this;
+    }
+
+    public function setPrivate()
+    {
+        $this->public = false;
+        return $this;
+    }
+
+    public function isPublic()
+    {
+        return $this->public;
     }
 
     /**

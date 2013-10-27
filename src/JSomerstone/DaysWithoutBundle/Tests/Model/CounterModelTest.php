@@ -80,7 +80,7 @@ class CounterModelTest extends WebTestCase
     public function counterWithoutOwnerIsPublic()
     {
         $counter = new CounterModel(null);
-        $this->assertTrue($counter->getPublic());
+        $this->assertTrue($counter->isPublic());
     }
 
     /**

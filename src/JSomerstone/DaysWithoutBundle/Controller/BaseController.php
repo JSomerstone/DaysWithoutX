@@ -4,6 +4,7 @@ namespace JSomerstone\DaysWithoutBundle\Controller;
 use JSomerstone\DaysWithoutBundle\Form\Type\CounterType,
     JSomerstone\DaysWithoutBundle\Form\Type\OwnerType,
     JSomerstone\DaysWithoutBundle\Model\CounterModel;
+use JSomerstone\DaysWithoutBundle\Form\Type\ResetType;
 use \Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 abstract class BaseController extends Controller

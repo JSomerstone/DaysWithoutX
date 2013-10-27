@@ -36,9 +36,8 @@ class CounterStorage
      * @param string $owner
      * @return bool
      */
-    public function exists($name, $owner)
+    public function exists($name, $owner = 'public')
     {
-        $owner = empty($owner) ? 'public' : $owner;
         return file_exists($this->getFileName($name, $owner));
     }
 
@@ -49,15 +48,13 @@ class CounterStorage
      */
     public function store(CounterModel $counter)
     {
+        $name = $counter->getName();
         $owner = is_null($counter->getOwner())
                 ? 'public'
                 : $counter->getOwner()->getNick();
 
         $filePath = $this->getFilePath($owner);
-        $filename = $this->getFileName(
-            $counter->getName(),
-            $owner
-        );
+        $filename = $this->getFileName($name, $owner);
         if ( ! file_exists($filePath))
         {
             mkdir($filePath);
@@ -70,13 +67,20 @@ class CounterStorage
 
     private function getFilePath($owner)
     {
-        return "$this->basePath/$owner";
+        return sprintf(
+            "%s/%s",
+            $this->basePath,
+            StringFormatter::getUrlSafe($owner)
+        );
     }
 
     private function getFileName($name, $owner)
     {
-        $counter = StringFormatter::getUrlSafe($name);
-
-        return "$this->basePath/$owner/$counter.txt";
+        return sprintf(
+            "%s/%s/%s.txt",
+            $this->basePath,
+            StringFormatter::getUrlSafe($owner),
+            StringFormatter::getUrlSafe($name)
+        );
     }
 }

@@ -1,27 +1,22 @@
-<div class="offset4">
-    {% for flashMessage in app.session.flashbag.get('error') %}
-        <div class="span6">
-            <div class="alert alert-danger">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <strong>Notice!</strong> {{ flashMessage }}
-            </div>
-        </div>
-    {% endfor %}
+<div class="row-fluid">
+    <div class="offset3 span6">
+        {% for flashMessage in app.session.flashbag.get('error') %}
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Notice!</strong> {{ flashMessage }}
+                </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('notice') %}
+                <div class="alert alert-warning">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Notice!</strong> {{ flashMessage }}
+                </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('message') %}
+                <div class="alert alert-info">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ flashMessage }}
+                </div>
+        {% endfor %}
     </div>
-    {% for flashMessage in app.session.flashbag.get('notice') %}
-        <div class="span6">
-            <div class="alert alert-warning">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <strong>Notice!</strong> {{ flashMessage }}
-            </div>
-        </div>
-    {% endfor %}
-    {% for flashMessage in app.session.flashbag.get('message') %}
-        <div class="span6">
-            <div class="alert alert-info">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                {{ flashMessage }}
-            </div>
-        </div>
-    {% endfor %}
 </div>

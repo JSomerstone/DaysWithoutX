@@ -1,8 +1,12 @@
 parameters:
     dayswithout.storage.counter.class: JSomerstone\DaysWithoutBundle\Storage\CounterStorage
+    dayswithout.storage.user.class: JSomerstone\DaysWithoutBundle\Storage\UserStorage
 
 services:
     dayswithout.storage.counter:
         class: %dayswithout.storage.counter.class%
         arguments: [%dayswithout.counter_path%]
+    dayswithout.storage.user:
+        class: %dayswithout.storage.user.class%
+        arguments: [%dayswithout.user_path%]
 

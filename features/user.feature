@@ -11,11 +11,13 @@ Feature: User can create & reset password protected counters
 
     Scenario: User creates private counter
         Given user "Mee" with password "fuubar123"
+          And "/" page is loaded
         When "Mee" posts private counter "being sober" with password "foobar123"
-        Then user is redirected to "/being-sober"
+        Then user is redirected to "/being-sober/mee"
 
     Scenario: User opens private counter
-        Given user "Mee" with password "irrelevant"
-        When "Mee" opens counter "being-sober"
-        Then page has button "Reset"
-    
+        Given user "Mee" with password "fuubar123"
+         And "Mee" counter "Foobar" with "19" days exists
+        When "/foobar/mee" page is loaded
+        And the counter is "19"
+        And page has "Days without Foobar"
