@@ -1,10 +1,13 @@
 <?php
 namespace JSomerstone\DaysWithoutBundle\Controller;
 
+use Doctrine\ORM\Query\AST\Functions\ConcatFunction;
 use JSomerstone\DaysWithoutBundle\Form\Type\CounterType,
     JSomerstone\DaysWithoutBundle\Form\Type\OwnerType,
     JSomerstone\DaysWithoutBundle\Model\CounterModel;
 use JSomerstone\DaysWithoutBundle\Form\Type\ResetType;
+use JSomerstone\DaysWithoutBundle\Lib\StringFormatter;
+use JSomerstone\DaysWithoutBundle\Model\UserModel;
 use \Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 abstract class BaseController extends Controller
@@ -68,11 +71,13 @@ abstract class BaseController extends Controller
      *
      * @return \Symfony\Component\Form\Form
      */
-    protected function getCounterForm()
+    protected function getCounterForm($headline = null, $owner = null)
     {
+        $counter = new CounterModel(StringFormatter::getUrlUnsafe($headline));
+
         return $this->createForm(
             new CounterType(),
-            new CounterModel(null),
+            $counter,
             array(
                 'action' => $this->generateUrl('dwo_create_counter'),
                 'method' => 'POST',

@@ -3,7 +3,7 @@
         {% for flashMessage in app.session.flashbag.get('error') %}
                 <div class="alert alert-danger">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <strong>Notice!</strong> {{ flashMessage }}
+                    <strong>Error!</strong> {{ flashMessage }}
                 </div>
         {% endfor %}
         {% for flashMessage in app.session.flashbag.get('notice') %}

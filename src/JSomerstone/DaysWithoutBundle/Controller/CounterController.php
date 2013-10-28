@@ -61,6 +61,16 @@ class CounterController extends BaseController
 
     public function showAction($name, $owner = 'public')
     {
+        $storage = $this->getStorage();
+        if ( ! $storage->exists($name, $owner))
+        {
+            $this->addError('Counter did not exist - would you like to create one?');
+            $this->setForm($this->getCounterForm($name, $owner));
+            return $this->render(
+                'JSomerstoneDaysWithoutBundle:Default:index.html.twig',
+                $this->response
+            );
+        }
         $counterModel = $this->getStorage()->load($name, $owner);
 
         $this->setCounter($counterModel);
