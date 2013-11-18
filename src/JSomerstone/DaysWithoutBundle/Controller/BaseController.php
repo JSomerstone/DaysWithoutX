@@ -69,6 +69,8 @@ abstract class BaseController extends Controller
 
     /**
      *
+     * @param string $headline optional
+     * @param string $owner optional
      * @return \Symfony\Component\Form\Form
      */
     protected function getCounterForm($headline = null, $owner = null)

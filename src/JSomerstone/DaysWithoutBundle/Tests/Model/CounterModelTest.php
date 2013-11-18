@@ -182,9 +182,9 @@ class CounterModelTest extends WebTestCase
     {
         return [
             ['Abba', 'abba'],
-            ['Abba Ac/Dc', 'abba-acdc'],
+            ['Abba Ac/Dc', 'abba-ac-dc'],
             ['abba-acdc', 'abba-acdc'],
-            ['Q!"#¤%&(=rty', 'qrty'],
+            ['Q!"#¤%&(=rty', 'q-rty'],
             ['Fuu-bar 123', 'fuu-bar-123'],
         ];
     }
