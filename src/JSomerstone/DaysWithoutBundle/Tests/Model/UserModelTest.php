@@ -40,4 +40,49 @@ class UserModelTest extends WebTestCase
         $this->assertEquals('testnick', $user->getNick());
     }
 
+    /**
+     * @test
+     */
+    public function settingNameSetsId()
+    {
+        $user = new UserModel();
+        $user->setNick('TestUser');
+        $this->assertEquals('testuser', $user->getId());
+    }
+
+    /**
+     * @test
+     */
+    public function setPasswordIsHashed()
+    {
+        $user = new UserModel('Relevant');
+        $user->setPassword('PlainTextPassword');
+        $expected = hash('sha256', "Relevant-PlainTextPassword");
+        $this->assertEquals($expected, $user->getPassword());
+    }
+
+    /**
+     * @test
+     */
+    public function passwordWithoutNickThrowsException()
+    {
+        $user = new UserModel(null);
+        $this->setExpectedException('LogicException');
+        $user->setPassword('any password without nick fails');
+    }
+
+    /**
+     * @test
+     */
+    public function jsonEncodingDoesntChangeUser()
+    {
+        $original = new UserModel('TestNick', 'PlainTxtP4ssw0rc|');
+        $json = $original->toJson();
+        $clone = (new Usermodel())->fromJsonObject(json_decode($json));
+
+        $this->assertEquals(
+            $original->toArray(),
+            $clone->toArray()
+        );
+    }
 }
