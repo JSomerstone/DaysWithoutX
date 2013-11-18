@@ -7,7 +7,7 @@ class CounterModel
 {
     private $reseted;
 
-    protected $thing;
+    protected $headline;
 
     protected $name;
 
@@ -20,15 +20,15 @@ class CounterModel
 
     /**
      *
-     * @param string $thing The headline of the counter
+     * @param string $headline The headline of the counter
      * @param string $resetDate Optional, date in format YYYY-mm-dd
      * @param \JSomerstone\DaysWithoutBundle\Model\UserModel $owner, Optional
      */
-    public function __construct($thing, $resetDate = null, UserModel $owner = null)
+    public function __construct($headline, $resetDate = null, UserModel $owner = null)
     {
-        $this->thing = $thing;
+        $this->headline = $headline;
         $this->reseted = is_null($resetDate) ? date('Y-m-d') : $resetDate;
-        $this->name = StringFormatter::getUrlSafe($thing);
+        $this->name = StringFormatter::getUrlSafe($headline);
         $this->owner = $owner;
         $this->public = is_null($owner);
     }
@@ -51,9 +51,11 @@ class CounterModel
     {
         return array(
             'name' => $this->name,
-            'thing' => $this->thing,
+            'headline' => $this->headline,
             'reseted' => $this->reseted,
-            'days' => $this->getDays()
+            'days' => $this->getDays(),
+            'owner' => ($this->owner) ? $this->owner->toArray() : null,
+            'public' => $this->public
         );
     }
 
@@ -67,16 +69,16 @@ class CounterModel
         return $this->name;
     }
 
-    public function setThing($thing)
+    public function setHeadline($headline)
     {
-        $this->thing = $thing;
-        $this->setName(StringFormatter::getUrlSafe($thing));
+        $this->headline = $headline;
+        $this->setName(StringFormatter::getUrlSafe($headline));
         return $this;
     }
 
-    public function getThing()
+    public function getHeadline()
     {
-        return $this->thing;
+        return $this->headline;
     }
 
     public function setReseted($date)
@@ -131,6 +133,24 @@ class CounterModel
     public function toJson()
     {
         return json_encode($this->toArray());
+    }
+
+    /**
+     * @param object $json
+     * @return $this
+     */
+    public function fromJsonObject($json)
+    {
+        $this->name =  isset($json->name) ? $json->name : null;
+        $this->headline = isset($json->headline) ? $json->headline : null;
+        $this->reseted = isset($json->reseted) ? $json->reseted : date('Y-m-d');
+        if (isset($json->owner))
+        {
+            $owner = new UserModel();
+            $this->owner = $owner->fromJsonObject($json->owner);
+        }
+        $this->public = isset($json->public) ? $json->public : false;
+        return $this;
     }
 
 }

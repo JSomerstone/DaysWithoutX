@@ -6,9 +6,18 @@ use JSomerstone\DaysWithoutBundle\Model\CounterModel,
 
 class CounterStorage
 {
-    public function __construct($basePath)
+    const FORMAT_JSON = 'json';
+    const FORMAT_SERIALIZED = 'serialized';
+
+    private $format;
+    public function __construct($basePath, $format = self::FORMAT_JSON)
     {
         $this->basePath = $basePath;
+        if ( ! in_array($format, [self::FORMAT_JSON, self::FORMAT_SERIALIZED]))
+        {
+            throw new StorageException('Unsuppoerted storing format: ' . $format);
+        }
+        $this->format = $format;
     }
 
     /**
@@ -27,7 +36,7 @@ class CounterStorage
         }
 
         $data = file_get_contents($filename);
-        return unserialize($data);
+        return $this->unserialize($data);
     }
 
     /**
@@ -59,7 +68,7 @@ class CounterStorage
         {
             mkdir($filePath);
         }
-        if ( ! file_put_contents($filename, serialize($counter)))
+        if ( ! file_put_contents($filename, $this->serialize($counter)))
         {
             throw new StorageException("Unable to persist counter to '$filename'");
         }
@@ -82,5 +91,39 @@ class CounterStorage
             StringFormatter::getUrlSafe($owner),
             StringFormatter::getUrlSafe($name)
         );
+    }
+
+    /**
+     * @param string $counter Serialized or JSON-object according to $this->format
+     * @return CounterModel
+     * @throws StorageException if provided
+     */
+    private function unserialize($counter)
+    {
+        if ($this->format === self::FORMAT_JSON)
+        {
+            $counterModel = new CounterModel(null);
+            return $counterModel->fromJsonObject(json_decode($counter));
+        }
+        else
+        {
+            return unserialize($counter);
+        }
+    }
+
+    /**
+     * @param CounterModel $counter
+     * @return string
+     */
+    private function serialize(CounterModel $counter)
+    {
+        if ($this->format === self::FORMAT_JSON)
+        {
+            return $counter->toJson();
+        }
+        else
+        {
+            return serialize($counter);
+        }
     }
 }

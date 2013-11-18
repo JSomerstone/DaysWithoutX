@@ -48,7 +48,7 @@ class UserStorage
     {
         $filename = $this->getFileName($user->getNick());
 
-        if ( ! file_put_contents($filename, serialize($user)))
+        if ( ! file_put_contents($filename, $user->toJson()))
         {
             throw new StorageException("Unable to persist user to '$filename'");
         }

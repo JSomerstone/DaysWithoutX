@@ -39,10 +39,11 @@ class CounterModelTest extends WebTestCase
     public function counterCountsDaysCorrectly()
     {
         $pool = [0, 1, 2, 3, 5, 8, 13, 21, 34, 55];
-        foreach ($pool as $daysSince){
-            $reseted = date('Y-m-d', strtotime("-$daysSince days"));
+        foreach ($pool as $daysSince)
+        {
+            $then = time() - $daysSince * (60*60*24);
+            $reseted = date('Y-m-d', $then);
             $counter = new CounterModel(null, $reseted);
-
             $this->assertEquals(
                 $daysSince,
                 $counter->getDays(),
@@ -63,9 +64,15 @@ class CounterModelTest extends WebTestCase
 
         $expected = json_encode([
             'name' => 'headline-of-the-counter',
-            'thing' => $headline,
+            'headline' => $headline,
             'reseted' => $this->yesterday,
-            'days' => 1
+            'days' => 1,
+            'owner' => array(
+                'nick' => 'testuser',
+                'id' => 'testuser',
+                'password' => null
+            ),
+            'public' => false
         ]);
         $actual = $counter->toJson();
         $this->assertEquals(
@@ -85,7 +92,7 @@ class CounterModelTest extends WebTestCase
 
     /**
      * @test
-     * @dataProvider provideThingNamePairs
+     * @dataProvider provideHeadlineNamePairs
      * @param type $headline
      * @param type $expectedName
      */
@@ -100,7 +107,7 @@ class CounterModelTest extends WebTestCase
 
         $this->assertEquals(
             $headline,
-            $counter->getThing()
+            $counter->getHeadline()
         );
     }
 
@@ -118,7 +125,60 @@ class CounterModelTest extends WebTestCase
         );
     }
 
-    public function provideThingNamePairs()
+    /**
+     * @test
+     */
+    public function fromJsonWithAllProperties()
+    {
+        $owner = new UserModel('irrelevant', 'irrelevant');
+        $original = new CounterModel('Headline', date('Y-m-d'), $owner);
+        $json = $original->toJson();
+        $clone = (new CounterModel(null))->fromJsonObject(json_decode($json));
+
+        $this->assertSame($original->toArray(), $clone->toArray());
+    }
+
+    /**
+     * @test
+     * @dataProvider provideValidProperties
+     */
+    public function settersAndGettersWorks($property, $value)
+    {
+        $counter = new CounterModel('irrelevant');
+        $setter = 'set' . ucfirst($property);
+        $getter = 'get' . ucfirst($property);
+
+        $counter->$setter($value);
+        $this->assertEquals(
+            $value,
+            $counter->$getter()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function settingPrivateOrPublicWorks()
+    {
+        $counter = new CounterModel('irrelevant');
+
+        $counter->setPrivate();
+        $this->assertFalse($counter->isPublic());
+        $counter->setPublic();
+        $this->assertTrue($counter->isPublic());
+    }
+
+    public function provideValidProperties()
+    {
+        return [
+            'name' => ['name', 'meaning-of-life'],
+            'headline' => ['headline', 'Meaning of Life'],
+            'reset date' => ['reseted', date('Y-m-d')],
+            'owner' => ['owner', new UserModel('irrelevant', 'irrelevant')],
+        ];
+    }
+
+    public function provideHeadlineNamePairs()
     {
         return [
             ['Abba', 'abba'],

@@ -9,7 +9,7 @@
         {{ form_start(form) }}
             {{ form_errors(form) }}
             <span class="lead"><b>0</b> days without</span>
-            {{ form_widget(form.thing, {'attr': {'class': 'span12', 'autofocus': 'autofocus', 'placeholder': '... what?' }}) }}
+            {{ form_widget(form.headline, {'attr': {'class': 'span12', 'autofocus': 'autofocus', 'placeholder': '... what?' }}) }}
             {{ form_widget(form.public, {'attr': {'class': 'btn btn-large btn-primary btn-block' }}) }}
             <div style="text-align: center">~ or ~</div>
             {{ form_widget(form.owner.nick, {'attr': {'class': 'span6', 'placeholder': 'Nick'}}) }}

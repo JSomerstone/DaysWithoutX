@@ -143,7 +143,7 @@ class FeatureContext extends BehatContext
     {
         $post = array(
             'counter' => array(
-                'thing' => $counterHeadline,
+                'headline' => $counterHeadline,
                 'public' => '',
                 'owner' => array(
                     'nick' => '',
@@ -167,7 +167,7 @@ class FeatureContext extends BehatContext
     {
         $post = array(
             'counter' => array(
-                'thing' => $headline,
+                'headline' => $headline,
                 'private' => '',
                 'owner' => array(
                     'nick' => $nick,

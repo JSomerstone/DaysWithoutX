@@ -9,7 +9,7 @@ class CounterType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('thing', 'text', array('max_length' => 64, 'required' => true))
+        $builder->add('headline', 'text', array('max_length' => 64, 'required' => true))
             ->add('public', 'submit')
             ->add('owner', new UserType())
             ->add('private', 'submit');

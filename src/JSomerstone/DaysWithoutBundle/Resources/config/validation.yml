@@ -1,6 +1,6 @@
 JSomerstone\DaysWithoutBundle\Model:
     properties:
-        thing:
+        headline:
             - NotBlank: ~
         name:
             - NotBlank: ~
