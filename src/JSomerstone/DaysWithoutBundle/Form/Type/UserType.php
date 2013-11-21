@@ -7,10 +7,24 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class UserType extends AbstractType
 {
+    private $nick;
+    public function __construct($nick = null)
+    {
+        $this->nick = $nick;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('nick', 'text', array('max_length' => 32, 'required' => false))
-            ->add('password', 'password', array('required' => false));
+        $builder->add(
+            'nick',
+            'text',
+            array(
+                'max_length' => 32,
+                'required' => false,
+                'data' => $this->nick
+            )
+        )
+        ->add('password', 'password', array('required' => false));
 
     }
 

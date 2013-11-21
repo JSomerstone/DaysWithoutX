@@ -71,7 +71,18 @@ class UserModel
     }
 
     /**
+     * @param $plainTextPassword
+     * @return bool
+     */
+    public function authenticate($plainTextPassword)
+    {
+        return $this->password
+            === self::hashPassword($plainTextPassword, $this->nick);
+    }
+
+    /**
      * @param object $userAsJson
+     * @return UserModel
      */
     public function fromJsonObject($userAsJson)
     {

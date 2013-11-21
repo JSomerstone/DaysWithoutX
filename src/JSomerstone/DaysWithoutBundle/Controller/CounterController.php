@@ -2,7 +2,8 @@
 namespace JSomerstone\DaysWithoutBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request,
-    Symfony\Component\DependencyInjection\ContainerInterface as Container;
+    Symfony\Component\DependencyInjection\ContainerInterface as Container,
+    Symfony\Component\Form\Form as Form;
 use JSomerstone\DaysWithoutBundle\Model\CounterModel,
     JSomerstone\DaysWithoutBundle\Model\UserModel,
     JSomerstone\DaysWithoutBundle\Storage\CounterStorage;
@@ -28,6 +29,7 @@ class CounterController extends BaseController
         $form = $this->getCounterForm();
         $form->handleRequest($request);
         $storage = $this->getStorage();
+        $userStorage = $this->getUserStorage();
 
         if ( ! $form->isValid())
         {
@@ -37,22 +39,34 @@ class CounterController extends BaseController
         $counter = $form->getData();
         $owner = $counter->getOwner();
 
-        if ($form->get('public')->isClicked()) {
-            $counter->setPublic()
-                ->setOwner(new UserModel('public'));
-        } else {
+        if ($form->get('public')->isClicked())
+        {
+            $owner = new UserModel('public');
+            $counter->setPublic()->setOwner($owner);
+        }
+        else
+        {
             $counter->setPrivate();
         }
 
-        if ( ! $counter->isPublic() && ! $this->authenticateUser($owner)) {
+        if ( ! $userStorage->exists($owner->getNick()))
+        {
+            $this->addNotice('New user saved, welcome ' . $owner->getNick());
+            $userStorage->store($owner);
+        }
+        else if ( ! $this->authenticateUser($owner))
+        {
+            $this->addError('Wrong Nick and/or password');
             return $this->redirect($this->generateUrl('dwo_frontpage'));
         }
 
-        if ( $storage->exists($counter->getName(), $counter->getOwner()->getId()))
+        if ( $storage->exists($counter->getName(), $owner->getId()))
         {
             $this->addNotice('Already existed, showing it');
             return $this->redirectToCounter($counter);
-        } else {
+        }
+        else
+        {
             $storage->store($counter);
             $this->addMessage('Counter created');
             return $this->redirectToCounter($counter);
@@ -64,43 +78,99 @@ class CounterController extends BaseController
         $storage = $this->getStorage();
         if ( ! $storage->exists($name, $owner))
         {
-            $this->addError('Counter did not exist - would you like to create one?');
-            $this->setForm($this->getCounterForm($name, $owner));
-            return $this->render(
-                'JSomerstoneDaysWithoutBundle:Default:index.html.twig',
-                $this->response
-            );
+            return $this->redirectFromNonExisting($name, $owner);
         }
         $counterModel = $this->getStorage()->load($name, $owner);
 
         $this->setCounter($counterModel);
+        $this->setForm($this->getResetForm($name, $owner));
         return $this->render(
             'JSomerstoneDaysWithoutBundle:Counter:index.html.twig',
             $this->response
         );
     }
 
+    /**
+     * @param string $name
+     * @param string $owner optional default 'public'
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function resetAction($name, $owner = 'public')
     {
-        $request = $this->getRequest();
+        $storage = $this->getStorage();
+        $form = $this->getResetForm($name, $owner);
 
-        if ($request->get('reset') != 1)
+        if ( ! $storage->exists($name, $owner))
         {
-            return $this->showAction($name);
+            return $this->redirectFromNonExisting($name, $owner);
         }
+        $counterModel = $storage->load($name, $owner);
 
-        $counterModel = $this->getStorage()->load($name, $owner);
-        $counterModel->reset();
+        if ($owner === 'public')
+        {
+            $counterModel->reset();
+        }
+        else
+        {
+            $resetter = $this->getUserFromRequest(
+                $this->getRequest(),
+                $form
+            );
+            if ( ! $this->authenticateUserForCounter($resetter, $counterModel))
+            {
+                $this->addError('Wrong Nick and/or password');
+            } else {
+                $counterModel->reset();
+                $this->getStorage()->store($counterModel);
+            }
+        }
         $this->getStorage()->store($counterModel);
 
-        $this->applyToResponse(array(
-            'counter' => $counterModel
-        ));
+        $this->setCounter($counterModel);
+        $this->setForm($form);
 
         return $this->render(
             'JSomerstoneDaysWithoutBundle:Counter:index.html.twig',
             $this->response
         );
+    }
+
+    /**
+     * @param string $name
+     * @param string $owner
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    private function redirectFromNonExisting($name, $owner)
+    {
+        $this->addError('Counter did not exist - would you like to create one?');
+        $this->setForm($this->getCounterForm($name, $owner));
+
+        return $this->render(
+            'JSomerstoneDaysWithoutBundle:Default:index.html.twig',
+            $this->response
+        );
+    }
+
+    /**
+     * @param UserModel $user
+     * @param CounterModel $counter
+     * @return bool
+     */
+    private function authenticateUserForCounter(UserModel $user, CounterModel $counter)
+    {
+        return $user->getPassword() === $counter->getOwner()->getPassword();
+    }
+
+    /**
+     * @param Request $request
+     * @param Form $form
+     * @return UserModel
+     */
+    private function getUserFromRequest(Request $request, Form $form)
+    {
+        $form->handleRequest($request);
+        $data = $form->getData();
+        return $data['owner'];
     }
 
     private function setCounter($counter)
@@ -150,16 +220,17 @@ class CounterController extends BaseController
         return $this->userStorage;
     }
 
+    /**
+     * @param UserModel $user
+     * @return bool
+     */
     private function authenticateUser(UserModel $user)
     {
         $userStorage = $this->getUserStorage();
         if ( ! $userStorage->exists($user->getNick())) {
-            $this->addMessage('Nick stored');
             return true;
-        } elseif ( ! $userStorage->authenticate($user)) {
-            $this->addError('Unknown nick or password');
-            return false;
         }
-        return true;
+        var_dump($user->)
+        return $userStorage->authenticate($user);
     }
 }

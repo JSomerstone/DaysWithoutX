@@ -37,6 +37,7 @@ abstract class AssertContext
     {
         if (stripos($hayStack, $needle) === false)
         {
+            echo $hayStack;
             throw new AssertionException(
                 $messageIfNot ?: "Failed asserting that '$hayStack' has string '$needle'"
             );

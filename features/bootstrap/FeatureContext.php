@@ -182,6 +182,7 @@ class FeatureContext extends BehatContext
             $post
         );
         $this->response = $this->getKernel()->handle($this->request);
+        echo $this->response->getContent();
     }
 
     /**
@@ -190,10 +191,19 @@ class FeatureContext extends BehatContext
     public function userResetsCounter($counterHeadline)
     {
         $url = self::getCounterName($counterHeadline);
+        $post = array(
+            'resetForm' => array(
+                'owner' => array(
+                    'nick' => '',
+                    'password' => ''
+                ),
+                'reset' => ''
+            )
+        );
         $this->request = Request::create(
             "/$url",
             'POST',
-            array('reset' => 1)
+            $post
         );
         $this->response = $this->getKernel()->handle($this->request);
 
@@ -217,7 +227,7 @@ class FeatureContext extends BehatContext
         Assert::contains(
             $expectedString,
             $this->response->getContent(),
-            "Page did not have expected '$expectedString'"
+            " - Did not"
         );
     }
 
@@ -294,7 +304,7 @@ class FeatureContext extends BehatContext
         Assert::true($this->response->isRedirection(), 'Not a redirection');
         Assert::true(
             $this->response->isRedirect($redirUrl),
-            "Was not redirected to '$redirUrl'"
+            " - Was not " . $this->response->getContent()
         );
     }
 

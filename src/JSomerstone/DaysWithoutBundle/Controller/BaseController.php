@@ -85,6 +85,21 @@ abstract class BaseController extends Controller
                 'method' => 'POST',
             )
         );
+    }
 
+    protected function getResetForm($name, $owner)
+    {
+        $action = $this->generateUrl('dwo_reset_counter', array(
+            'name' => $name,
+            'owner' => $owner
+        ));
+        return $this->createForm(
+            new ResetType($owner),
+            null,
+            array(
+                'action' => $action,
+                'method' => 'POST',
+            )
+        );
     }
 }

@@ -20,17 +20,23 @@
                     </a>
                 </i>
             </p>
-            <form action="{{ counter.name }}" method="POST">
-                <input type="hidden" name="reset" value="1">
-                <button
-                    onClick="return confirm('Do you REALLY want to reset the counter?');"
-                    id="search-btn"
-                    class="btn btn-big btn-danger btn-block"
-                    {% if counter.days == 0 %}
-                        disabled
+
+            {% if counter.days > 0 %}
+                {{ form_start(form) }}
+                    {% if counter.public %}
+                        <div class="hidden">
+                            {{ form_widget(form.owner.nick, {'attr': {'class': 'span6', 'placeholder': 'Nick'}}) }}
+                            {{ form_widget(form.owner.password, {'attr': {'class': 'span6', 'placeholder': 'Password' }}) }}
+                        </div>
+                    {% else %}
+                        {{ form_widget(form.owner.nick, {'attr': {'class': 'span6', 'placeholder': 'Nick'}}) }}
+                        {{ form_widget(form.owner.password, {'attr': {'class': 'span6', 'placeholder': 'Password' }}) }}
                     {% endif %}
-                >Reset</button>
-            </form>
+                    {{ form_widget(form.reset, {'attr': {
+                        'onClick': "return confirm('Do you REALLY want to reset the counter?');",
+                        'class': 'btn btn-big btn-danger btn-block' }}) }}
+                {{ form_end(form) }}
+            {% endif %}
         </div>
     </div>
 </div>

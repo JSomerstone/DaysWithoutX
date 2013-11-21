@@ -25,9 +25,9 @@ class UserStorage
         {
             throw new StorageException("Unable to read file from '$filename'");
         }
-
-        $data = file_get_contents($filename);
-        return unserialize($data);
+        $data = json_decode(file_get_contents($filename));
+        $user = new UserModel();
+        return $user->fromJsonObject($data);
     }
 
     /**
@@ -61,8 +61,8 @@ class UserStorage
      */
     public function authenticate(userModel $user)
     {
-        return true;
         $persisted = $this->load($user->getNick());
+        var_dump($persisted, $user);
         return ($persisted->getPassword() === $user->getPassword());
     }
 
