@@ -13,7 +13,7 @@ class CounterStorage
     public function __construct($basePath, $format = self::FORMAT_JSON)
     {
         $this->basePath = $basePath;
-        if ( ! in_array($format, [self::FORMAT_JSON, self::FORMAT_SERIALIZED]))
+        if ( ! in_array($format, array(self::FORMAT_JSON, self::FORMAT_SERIALIZED)))
         {
             throw new StorageException('Unsuppoerted storing format: ' . $format);
         }
