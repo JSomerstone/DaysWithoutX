@@ -33,7 +33,6 @@ class CounterController extends BaseController
 
         if ( ! $form->isValid())
         {
-            var_dump($form->getErrorsAsString());
             return $this->redirect($this->generateUrl('dwo_frontpage'));
         }
         $counter = $form->getData();
@@ -47,17 +46,17 @@ class CounterController extends BaseController
         else
         {
             $counter->setPrivate();
-        }
 
-        if ( ! $userStorage->exists($owner->getNick()))
-        {
-            $this->addNotice('New user saved, welcome ' . $owner->getNick());
-            $userStorage->store($owner);
-        }
-        else if ( ! $this->authenticateUser($owner))
-        {
-            $this->addError('Wrong Nick and/or password');
-            return $this->redirect($this->generateUrl('dwo_frontpage'));
+            if ( ! $userStorage->exists($owner->getNick()))
+            {
+                $this->addNotice('New user saved, welcome ' . $owner->getNick());
+                $userStorage->store($owner);
+            }
+            else if ( ! $this->authenticateUser($owner))
+            {
+                $this->addError('Wrong Nick and/or password');
+                return $this->redirect($this->generateUrl('dwo_frontpage'));
+            }
         }
 
         if ( $storage->exists($counter->getName(), $owner->getId()))
@@ -184,7 +183,8 @@ class CounterController extends BaseController
     {
         $owner = ($counter->isPublic())
             ? 'public'
-            : $counter->getOwner()->getId();
+            : $counter->getOwner()->getNick();
+
         return $this->redirect(
             $this->generateUrl(
                 'dwo_show_counter',
@@ -228,9 +228,9 @@ class CounterController extends BaseController
     {
         $userStorage = $this->getUserStorage();
         if ( ! $userStorage->exists($user->getNick())) {
-            return true;
+            return false;
         }
-        var_dump($user->)
+
         return $userStorage->authenticate($user);
     }
 }

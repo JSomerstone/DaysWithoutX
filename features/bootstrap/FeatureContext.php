@@ -182,7 +182,6 @@ class FeatureContext extends BehatContext
             $post
         );
         $this->response = $this->getKernel()->handle($this->request);
-        echo $this->response->getContent();
     }
 
     /**

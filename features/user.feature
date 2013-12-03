@@ -25,5 +25,5 @@ Feature: User can create & reset password protected counters
   Scenario: User creates private counter
     Given user "Mee" with password "fuubar123"
       And "/" page is loaded
-    When "Mee" posts private counter "being sober" with password "foobar123"
-    Then user is redirected to "/being-sober/mee"
+    When "Mee" posts private counter "being sober" with password "fuubar123"
+    Then user is redirected to "/being-sober/Mee"

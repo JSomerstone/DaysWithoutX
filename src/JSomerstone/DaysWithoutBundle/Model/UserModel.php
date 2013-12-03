@@ -56,10 +56,11 @@ class UserModel
      */
     public function setPassword($password)
     {
-        if (!isset($this->nick)) {
+        if ( ! isset($this->nick))
+        {
             throw new \LogicException('Users nick must be set before password');
         }
-        $this->password = self::hashPassword($password, $this->getNick());
+        $this->password = self::hashPassword($password, $this->nick);
     }
 
     /**

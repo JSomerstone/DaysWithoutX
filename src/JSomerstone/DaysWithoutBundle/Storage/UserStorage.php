@@ -62,7 +62,6 @@ class UserStorage
     public function authenticate(userModel $user)
     {
         $persisted = $this->load($user->getNick());
-        var_dump($persisted, $user);
         return ($persisted->getPassword() === $user->getPassword());
     }
 
