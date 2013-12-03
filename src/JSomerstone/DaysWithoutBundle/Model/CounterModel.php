@@ -54,7 +54,7 @@ class CounterModel
             'headline' => $this->headline,
             'reseted' => $this->reseted,
             'days' => $this->getDays(),
-            'owner' => ($this->owner) ? $this->owner->toArray() : null,
+            'owner' => ($this->owner) ? $this->owner->getNick() : null,
             'public' => $this->public
         );
     }
@@ -146,8 +146,7 @@ class CounterModel
         $this->reseted = isset($json->reseted) ? $json->reseted : date('Y-m-d');
         if (isset($json->owner))
         {
-            $owner = new UserModel();
-            $this->owner = $owner->fromJsonObject($json->owner);
+            $this->owner = new UserModel($json->owner);
         }
         $this->public = isset($json->public) ? $json->public : false;
         return $this;

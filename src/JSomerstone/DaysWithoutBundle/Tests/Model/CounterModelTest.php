@@ -67,11 +67,7 @@ class CounterModelTest extends WebTestCase
             'headline' => $headline,
             'reseted' => $this->yesterday,
             'days' => 1,
-            'owner' => array(
-                'nick' => 'testuser',
-                'id' => 'testuser',
-                'password' => null
-            ),
+            'owner' => 'testuser',
             'public' => false
         ]);
         $actual = $counter->toJson();
