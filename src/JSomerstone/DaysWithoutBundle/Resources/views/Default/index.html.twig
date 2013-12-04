@@ -6,7 +6,7 @@
 <div class="row-fluid">
     <div class="content span3 offset3">
         <h2>Start new counter:</h2>
-        {{ form_start(form) }}
+        {{ form_start(form, {'action': path('dwo_create_counter'), 'method': 'POST'}) }}
             {{ form_errors(form) }}
             <span class="lead"><b>0</b> days without</span>
             {{ form_widget(form.headline, {'attr': {'class': 'span12', 'autofocus': 'autofocus', 'placeholder': '... what?' }}) }}

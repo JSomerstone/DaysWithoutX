@@ -79,12 +79,9 @@ abstract class BaseController extends Controller
 
         return $this->createForm(
             new CounterType(),
-            $counter,
-            array(
-                'action' => $this->generateUrl('dwo_create_counter'),
-                'method' => 'POST',
-            )
+            $counter
         );
+
     }
 
     protected function getResetForm($name, $owner)
