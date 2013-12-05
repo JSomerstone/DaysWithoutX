@@ -97,35 +97,32 @@ class CounterController extends BaseController
     public function resetAction($name, $owner = 'public')
     {
         $storage = $this->getStorage();
+
         $form = $this->getResetForm($name, $owner);
+        $user = $this->getUserFromRequest(
+            $this->getRequest(),
+            $form
+        );
 
         if ( ! $storage->exists($name, $owner))
         {
             return $this->redirectFromNonExisting($name, $owner);
         }
-        $counterModel = $storage->load($name, $owner);
+        $counter = $storage->load($name, $owner);
 
-        if ($owner === 'public')
+        if ($counter->isPublic() || $this->authenticateUserForCounter($user, $counter))
         {
-            $counterModel->reset();
+            $counter->reset();
         }
-        else
+        else if ( ! $this->authenticateUserForCounter($user, $counter))
         {
-            $resetter = $this->getUserFromRequest(
-                $this->getRequest(),
-                $form
-            );
-            if ( ! $this->authenticateUserForCounter($resetter, $counterModel))
-            {
-                $this->addError('Wrong Nick and/or password');
-            } else {
-                $counterModel->reset();
-                $this->getStorage()->store($counterModel);
-            }
+            $this->addError('Wrong Nick and/or password');
+            return $this->redirectToCounter($counter);
         }
-        $this->getStorage()->store($counterModel);
 
-        $this->setCounter($counterModel);
+        $storage->store($counter);
+
+        $this->setCounter($counter);
         $this->setForm($form);
 
         return $this->render(
@@ -157,7 +154,8 @@ class CounterController extends BaseController
      */
     private function authenticateUserForCounter(UserModel $user, CounterModel $counter)
     {
-        return $user->getPassword() === $counter->getOwner()->getPassword();
+        $owner = $this->getUserStorage()->load($counter->getOwner()->getNick());
+        return ($user->getPassword() === $owner->getPassword());
     }
 
     /**
