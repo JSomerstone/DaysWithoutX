@@ -142,7 +142,7 @@ class FeatureContext extends BehatContext
     public function userPostsNewCounter($counterHeadline)
     {
         $post = array(
-            'counter' => array(
+            'form' => array(
                 'headline' => $counterHeadline,
                 'public' => '',
                 'owner' => array(
@@ -166,7 +166,7 @@ class FeatureContext extends BehatContext
     public function UserPostsPrivateCounter($nick, $headline, $password)
     {
         $post = array(
-            'counter' => array(
+            'form' => array(
                 'headline' => $headline,
                 'private' => '',
                 'owner' => array(
@@ -191,12 +191,11 @@ class FeatureContext extends BehatContext
     {
         $url = self::getCounterName($counterHeadline);
         $post = array(
-            'resetForm' => array(
-                'owner' => array(
-                    'nick' => '',
-                    'password' => ''
-                ),
-                'reset' => ''
+            'form' => array(
+                'nick' => '',
+                'password' => '',
+                'reset' => '',
+                '_token' => $this->requestToken
             )
         );
         $this->request = Request::create(
@@ -322,7 +321,7 @@ class FeatureContext extends BehatContext
     {
         $matches = array();
         preg_match(
-            '/name="counter\[_token\]" value="(?P<token>[0-9a-z]+)"/',
+            '/name="form\[_token\]" value="(?P<token>[0-9a-z]+)"/',
             $response->getContent(),
             $matches
         );

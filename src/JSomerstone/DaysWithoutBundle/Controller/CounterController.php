@@ -82,7 +82,7 @@ class CounterController extends BaseController
         $counterModel = $this->getStorage()->load($name, $owner);
 
         $this->setCounter($counterModel);
-        $this->setForm($this->getResetForm($name, $owner));
+        $this->setForm($this->getResetForm($counterModel));
         return $this->render(
             'JSomerstoneDaysWithoutBundle:Counter:index.html.twig',
             $this->response
@@ -98,18 +98,13 @@ class CounterController extends BaseController
     {
         $storage = $this->getStorage();
 
-        $form = $this->getResetForm($name, $owner);
-        $user = $this->getUserFromRequest(
-            $this->getRequest(),
-            $form
-        );
-
         if ( ! $storage->exists($name, $owner))
         {
             return $this->redirectFromNonExisting($name, $owner);
         }
         $counter = $storage->load($name, $owner);
-
+        $form = $this->getResetForm($counter);
+        $user = $this->getUserFromRequest($this->getRequest(), $form);
         if ($counter->isPublic() || $this->authenticateUserForCounter($user, $counter))
         {
             $counter->reset();
@@ -123,7 +118,7 @@ class CounterController extends BaseController
         $storage->store($counter);
 
         $this->setCounter($counter);
-        $this->setForm($form);
+        $this->setForm($this->getResetForm($counter));
 
         return $this->render(
             'JSomerstoneDaysWithoutBundle:Counter:index.html.twig',
@@ -166,8 +161,7 @@ class CounterController extends BaseController
     private function getUserFromRequest(Request $request, Form $form)
     {
         $form->handleRequest($request);
-        $data = $form->getData();
-        return $data['owner'];
+        return $form->getData();
     }
 
     private function setCounter($counter)

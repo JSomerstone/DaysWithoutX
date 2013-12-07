@@ -24,13 +24,10 @@
             {% if counter.days > 0 %}
                 {{ form_start(form) }}
                     {% if counter.public %}
-                        <div class="hidden">
-                            {{ form_widget(form.owner.nick, {'attr': {'class': 'span6', 'placeholder': 'Nick'}}) }}
-                            {{ form_widget(form.owner.password, {'attr': {'class': 'span6', 'placeholder': 'Password' }}) }}
-                        </div>
+
                     {% else %}
-                        {{ form_widget(form.owner.nick, {'attr': {'class': 'span6', 'placeholder': 'Nick'}}) }}
-                        {{ form_widget(form.owner.password, {'attr': {'class': 'span6', 'placeholder': 'Password' }}) }}
+                        {{ form_widget(form.nick, {'attr': {'class': 'span6', 'placeholder': 'Nick'}}) }}
+                        {{ form_widget(form.password, {'attr': {'class': 'span6', 'placeholder': 'Password' }}) }}
                     {% endif %}
                     {{ form_widget(form.reset, {'attr': {
                         'onClick': "return confirm('Do you REALLY want to reset the counter?');",

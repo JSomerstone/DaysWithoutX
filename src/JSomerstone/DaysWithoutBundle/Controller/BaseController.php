@@ -6,9 +6,11 @@ use JSomerstone\DaysWithoutBundle\Form\Type\CounterType,
     JSomerstone\DaysWithoutBundle\Form\Type\OwnerType,
     JSomerstone\DaysWithoutBundle\Model\CounterModel;
 use JSomerstone\DaysWithoutBundle\Form\Type\ResetType;
+use JSomerstone\DaysWithoutBundle\Form\Type\UserType;
 use JSomerstone\DaysWithoutBundle\Lib\StringFormatter;
 use JSomerstone\DaysWithoutBundle\Model\UserModel;
 use \Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Security\Tests\Core\User\UserTest;
 
 abstract class BaseController extends Controller
 {
@@ -76,19 +78,26 @@ abstract class BaseController extends Controller
     protected function getCounterForm($headline = null, $owner = null)
     {
         $counter = new CounterModel(StringFormatter::getUrlUnsafe($headline));
+        $owner = new UserModel($owner);
 
-        return $this->createForm(
-            new CounterType(),
-            $counter
-        );
+        return $this->createFormBuilder($counter)
+            ->add('headline', 'text')
+            ->add('public', 'submit')
+            ->add('owner', new UserType())
+            ->add('private', 'submit')
+            ->getForm();
 
     }
 
-    protected function getResetForm($name, $owner)
+    protected function getResetForm(CounterModel $counter)
     {
-        return $this->createForm(
-            new ResetType($owner),
-            null
-        );
+        $builder = $this->createFormBuilder(new UserModel());
+        if ( ! $counter->isPublic() )
+        {
+            $builder->add('nick', 'text')
+                ->add('password', 'password');
+        }
+        $builder->add('reset', 'submit');
+        return $builder->getForm();
     }
 }
