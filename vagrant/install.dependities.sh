@@ -4,8 +4,7 @@ VAGRANT_DIR="/vagrant/vagrant"
 
 function install_packages()
 {
-    apt-get update
-    apt-get install -y apache2 php5 libapache2-mod-php5 php5-mcrypt php-pear curl git
+    apt-get install -y apache2 php5 libapache2-mod-php5 php-pear curl git
 }
 
 function set_locale()
@@ -33,8 +32,9 @@ function install_composer()
     mv composer.phar /usr/local/bin/composer
 }
 
-set_locale
+#set_locale
 
+#apt-get update 1> /dev/null
 install_packages
 
 install_phpunit

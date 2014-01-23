@@ -1,0 +1,34 @@
+<VirtualHost *:80>
+	ServerName dayswithout
+	ServerAlias dayswithout.dev
+
+	DocumentRoot /vagrant/web
+	DirectoryIndex app_dev.php
+	<Directory />
+		Options FollowSymLinks
+		AllowOverride All
+	</Directory>
+	<Directory /vagrant/web/>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride All
+		Order allow,deny
+		allow from all
+	</Directory>
+
+	ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+	<Directory "/usr/lib/cgi-bin">
+		AllowOverride All
+		Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+		Order allow,deny
+		Allow from all
+	</Directory>
+
+	ErrorLog /tmp/apache-error.log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel info
+
+	CustomLog /tmp/apache-access.log combined
+
+</VirtualHost>

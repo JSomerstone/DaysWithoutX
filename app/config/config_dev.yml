@@ -27,12 +27,10 @@ monolog:
 assetic:
     use_controller: false
 
-#swiftmailer:
-#    delivery_address: me@example.com
 # JSomerstoneDaysWithoutBundleConfiguration
 j_somerstone_days_without:
     storage:
         # Absolute path to store Counters to
-        counter_path: /tmp/dayswithout-dev/counters
+        counter_path: /run/shm/dwo/counters
         # Absolute path to store Users to
-        user_path: /tmp/dayswithout-dev/users
+        user_path: /run/shm/dwo/users

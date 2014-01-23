@@ -3,19 +3,6 @@
 VAGRANT_DIR="/vagrant/vagrant"
 HTTPD_CONF_FILE="/etc/apache2/apache2.conf"
 
-function symlink_public_to_var_www()
-{
-    local WWW_DIR="/var/www"
-
-    [ -d "$WWW_DIR" ] && mv "$WWW_DIR" "$WWW_DIR~"
-    ln -Tbs /vagrant/web "$WWW_DIR"
-}
-
-function httpd_allow_override()
-{
-    sed -i~ 's/AllowOverride None/AllowOverride All/' /etc/apache2/sites-available/default
-}
-
 #fix for bug: http://stackoverflow.com/questions/9479117/vagrant-virtualbox-apache2-strange-cache-behaviour
 function disable_sendfile_for_apache()
 {
@@ -28,12 +15,37 @@ function compose_project()
 {
     cd /vagrant
     composer install
+    app/console cache:clear --env=dev
 }
 
-symlink_public_to_var_www
+function setup_project_directories()
+{
+    [ ! -d /run/shm/dwo ] || rm -rf /run/shm/dwo
 
-httpd_allow_override
+    mkdir -p /run/shm/dwo/{cache,logs,users,counters}
+}
+
+function copy_resources()
+{
+    cp -rbv /vagrant/vagrant/resources/* / 1> /dev/null
+}
+
+function setup_directory_rights()
+{
+    APACHEUSER=`ps aux | grep -E '[a]pache|[h]ttpd|[_]www|[w]ww-data' | grep -v root | head -1 | cut -d\  -f1`
+
+    chown -R vagrant:$APACHEUSER /run/shm/dwo
+    chmod -R 775 /run/shm/dwo
+}
+
+umask 002
 
 disable_sendfile_for_apache
 
+setup_project_directories
 compose_project
+setup_directory_rights
+
+copy_resources
+
+/etc/init.d/apache2 restart

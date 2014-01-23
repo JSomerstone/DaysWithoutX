@@ -13,3 +13,4 @@ vendor/
 doc/coverage/
 .idea/
 .vagrant/
+.DS_Store
