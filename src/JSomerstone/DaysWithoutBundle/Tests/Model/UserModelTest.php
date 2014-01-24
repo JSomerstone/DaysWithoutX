@@ -78,7 +78,8 @@ class UserModelTest extends WebTestCase
     {
         $original = new UserModel('TestNick', 'PlainTxtP4ssw0rc|');
         $json = $original->toJson();
-        $clone = (new Usermodel())->fromJsonObject(json_decode($json));
+        $user = new UserModel();
+        $clone = $user->fromJsonObject(json_decode($json));
 
         $this->assertEquals(
             $original->toArray(),

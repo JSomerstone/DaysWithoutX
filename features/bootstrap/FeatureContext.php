@@ -10,7 +10,10 @@ use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
 
 use Symfony\Component\HttpFoundation\Request,
-    Symfony\Component\HttpFoundation\Response;
+    Symfony\Component\HttpFoundation\Response,
+    Symfony\Component\HttpKernel\KernelInterface,
+    Symfony\Component\DependencyInjection\ContainerInterface;
+
 use JSomerstone\DaysWithoutBundle\Model\CounterModel,
     JSomerstone\DaysWithoutBundle\Model\UserModel,
     JSomerstone\DaysWithoutBundle\Storage\CounterStorage,
@@ -30,8 +33,6 @@ use AssertContext as Assert;
  */
 class FeatureContext extends BehatContext
 {
-    use Behat\Symfony2Extension\Context\KernelDictionary;
-
     /**
      *
      * @var Symfony\Component\HttpFoundation\Request
@@ -113,6 +114,35 @@ class FeatureContext extends BehatContext
         //exec("rm -rf " . self::$counterStoragePath);
     }
 
+    /**
+     * Sets Kernel instance.
+     *
+     * @param KernelInterface $kernel HttpKernel instance
+     */
+    public function setKernel(KernelInterface $kernel)
+    {
+        $this->kernel = $kernel;
+    }
+
+    /**
+     * Returns HttpKernel instance.
+     *
+     * @return KernelInterface
+     */
+    public function getKernel()
+    {
+        return $this->kernel;
+    }
+
+    /**
+     * Returns HttpKernel service container.
+     *
+     * @return ContainerInterface
+     */
+    public function getContainer()
+    {
+        return $this->kernel->getContainer();
+    }
 
     /**
      * @Given /^anonymeus user$/
@@ -329,5 +359,4 @@ class FeatureContext extends BehatContext
             ? $matches['token']
             : null;
     }
-
 }

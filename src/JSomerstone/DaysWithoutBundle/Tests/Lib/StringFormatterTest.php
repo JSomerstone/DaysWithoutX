@@ -40,21 +40,21 @@ class StringFormatterTest extends WebTestCase
 
     public function provideUnsafeStrings()
     {
-        return [
+        return array(
             //Input , output
-            ['This is not in camelCase', 'this-is-not-in-camelcase'],
-            ['<script>alert("foobar")</script>', 'script-alert-foobar-script'],
-            ['Many   whites   between', 'many-whites-between'],
-            ['   Trimmer    ', 'trimmer'],
-        ];
+            array('This is not in camelCase', 'this-is-not-in-camelcase'),
+            array('<script>alert("foobar")</script>', 'script-alert-foobar-script'),
+            array('Many   whites   between', 'many-whites-between'),
+            array('   Trimmer    ', 'trimmer'),
+        );
     }
 
     public function provideSafeStrings()
     {
-        return [
+        return array(
             //Input , output
-            ['something-url-safe', 'Something Url Safe'],
-        ];
+            array('something-url-safe', 'Something Url Safe'),
+        );
     }
 
 }

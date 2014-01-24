@@ -38,7 +38,7 @@ class CounterModelTest extends WebTestCase
      */
     public function counterCountsDaysCorrectly()
     {
-        $pool = [0, 1, 2, 3, 5, 8, 13, 21, 34, 55];
+        $pool = array(0, 1, 2, 3, 5, 8, 13, 21, 34, 55);
         foreach ($pool as $daysSince)
         {
             $then = time() - $daysSince * (60*60*24);
@@ -62,14 +62,16 @@ class CounterModelTest extends WebTestCase
 
         $counter = new CounterModel($headline, $this->yesterday, $owner);
 
-        $expected = json_encode([
-            'name' => 'headline-of-the-counter',
-            'headline' => $headline,
-            'reseted' => $this->yesterday,
-            'days' => 1,
-            'owner' => 'testuser',
-            'public' => false
-        ]);
+        $expected = json_encode(
+            array(
+                'name' => 'headline-of-the-counter',
+                'headline' => $headline,
+                'reseted' => $this->yesterday,
+                'days' => 1,
+                'owner' => 'testuser',
+                'public' => false
+            )
+        );
         $actual = $counter->toJson();
         $this->assertEquals(
             $expected,
@@ -129,7 +131,8 @@ class CounterModelTest extends WebTestCase
         $owner = new UserModel('irrelevant', 'irrelevant');
         $original = new CounterModel('Headline', date('Y-m-d'), $owner);
         $json = $original->toJson();
-        $clone = (new CounterModel(null))->fromJsonObject(json_decode($json));
+        $counter = new CounterModel(null);
+        $clone = $counter->fromJsonObject(json_decode($json));
 
         $this->assertSame($original->toArray(), $clone->toArray());
     }
@@ -166,22 +169,22 @@ class CounterModelTest extends WebTestCase
 
     public function provideValidProperties()
     {
-        return [
-            'name' => ['name', 'meaning-of-life'],
-            'headline' => ['headline', 'Meaning of Life'],
-            'reset date' => ['reseted', date('Y-m-d')],
-            'owner' => ['owner', new UserModel('irrelevant', 'irrelevant')],
-        ];
+        return array(
+            'name' => array('name', 'meaning-of-life'),
+            'headline' => array('headline', 'Meaning of Life'),
+            'reset date' => array('reseted', date('Y-m-d')),
+            'owner' => array('owner', new UserModel('irrelevant', 'irrelevant')),
+        );
     }
 
     public function provideHeadlineNamePairs()
     {
-        return [
-            ['Abba', 'abba'],
-            ['Abba Ac/Dc', 'abba-ac-dc'],
-            ['abba-acdc', 'abba-acdc'],
-            ['Q!"#¤%&(=rty', 'q-rty'],
-            ['Fuu-bar 123', 'fuu-bar-123'],
-        ];
+        return array(
+            array('Abba', 'abba'),
+            array('Abba Ac/Dc', 'abba-ac-dc'),
+            array('abba-acdc', 'abba-acdc'),
+            array('Q!"#¤%&(=rty', 'q-rty'),
+            array('Fuu-bar 123', 'fuu-bar-123'),
+        );
     }
 }
