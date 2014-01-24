@@ -1,4 +1,5 @@
 #!/bin/bash
+clear
 
 cat ~/readme.txt
 

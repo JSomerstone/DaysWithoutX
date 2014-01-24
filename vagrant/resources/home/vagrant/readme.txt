@@ -5,3 +5,9 @@ ________                        __      __.__  __  .__                   __     
 /_______  (____  / ____/____  >  \__/\  / |__||__| |___|  /\____/|____/ |__| /\ \____ |\___  >\_/
         \/     \/\/         \/        \/                \/                   \/      \/    \/
 
+To run unit tests, simply run:
+phpunit
+
+To run Behat-tests, run:
+
+bin/behat features/

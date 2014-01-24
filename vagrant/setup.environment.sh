@@ -27,7 +27,8 @@ function setup_project_directories()
 
 function copy_resources()
 {
-    cp -rbv /vagrant/vagrant/resources/* / 1> /dev/null
+    cp -rb /vagrant/vagrant/resources/* /
+    chown vagrant:vagrant /home/vagrant/{.bashrc,readme.txt}
 }
 
 function setup_directory_rights()
