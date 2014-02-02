@@ -260,16 +260,33 @@ class FeatureContext extends BehatContext
     }
 
     /**
-     * @Given /^"([^"]*)" counter "([^"]*)" with "([^"]*)" days exists$/
+     * @Given /^public counter "([^"]*)" with "([^"]*)" days$/
      */
-    public function counterWithDaysExists($nick, $thing, $days)
+    public function publicCounterWithDays($headline, $days)
     {
-        $reseted = time() - 60 * 60 * 24 * $days;
-        $user = $nick == 'public' ? null : new UserModel($nick, self::$testUserPassword);
+        $this->storeCounter(
+            $headline,
+            time() - 60 * 60 * 24 * $days
+        );
+    }
 
+    /**
+     * @Given /^user "([^"]*)" has a counter "([^"]*)" with "([^"]*)" days$/
+     */
+    public function userHasCounterWithDays($nick, $headline, $days)
+    {
+        $this->storeCounter(
+            $headline,
+            time() - 60 * 60 * 24 * $days,
+            new UserModel($nick, self::$testUserPassword)
+        );
+    }
+
+    private function storeCounter($headline, $date, $user = null)
+    {
         $counterModel = new CounterModel(
-            $thing,
-            date('Y-m-d', $reseted),
+            $headline,
+            date('Y-m-d', $date),
             $user
         );
         $this->counterStorage->store($counterModel);
