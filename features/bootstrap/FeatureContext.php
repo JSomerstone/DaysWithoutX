@@ -238,54 +238,25 @@ class FeatureContext extends BehatContext
     }
 
     /**
-     * @When /^"([^"]*)" resets counter "([^"]*)" with password "([^"]*)"$/
+     * @When /^user "([^"]*)" resets the counter "([^"]*)" with password "([^"]*)"$/
      */
-    public function resetsCounterWithPassword($user, $counter, $password)
+    public function userResetsTheCounterWithPassword($nick, $headline, $password)
     {
-        $url = self::getCounterName($counter);
+        $url = self::getCounterName($headline);
         $post = array(
             'form' => array(
-                'nick' => $user,
+                'nick' => $nick,
                 'password' => $password,
                 'reset' => '',
                 '_token' => $this->requestToken
             )
         );
         $this->request = Request::create(
-            "/$url/$user",
+            "/$url/$nick",
             'POST',
             $post
         );
         $this->response = $this->getKernel()->handle($this->request);
-
-    }
-
-    /**
-     * @When /^use "([^"]*)" tries to log in with password "([^"]*)"$/
-     */
-    public function useTriesToLogInWithPassword($nick, $password)
-    {
-        $post = array(
-            'form' => array(
-                'nick' => $nick,
-                'password' => $password,
-                '_token' => $this->requestToken
-            )
-        );
-        $this->request = Request::create(
-            "/login",
-            'POST',
-            $post
-        );
-        $this->response = $this->getKernel()->handle($this->request);
-    }
-
-    /**
-     * @Given /^"([^"]*)" has counter "([^"]*)" with "([^"]*)" days$/
-     */
-    public function hasCounterWithDays($nick, $headline, $days)
-    {
-
     }
 
 
