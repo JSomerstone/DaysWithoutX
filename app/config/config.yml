@@ -45,4 +45,14 @@ j_somerstone_days_without:
         # Absolute path to store Counters to
         counter_path: /data/dwo/counters
         # Absolute path to store Users to
-        user_path: /data/dwo/users
+        user_path: /var/data/dayswithout/users
+
+doctrine_mongodb:
+    connections:
+        default:
+            server: mongodb://localhost:27017
+            options: {}
+    default_database: kickass
+    document_managers:
+        default:
+            auto_mapping: true

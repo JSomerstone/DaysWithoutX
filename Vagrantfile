@@ -16,7 +16,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     config.vm.provider "virtualbox" do |v|
         v.name = "dayswithout-dev"
-        v.memory = 1024
+        v.memory = 2048
         v.customize ["modifyvm", :id, "--cpus", 2]
     end
 end
