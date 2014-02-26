@@ -18,12 +18,6 @@ class CounterController extends BaseController
      */
     private $counterStorage;
 
-    /**
-     * @var JSomerstone\DaysWithoutBundle\Storage\UserStorage
-     */
-    private $userStorage;
-
-
     public function createAction(Request $request)
     {
         $form = $this->getCounterForm();
@@ -188,7 +182,6 @@ class CounterController extends BaseController
         );
     }
 
-
     /**
      *
      * @return JSomerstone\DaysWithoutBundle\Storage\CounterStorage
@@ -199,30 +192,5 @@ class CounterController extends BaseController
             $this->counterStorage = $this->get('dayswithout.storage.counter');
         }
         return $this->counterStorage;
-    }
-
-    /**
-     * @return JSomerstone\DaysWithoutBundle\Storage\UserStorage|object
-     */
-    private function getUserStorage()
-    {
-        if ( ! $this->userStorage) {
-            $this->userStorage = $this->get('dayswithout.storage.user');
-        }
-        return $this->userStorage;
-    }
-
-    /**
-     * @param UserModel $user
-     * @return bool
-     */
-    private function authenticateUser(UserModel $user)
-    {
-        $userStorage = $this->getUserStorage();
-        if ( ! $userStorage->exists($user->getNick())) {
-            return false;
-        }
-
-        return $userStorage->authenticate($user);
     }
 }

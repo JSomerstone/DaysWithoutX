@@ -25,6 +25,11 @@ abstract class BaseController extends Controller
         'errors' => array(),
     );
 
+    /**
+     * @var JSomerstone\DaysWithoutBundle\Storage\UserStorage
+     */
+    protected $userStorage;
+
     protected function bindToResponse($variable, &$value)
     {
         $this->response[$variable] = $value;
@@ -99,5 +104,25 @@ abstract class BaseController extends Controller
         }
         $builder->add('reset', 'submit');
         return $builder->getForm();
+    }
+
+    /**
+     * @return JSomerstone\DaysWithoutBundle\Storage\UserStorage|object
+     */
+    protected function getUserStorage()
+    {
+        if ( ! $this->userStorage) {
+            $this->userStorage = $this->get('dayswithout.storage.user');
+        }
+        return $this->userStorage;
+    }
+
+    protected function getLoginForm()
+    {
+        return $this->createFormBuilder(new UserModel())
+            ->add('nick', 'text')
+            ->add('password', 'password')
+            ->add('login', 'submit')
+            ->getForm();
     }
 }

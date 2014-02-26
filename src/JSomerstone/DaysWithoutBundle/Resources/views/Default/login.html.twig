@@ -1,0 +1,18 @@
+{% extends 'JSomerstoneDaysWithoutBundle::layout.html.twig' %}
+
+{% block title %}Days w/o {{ title }}{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+    <div class="content span3 offset3">
+        <h2>Login</h2>
+        {{ form_start(form, {'action': path('dwo_login'), 'method': 'POST'}) }}
+            {{ form_errors(form) }}
+            {{ form_widget(form.nick, {'attr': {'class': 'span6', 'placeholder': 'Nick'}}) }}
+            {{ form_widget(form.password, {'attr': {'class': 'span6', 'placeholder': 'Password' }}) }}
+
+            {{ form_widget(form.login, {'attr': {'class': 'btn btn-large btn-primary btn-block' }}) }}
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

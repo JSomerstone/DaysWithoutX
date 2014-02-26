@@ -7,6 +7,16 @@ dwo_create_counter:
     defaults: { _controller: JSomerstoneDaysWithoutBundle:Counter:create }
     methods: [POST]
 
+dwo_loginpage:
+    pattern: /login
+    defaults: { _controller: JSomerstoneDaysWithoutBundle:Session:loginPage }
+    methods: [GET]
+
+dwo_login:
+    pattern: /login
+    defaults: { _controller: JSomerstoneDaysWithoutBundle:Session:login }
+    methods: [POST]
+
 dwo_show_counter:
     pattern: /{name}/{owner}
     defaults: { _controller: JSomerstoneDaysWithoutBundle:Counter:show, owner: public }

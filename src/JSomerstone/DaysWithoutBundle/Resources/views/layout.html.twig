@@ -8,7 +8,14 @@
 {% block title %}Days w/o {{ title }}{% endblock %}
 {% block content_header '' %}
 {% block body %}
-    <a href="{{ url('dwo_frontpage') }}" class="btn btn-small btn-navbar">Home</a><br>
+    <ul class="nav nav-tabs">
+        <li {% if app.request.get('_route') == 'dwo_frontpage' %} class="active"{% endif %}>
+            <a href="{{ url('dwo_frontpage') }}" >Home</a>
+        </li>
+        <li {% if app.request.get('_route') == 'dwo_loginpage' %} class="active"{% endif %}>
+            <a href="{{ url('dwo_loginpage') }}" >Login</a>
+        </li>
+    </ul>
 
     <div class="container-fluid">
         {% include 'JSomerstoneDaysWithoutBundle::notifications.html.twig' %}
