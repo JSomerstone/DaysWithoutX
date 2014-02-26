@@ -2,20 +2,27 @@
 namespace JSomerstone\DaysWithoutBundle\Model;
 
 use JSomerstone\DaysWithoutBundle\Lib\StringFormatter;
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
+/** @ODM\Document */
 class CounterModel
 {
+    /** @ODM\Date */
     private $reseted;
 
+    /** @ODM\String */
     protected $headline;
 
+    /** @ODM\String */
     protected $name;
 
     /**
      * @var UserModel
+     * @ODM\ReferenceOne(targetDocument="UserModel", cascade="all")
      */
     private $owner;
 
+    /** @ODM\Boolean */
     private $public;
 
     /**

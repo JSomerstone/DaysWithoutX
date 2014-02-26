@@ -2,15 +2,26 @@
 namespace JSomerstone\DaysWithoutBundle\Model;
 
 use JSomerstone\DaysWithoutBundle\Lib\StringFormatter;
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
 /**
  * Class UserModel
  * @package JSomerstone\DaysWithoutBundle\Model
+ * @ODM\Document
  */
 class UserModel
 {
+    /** @ODM\Id */
+    private $id;
+
+    /** @ODM\String */
     private $nick;
+
+    /** @ODM\String */
     private $password;
+
+    /** @ODM\ReferenceMany(targetDocument="CounterModel", cascade="all") */
+    private $counters = array();
 
     /**
      * @param string $nick
@@ -48,6 +59,31 @@ class UserModel
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @param CounterModel $counter
+     */
+    public function addCounter(CounterModel $counter)
+    {
+        $this->counters[$counter->getName()] = $counter;
+    }
+
+    /**
+     * @param $name
+     * @return CounterModel|null
+     */
+    public function getCounter($name)
+    {
+        return isset($this->counters[$name]) ? $this->counters[$name] : null;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCounters()
+    {
+        return $this->counters;
     }
 
     /**
