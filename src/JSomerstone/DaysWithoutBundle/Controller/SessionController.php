@@ -18,6 +18,17 @@ class SessionController extends BaseController
         );
     }
 
+    public function logoutAction()
+    {
+        $user = $this->get('session')->get('user');
+        if ($user)
+        {
+            $this->get('session')->set('user', null);
+            $this->addMessage('Logged out');
+        }
+        return $this->redirect($this->generateUrl('dwo_frontpage'));
+    }
+
     public function loginAction(Request $request)
     {
         $form = $this->getLoginForm();

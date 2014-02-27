@@ -17,6 +17,11 @@ dwo_login:
     defaults: { _controller: JSomerstoneDaysWithoutBundle:Session:login }
     methods: [POST]
 
+dwo_logout:
+    pattern: /logout
+    defaults: { _controller: JSomerstoneDaysWithoutBundle:Session:logout }
+    methods: [GET]
+
 dwo_show_counter:
     pattern: /{name}/{owner}
     defaults: { _controller: JSomerstoneDaysWithoutBundle:Counter:show, owner: public }

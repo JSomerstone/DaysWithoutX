@@ -9,8 +9,9 @@ use JSomerstone\DaysWithoutBundle\Form\Type\ResetType;
 use JSomerstone\DaysWithoutBundle\Form\Type\UserType;
 use JSomerstone\DaysWithoutBundle\Lib\StringFormatter;
 use JSomerstone\DaysWithoutBundle\Model\UserModel;
-use \Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Tests\Core\User\UserTest;
+use Symfony\Component\HttpFoundation\Response;
 
 abstract class BaseController extends Controller
 {
@@ -29,6 +30,14 @@ abstract class BaseController extends Controller
      * @var JSomerstone\DaysWithoutBundle\Storage\UserStorage
      */
     protected $userStorage;
+
+    public function render($view, array $parameters = array(), Response $response = null)
+    {
+        $loggedInUser = $this->get('session')->get('user');
+        $parameters['user'] = $loggedInUser;
+        $parameters['loggedIn'] = $loggedInUser ? true : false;
+        return parent::render($view, $parameters, $response);
+    }
 
     protected function bindToResponse($variable, &$value)
     {
@@ -124,5 +133,21 @@ abstract class BaseController extends Controller
             ->add('password', 'password')
             ->add('login', 'submit')
             ->getForm();
+    }
+
+
+
+    /**
+     * @param UserModel $user
+     * @return bool
+     */
+    protected  function authenticateUser(UserModel $user)
+    {
+        $userStorage = $this->getUserStorage();
+        if ( ! $userStorage->exists($user->getNick())) {
+            return false;
+        }
+
+        return $userStorage->authenticate($user);
     }
 }
