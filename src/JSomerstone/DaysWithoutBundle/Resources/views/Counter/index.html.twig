@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="row">
-    <div class="content col-md-8 col-md-offset-2">
+    <div class="col-lg-6 col-sm-6 col-sm-offset-2 col-xs-12">
         <h2>Days without {{ counter.headline }}:</h2>
         <div class="row">
             <div class="counterDays">{{ counter.days }}</div>
@@ -20,19 +20,22 @@
                     </a>
                 </i>
             </p>
-
             {% if counter.days > 0 %}
-                {{ form_start(form) }}
-                    {% if counter.public %}
-
-                    {% else %}
-                        {{ form_widget(form.nick, {'attr': {'class': 'col-md-6', 'placeholder': 'Nick'}}) }}
-                        {{ form_widget(form.password, {'attr': {'class': 'col-md-6', 'placeholder': 'Password' }}) }}
-                    {% endif %}
+                <div class="row col-sm-10 col-sm-offset-1">
+                    {{ form_start(form) }}
+                    <div {% if loggedIn or counter.public %} style="display: none" {% endif %}>
+                        <div class="col-xs-6 wo-pad-right">
+                            {{ form_widget(form.nick, {'attr': {'class': 'form-control', 'placeholder': 'Nick'}}) }}
+                        </div>
+                        <div class="col-xs-6 wo-pad-left">
+                            {{ form_widget(form.password, {'attr': {'class': 'form-control', 'placeholder': 'Password' }}) }}
+                        </div>
+                    </div>
                     {{ form_widget(form.reset, {'attr': {
                         'onClick': "return confirm('Do you REALLY want to reset the counter?');",
-                        'class': 'btn btn-default btn-big btn-danger btn-block' }}) }}
-                {{ form_end(form) }}
+                        'class': 'btn btn-big btn-danger btn-block' }}) }}
+                    {{ form_end(form) }}
+                </div>
             {% endif %}
         </div>
     </div>

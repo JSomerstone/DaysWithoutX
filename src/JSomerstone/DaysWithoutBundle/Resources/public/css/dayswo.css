@@ -12,3 +12,11 @@ body {
     background-color: black;
     color: ivory;
 }
+
+.wo-pad-left {
+    padding-left: 0px;
+}
+
+.wo-pad-right {
+    padding-right: 0px;
+}
