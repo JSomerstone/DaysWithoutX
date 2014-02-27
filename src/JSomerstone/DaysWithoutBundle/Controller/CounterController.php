@@ -76,7 +76,10 @@ class CounterController extends BaseController
         $counterModel = $this->getStorage()->load($name, $owner);
 
         $this->setCounter($counterModel);
-        $this->setForm($this->getResetForm($counterModel));
+        $this->setForm($this->getResetForm(
+            $counterModel,
+            $this->getLoggedInUser()
+        ));
         return $this->render(
             'JSomerstoneDaysWithoutBundle:Counter:index.html.twig',
             $this->response
@@ -134,17 +137,6 @@ class CounterController extends BaseController
             'JSomerstoneDaysWithoutBundle:Default:index.html.twig',
             $this->response
         );
-    }
-
-    /**
-     * @param UserModel $user
-     * @param CounterModel $counter
-     * @return bool
-     */
-    private function authenticateUserForCounter(UserModel $user, CounterModel $counter)
-    {
-        $owner = $this->getUserStorage()->load($counter->getOwner()->getNick());
-        return ($user->getPassword() === $owner->getPassword());
     }
 
     /**

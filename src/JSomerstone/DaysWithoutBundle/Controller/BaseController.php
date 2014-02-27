@@ -103,10 +103,12 @@ abstract class BaseController extends Controller
 
     }
 
-    protected function getResetForm(CounterModel $counter)
+    protected function getResetForm(CounterModel $counter, UserModel $loggedInUser = null)
     {
         $builder = $this->createFormBuilder(new UserModel());
-        if ( ! $counter->isPublic() )
+        if ( ! $counter->isPublic()
+            || is_null($loggedInUser)
+            || ! $this->authenticateUserForCounter($loggedInUser, $counter))
         {
             $builder->add('nick', 'text')
                 ->add('password', 'password');
@@ -135,8 +137,6 @@ abstract class BaseController extends Controller
             ->getForm();
     }
 
-
-
     /**
      * @param UserModel $user
      * @return bool
@@ -149,5 +149,26 @@ abstract class BaseController extends Controller
         }
 
         return $userStorage->authenticate($user);
+    }
+
+    protected function getLoggedInUser()
+    {
+        return $this->get('session')->get('user');
+    }
+
+    protected function isLoggedIn()
+    {
+        return instance_of('JSomerstone\DaysWithoutBundle\Model\UserModel', $this->getLoggedInUser());
+    }
+
+    /**
+     * @param UserModel $user
+     * @param CounterModel $counter
+     * @return bool
+     */
+    protected function authenticateUserForCounter(UserModel $user, CounterModel $counter)
+    {
+        $owner = $this->getUserStorage()->load($counter->getOwner()->getNick());
+        return ($user->getPassword() === $owner->getPassword());
     }
 }

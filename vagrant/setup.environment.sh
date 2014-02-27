@@ -23,6 +23,7 @@ function setup_project_directories()
     [ ! -d /run/shm/dwo ] || rm -rf /run/shm/dwo
 
     mkdir -p /run/shm/dwo/{cache,logs,users,counters}
+
 }
 
 function copy_resources()

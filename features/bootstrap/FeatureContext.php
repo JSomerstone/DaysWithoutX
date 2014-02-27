@@ -1,5 +1,6 @@
 <?php
 include_once __DIR__ . '/../../app/AppKernel.php';
+include_once __DIR__ . '/helper/FileHelper.php';
 
 use Behat\Symfony2Extension\Context\KernelAwareInterface;
 use Behat\Behat\Context\ClosuredContextInterface,
@@ -91,19 +92,17 @@ class FeatureContext extends BehatContext
     {
         $command = __DIR__ . "/../../app/console cache:clear --env=test";
         echo "Cleaning up cache ... ";
-        //exec($command);
+        exec($command);
         echo "Done\n";
-        exec("mkdir -p " . self::$counterStoragePath);
-        exec("mkdir -p " . self::$userStoragePath);
+        FileHelper::createDirectoryOrFail(self::$counterStoragePath);
+        FileHelper::createDirectoryOrFail(self::$userStoragePath);
     }
 
     /** @BeforeFeature */
     public static function prepareForTheFeature()
     {
-        echo "Cleaning up temp-files ... ";
-        exec("rm -rf " . self::$counterStoragePath . '/*');
-        exec("rm -rf " . self::$userStoragePath . '/*');
-        echo "Done\n\n";
+        FileHelper::cleanupDirectoryOrFail(self::$counterStoragePath);
+        FileHelper::cleanupDirectoryOrFail(self::$userStoragePath);
     }
 
     /**
@@ -334,11 +333,14 @@ class FeatureContext extends BehatContext
     }
 
     /**
-     * @Then /^page has link "([^"]*)"$/
+     * @Then /^page has link "([^"]*)" to "([^"]*)"$/
      */
-    public function pageHasLink($arg1)
+    public function pageHasLink($linkText, $linkUrl)
     {
-        throw new PendingException();
+        $this->pageMatchesRegexp(
+            sprintf('|<a href="http://localhost(:[0-9]+)?%s" .*>%s</a>|', $linkUrl, $linkText),
+            " - Did not"
+        );
     }
 
     /**
@@ -355,8 +357,7 @@ class FeatureContext extends BehatContext
 
     private function pageMatchesRegexp($regexp, $messageIfNot = null)
     {
-        $content = str_replace("\n", ' ', $this->response->getContent());
-        Assert::regexp($regexp, $content, $messageIfNot);
+        Assert::regexp($regexp, $this->response->getContent(), $messageIfNot);
     }
 
     private static function getCounterName($counterHeadline)
