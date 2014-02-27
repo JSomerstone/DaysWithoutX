@@ -1,6 +1,7 @@
 <?php
 include_once __DIR__ . '/../../app/AppKernel.php';
 include_once __DIR__ . '/helper/FileHelper.php';
+include_once __DIR__ . '/helper/debug.php';
 
 use Behat\Symfony2Extension\Context\KernelAwareInterface;
 use Behat\Behat\Context\ClosuredContextInterface,
@@ -234,6 +235,26 @@ class FeatureContext extends BehatContext
         );
         $this->response = $this->getKernel()->handle($this->request);
 
+    }
+
+    /**
+     * @When /^use "([^"]*)" tries to log in with password "([^"]*)"$/
+     */
+    public function useTriesToLogInWithPassword($nick, $password)
+    {
+        $post = array(
+            'form' => array(
+                'nick' => $nick,
+                'password' => $password,
+                '_token' => $this->requestToken
+            )
+        );
+        $this->request = Request::create(
+            "/login",
+            'POST',
+            $post
+        );
+        $this->response = $this->getKernel()->handle($this->request);
     }
 
     /**

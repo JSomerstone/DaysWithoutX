@@ -9,4 +9,14 @@ Background:
 
 Scenario: Front-page has link to login
   When "/" page is loaded
-    Then page has link "Login" to "/login"
+  Then page has link "Login" to "/login"
+    And "/login" page is loaded
+    And page has button "Login"
+
+Scenario: Successfull login
+  Given "/login" page is loaded
+  When use "Mee" tries to log in with password "fuubar123"
+  Then user is redirected to "/"
+    And "/" page is loaded
+    And page has "Welcome Mee"
+    And page has link "Logout" to "/logout"

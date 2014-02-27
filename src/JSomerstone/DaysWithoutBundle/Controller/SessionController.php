@@ -46,7 +46,7 @@ class SessionController extends BaseController
             $this->addError('Wrong Nick and/or password');
             return $this->redirect($this->generateUrl('dwo_loginpage'));
         }
-        var_dump($this->get('session')->set('user', $user));
+        $this->get('session')->set('user', $user);
         // set and get session attributes
         $this->addMessage('Welcome ' . $user->getNick());
         return $this->redirect($this->generateUrl('dwo_frontpage'));
