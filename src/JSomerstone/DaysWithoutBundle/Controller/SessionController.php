@@ -10,7 +10,6 @@ class SessionController extends BaseController
 
     public function loginPageAction()
     {
-        var_dump($this->get('session')->get('user'));
         $this->setForm($this->getLoginForm());
 
         return $this->render(

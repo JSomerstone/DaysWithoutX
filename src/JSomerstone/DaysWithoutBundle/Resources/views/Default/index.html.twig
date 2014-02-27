@@ -1,24 +1,40 @@
 {% extends 'JSomerstoneDaysWithoutBundle::layout.html.twig' %}
 
-{% block title %}Days w/o {{ title }}{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-<div class="row-fluid">
-    <div class="content span3 offset3">
+<div class="row">
+    <div class="col-lg-offset-3 col-lg-4 col-sm-6 col-xs-12">
         <h2>Start new counter:</h2>
-        {{ form_start(form, {'action': path('dwo_create_counter'), 'method': 'POST'}) }}
-            {{ form_errors(form) }}
-            <span class="lead"><b>0</b> days without</span>
-            {{ form_widget(form.headline, {'attr': {'class': 'span12', 'autofocus': 'autofocus', 'placeholder': '... what?' }}) }}
-            {{ form_widget(form.public, {'attr': {'class': 'btn btn-large btn-primary btn-block' }}) }}
-            <div style="text-align: center">~ or ~</div>
-            {{ form_widget(form.owner.nick, {'attr': {'class': 'span6', 'placeholder': 'Nick'}}) }}
-            {{ form_widget(form.owner.password, {'attr': {'class': 'span6', 'placeholder': 'Password' }}) }}
-
-            {{ form_widget(form.private, {'attr': {'class': 'btn btn-large btn-danger btn-block' }}) }}
+        <h3>0 days without</h3>
+        {{ form_start(
+            form, {
+                'action': path('dwo_create_counter'),
+                'method': 'POST',
+                'attr': {'class' : 'form-horizontal'}
+                }
+            )
+        }}
+            <div class="form-group">
+                {{ form_errors(form) }}
+            </div>
+            <div class="form-group col-xs-12">
+                {{ form_widget(form.headline, {'attr': {'class': 'form-control input-lg', 'autofocus': 'autofocus', 'placeholder': '... what?' }}) }}
+            </div>
+            <div class="form-group">
+                {{ form_widget(form.public, {'attr': {'class': 'btn btn-lg btn-primary btn-block' }}) }}
+                <div style="text-align: center">~ or ~</div>
+                <div class="col-xs-6">
+                    {{ form_widget(form.owner.nick, {'attr': {'class': 'form-control', 'placeholder': 'Nick'}}) }}
+                </div>
+                <div class="col-xs-6">
+                    {{ form_widget(form.owner.password, {'attr': {'class': 'form-control', 'placeholder': 'Password' }}) }}
+                </div>
+                {{ form_widget(form.private, {'attr': {'class': 'btn btn-lg btn-danger btn-block' }}) }}
+            </div>
         {{ form_end(form) }}
     </div>
-    <div class="content span4">
+    <div class="col-lg-3 col-sm-6 col-xs-12">
         <p>
             <b>Public</b>-button will create a <u>public</u> counter that anyone can reset.
         </p>

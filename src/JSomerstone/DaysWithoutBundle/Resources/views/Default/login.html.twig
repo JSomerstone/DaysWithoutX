@@ -3,15 +3,14 @@
 {% block title %}Days w/o {{ title }}{% endblock %}
 
 {% block content %}
-<div class="row-fluid">
-    <div class="content span3 offset3">
+<div class="row">
+    <div class="content col-md-3 col-md-offset-3 form-group">
         <h2>Login</h2>
-        {{ form_start(form, {'action': path('dwo_login'), 'method': 'POST'}) }}
-            {{ form_errors(form) }}
-            {{ form_widget(form.nick, {'attr': {'class': 'span6', 'placeholder': 'Nick'}}) }}
-            {{ form_widget(form.password, {'attr': {'class': 'span6', 'placeholder': 'Password' }}) }}
-
-            {{ form_widget(form.login, {'attr': {'class': 'btn btn-large btn-primary btn-block' }}) }}
+        {{ form_start(form, {'action': path('dwo_login'), 'method': 'POST', 'attr': {'role': 'form', 'class' : 'form-horizontal'} }) }}
+                {{ form_errors(form) }}
+                {{ form_widget(form.nick, {'attr': {'class': 'col-md-6 form-control', 'placeholder': 'Nick'}}) }}
+                {{ form_widget(form.password, {'attr': {'class': 'col-md-6 form-control', 'placeholder': 'Password' }}) }}
+            {{ form_widget(form.login, {'attr': {'class': 'btn btn-default btn-lg btn-primary btn-block' }}) }}
         {{ form_end(form) }}
     </div>
 </div>

@@ -12,7 +12,7 @@
         >
         <link
             rel="stylesheet"
-            href="{{ asset('bundles/jsomerstonedayswithout/bootstrap/css/bootstrap-responsive.min.css') }}"
+            href="{{ asset('bundles/jsomerstonedayswithout/bootstrap/css/bootstrap-theme.min.css') }}"
             type="text/css" media="all"
         >
         <link rel="stylesheet" href="{{ asset('bundles/jsomerstonedayswithout/css/normalize.css') }}" type="text/css" media="all">
@@ -22,6 +22,7 @@
     <body>
         {% block body %}
         {% endblock %}
+        <script src="{{ asset('bundles/jsomerstonedayswithout/js/jquery-2.1.0.min.js') }}"></script>
         <script src="{{ asset('bundles/jsomerstonedayswithout/bootstrap/js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('bundles/jsomerstonedayswithout/js/dayswo.js') }}"></script>
         {% block bodyscripts '' %}

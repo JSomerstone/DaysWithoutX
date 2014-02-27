@@ -19,7 +19,7 @@ abstract class BaseController extends Controller
      * @var array
      */
     protected $response = array(
-        'title' => 'Days Without X',
+        'title' => 'Days Without <X>',
         'messages' => array(),
         'notices' => array(),
         'errors' => array(),
