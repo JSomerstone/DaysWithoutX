@@ -10,14 +10,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.provision :shell, :path => "vagrant/install.dependities.sh"
     config.vm.provision :shell, :path => "vagrant/setup.environment.sh"
 
-    config.vm.hostname = "dayswithout"
+    config.vm.synced_folder "./", "/home/vagrant/dayswithout/"
+
+    config.vm.hostname = "dayswithout.dev"
     config.vm.network "forwarded_port", guest: 80, host: 8080
 
-#    config.vm.provision :puppet do |puppet|
-#        puppet.manifest_file  = "dayswithout.pp"
-#        puppet.manifests_path = "vagrant/puppet/manifests"
-#        puppet.module_path    = "vagrant/puppet/modules"
-#    end
     config.vm.provider "virtualbox" do |v|
         v.name = "dayswithout-dev"
         v.memory = 1024

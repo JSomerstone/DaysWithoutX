@@ -1,6 +1,8 @@
 #!/bin/bash
 
-VAGRANT_DIR="/vagrant/vagrant"
+export PROJECT_DIR="/home/vagrant/dayswithout"
+export VAGRANT_DIR="${PROJECT_DIR}/vagrant"
+
 HTTPD_CONF_FILE="/etc/apache2/apache2.conf"
 
 #fix for bug: http://stackoverflow.com/questions/9479117/vagrant-virtualbox-apache2-strange-cache-behaviour
@@ -13,7 +15,7 @@ function disable_sendfile_for_apache()
 
 function compose_project()
 {
-    cd /vagrant
+    cd $PROJECT_DIR
     composer install
     app/console cache:clear --env=dev
 }
@@ -28,7 +30,7 @@ function setup_project_directories()
 
 function copy_resources()
 {
-    cp -rb /vagrant/vagrant/resources/* /
+    cp -rb ${VAGRANT_DIR}/resources/* /
     chown vagrant:vagrant /home/vagrant/{.bashrc,readme.txt}
 }
 

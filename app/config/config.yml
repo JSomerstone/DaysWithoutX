@@ -43,6 +43,6 @@ assetic:
 j_somerstone_days_without:
     storage:
         # Absolute path to store Counters to
-        counter_path: /var/data/dayswithout/counters
+        counter_path: /data/dwo/counters
         # Absolute path to store Users to
-        user_path: /var/data/dayswithout/users
+        user_path: /data/dwo/users

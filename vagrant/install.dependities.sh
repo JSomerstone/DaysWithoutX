@@ -1,10 +1,8 @@
 #!/bin/bash
 
-VAGRANT_DIR="/vagrant/vagrant"
-
 function install_packages()
 {
-    apt-get install -y apache2 php5 libapache2-mod-php5 php-pear curl git
+    apt-get install -y language-pack-en apache2 php5 libapache2-mod-php5 php-pear curl git
 }
 
 function set_locale()
@@ -34,7 +32,7 @@ function install_composer()
 
 #set_locale
 
-#apt-get update 1> /dev/null
+apt-get update 1> /dev/null
 install_packages
 
 install_phpunit
