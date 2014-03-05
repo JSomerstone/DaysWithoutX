@@ -127,13 +127,17 @@ class CounterController extends BaseController
             return $this->redirectFromNonExisting($name, $owner);
         }
         $counter = $storage->load($name, $owner);
-        $form = $this->getResetForm($counter);
-        $user = $this->getUserFromRequest($this->getRequest(), $form);
-        if ($counter->isPublic() || $this->authenticateUserForCounter($user, $counter))
+        $user = $this->getReseter($this->getRequest(), $this->getResetForm($counter));
+        if ($counter->isPublic())
         {
             $counter->reset();
         }
-        else if ( ! $this->authenticateUserForCounter($user, $counter))
+        else if ( $this->authenticateUserForCounter($user, $counter))
+        {
+            $counter->reset();
+            $this->setLoggedInUser($user);
+        }
+        else
         {
             $this->addError('Wrong Nick and/or password');
             return $this->redirectToCounter($counter);
@@ -152,7 +156,6 @@ class CounterController extends BaseController
 
     /**
      * @param string $name
-     * @param string $owner
      * @return \Symfony\Component\HttpFoundation\Response
      */
     private function redirectFromNonExisting($name)
@@ -171,8 +174,11 @@ class CounterController extends BaseController
      * @param Form $form
      * @return UserModel
      */
-    private function getUserFromRequest(Request $request, Form $form)
+    private function getReseter(Request $request, Form $form)
     {
+        if ($this->isLoggedIn())
+            return $this->getLoggedInUser();
+
         $form->handleRequest($request);
         return $form->getData();
     }

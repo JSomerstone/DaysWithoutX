@@ -51,3 +51,8 @@ Scenario: Creating private counter also logs user in
   Then user is redirected to "/being-sober/Mee"
     And "/being-sober/Mee" page is loaded
     And page has link "Logout" to "/logout"
+
+Scenario: Resetting private counter also logs user in
+  Given "/foobar/mee" page is loaded
+  When "Mee" resets counter "Foobar" with password "fuubar123"
+  Then page has link "Logout" to "/logout"

@@ -1,6 +1,6 @@
-<ul class="nav nav-tabs">
+<ul class="nav nav-pills">
     <li {% if app.request.get('_route') == 'dwo_frontpage' %} class="active"{% endif %}>
-        <a href="{{ url('dwo_frontpage') }}" >Home</a>
+        <a href="{{ url('dwo_frontpage') }}"> Home</a>
     </li>
     {% if loggedIn %}
         <li {% if app.request.get('_route') == 'dwo_logout' %} class="active"{% endif %}>

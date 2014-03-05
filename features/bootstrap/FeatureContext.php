@@ -238,6 +238,29 @@ class FeatureContext extends BehatContext
     }
 
     /**
+     * @When /^"([^"]*)" resets counter "([^"]*)" with password "([^"]*)"$/
+     */
+    public function resetsCounterWithPassword($user, $counter, $password)
+    {
+        $url = self::getCounterName($counter);
+        $post = array(
+            'form' => array(
+                'nick' => $user,
+                'password' => $password,
+                'reset' => '',
+                '_token' => $this->requestToken
+            )
+        );
+        $this->request = Request::create(
+            "/$url/$user",
+            'POST',
+            $post
+        );
+        $this->response = $this->getKernel()->handle($this->request);
+
+    }
+
+    /**
      * @When /^use "([^"]*)" tries to log in with password "([^"]*)"$/
      */
     public function useTriesToLogInWithPassword($nick, $password)
