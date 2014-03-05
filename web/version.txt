@@ -1,0 +1,6 @@
+1.1.0
+- Session handling, Login/out
+- Twitter Bootstrap version 2 -> 3 migration
+- jQuery version update
+- Layout changes
+
