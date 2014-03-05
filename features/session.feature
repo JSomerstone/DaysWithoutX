@@ -44,3 +44,10 @@ Scenario: Login & Logout
   Then user is redirected to "/"
     And "/" page is loaded
     And page has "Logged out"
+
+Scenario: Creating private counter also logs user in
+  Given "/" page is loaded
+  When "Mee" posts private counter "being sober" with password "fuubar123"
+  Then user is redirected to "/being-sober/Mee"
+    And "/being-sober/Mee" page is loaded
+    And page has link "Logout" to "/logout"

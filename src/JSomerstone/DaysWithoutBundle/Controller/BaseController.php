@@ -9,9 +9,9 @@ use JSomerstone\DaysWithoutBundle\Form\Type\ResetType;
 use JSomerstone\DaysWithoutBundle\Form\Type\UserType;
 use JSomerstone\DaysWithoutBundle\Lib\StringFormatter;
 use JSomerstone\DaysWithoutBundle\Model\UserModel;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Security\Tests\Core\User\UserTest;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller,
+    Symfony\Component\Security\Core\Exception\AuthenticationException,
+    Symfony\Component\HttpFoundation\Response;
 
 abstract class BaseController extends Controller
 {
@@ -120,7 +120,7 @@ abstract class BaseController extends Controller
     }
 
     /**
-     * @return JSomerstone\DaysWithoutBundle\Storage\UserStorage|object
+     * @return JSomerstone\DaysWithoutBundle\Storage\UserStorage
      */
     protected function getUserStorage()
     {
@@ -145,12 +145,13 @@ abstract class BaseController extends Controller
      */
     protected  function authenticateUser(UserModel $user)
     {
-        $userStorage = $this->getUserStorage();
-        if ( ! $userStorage->exists($user->getNick())) {
-            return false;
-        }
+        return $this->get('dayswithout.service.authentication')
+            ->authenticateUser($user);
+    }
 
-        return $userStorage->authenticate($user);
+    protected function setLoggedInUser(UserModel $user = null)
+    {
+        return $this->get('session')->set('user', $user);
     }
 
     protected function getLoggedInUser()
@@ -170,7 +171,15 @@ abstract class BaseController extends Controller
      */
     protected function authenticateUserForCounter(UserModel $user, CounterModel $counter)
     {
-        $autService = $this->get('dayswithout.service.authentication');
-        return $autService->authenticateUserForCounter($user, $counter);
+        return $this->get('dayswithout.service.authentication')
+            ->authenticateUserForCounter($user, $counter);
+    }
+
+    /**
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    protected function getFrontPageRedirection()
+    {
+        return $this->redirect($this->generateUrl('dwo_frontpage'));
     }
 }

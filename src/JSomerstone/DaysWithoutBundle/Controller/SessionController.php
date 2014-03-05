@@ -23,7 +23,7 @@ class SessionController extends BaseController
         $user = $this->get('session')->get('user');
         if ($user)
         {
-            $this->get('session')->set('user', null);
+            $this->setLoggedInUser(null);
             $this->addMessage('Logged out');
         }
         return $this->redirect($this->generateUrl('dwo_frontpage'));
@@ -46,9 +46,9 @@ class SessionController extends BaseController
             $this->addError('Wrong Nick and/or password');
             return $this->redirect($this->generateUrl('dwo_loginpage'));
         }
-        $this->get('session')->set('user', $user);
-        // set and get session attributes
+        $this->setLoggedInUser($user);
         $this->addMessage('Welcome ' . $user->getNick());
-        return $this->redirect($this->generateUrl('dwo_frontpage'));
+
+        return $this->getFrontPageRedirection();
     }
 }

@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request,
 use JSomerstone\DaysWithoutBundle\Model\CounterModel,
     JSomerstone\DaysWithoutBundle\Model\UserModel,
     JSomerstone\DaysWithoutBundle\Storage\CounterStorage;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class CounterController extends BaseController
 {
@@ -25,49 +26,70 @@ class CounterController extends BaseController
 
         if ( ! $form->isValid())
         {
-            return $this->redirect($this->generateUrl('dwo_frontpage'));
+            return $this->getFrontPageRedirection();
         }
 
-        $storage = $this->getStorage();
-        $userStorage = $this->getUserStorage();
         $counter = $form->getData();
+        try
+        {
+            if ($form->get('public')->isClicked())
+            {
+                $owner = new UserModel('public');
+                $counter->setOwner($owner)->setPublic();
+            }
+            else
+            {
+                $owner = $this->getAuthenticatedUser($counter);
+                $this->setLoggedInUser($owner);
+                $counter->setOwner($owner)->setPrivate();
+            }
 
+            $this->storeCounterIfNeeded($counter);
+        }
+        catch (AuthenticationException $e)
+        {
+            $this->addError($e->getMessage());
+            return $this->getFrontPageRedirection();
+        }
+
+        return $this->redirectToCounter($counter);
+    }
+
+    /**
+     * @param CounterModel $counter
+     * @return UserModel
+     * @throws AuthenticationException if authentication fails
+     */
+    private function getAuthenticatedUser(CounterModel $counter)
+    {
         $owner = $this->isLoggedIn()
             ? $this->getLoggedInUser()
             : $counter->getOwner();
 
-        if ($form->get('public')->isClicked())
-        {
-            $owner = new UserModel('public');
-            $counter->setPublic()->setOwner($owner);
-        }
-        else
-        {
-            $counter->setPrivate();
+        $userStorage = $this->getUserStorage();
 
-            if ( ! $userStorage->exists($owner->getNick()))
-            {
-                $this->addNotice('New user saved, welcome ' . $owner->getNick());
-                $userStorage->store($owner);
-                //$this->get('session')->set('user', $user);
-            }
-            else if ( ! $this->authenticateUser($owner))
-            {
-                $this->addError('Wrong Nick and/or password');
-                return $this->redirect($this->generateUrl('dwo_frontpage'));
-            }
+        if ( ! $userStorage->exists($owner->getNick()))
+        {
+            $userStorage->store($owner);
         }
+        elseif ( ! $this->authenticateUser($owner))
+        {
+            throw new AuthenticationException('Wrong Nick and/or password');
+        }
+        return $owner;
+    }
 
-        if ( $storage->exists($counter->getName(), $owner->getId()))
+    private function storeCounterIfNeeded(CounterModel $counter)
+    {
+        $storage = $this->getStorage();
+        if ( $storage->exists($counter->getName(), $counter->getOwner()->getId()))
         {
             $this->addNotice('Already existed, showing it');
-            return $this->redirectToCounter($counter);
         }
         else
         {
             $storage->store($counter);
             $this->addMessage('Counter created');
-            return $this->redirectToCounter($counter);
         }
     }
 
@@ -136,7 +158,7 @@ class CounterController extends BaseController
     private function redirectFromNonExisting($name)
     {
         $this->addError('Counter did not exist - would you like to create one?');
-        $this->setForm($this->getCounterForm($name));
+        $this->setForm($this->getCounterForm($name, $this->isLoggedIn()));
 
         return $this->render(
             'JSomerstoneDaysWithoutBundle:Default:index.html.twig',
