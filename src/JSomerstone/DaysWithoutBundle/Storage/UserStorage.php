@@ -54,17 +54,6 @@ class UserStorage
         }
     }
 
-    /**
-     * Authenticates the user
-     * @param UserModel $user
-     * @return bool
-     */
-    public function authenticate(userModel $user)
-    {
-        $persisted = $this->load($user->getNick());
-        return ($persisted->getPassword() === $user->getPassword());
-    }
-
     private function getFileName($name)
     {
         $name = StringFormatter::getUrlSafe($name);

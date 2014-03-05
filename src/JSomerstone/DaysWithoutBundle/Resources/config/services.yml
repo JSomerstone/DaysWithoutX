@@ -10,3 +10,7 @@ services:
         class: %dayswithout.storage.user.class%
         arguments: [%dayswithout.user_path%]
 
+    dayswithout.service.authentication:
+        class: JSomerstone\DaysWithoutBundle\Service\AuthenticationService
+        arguments: [ @dayswithout.storage.user ]
+

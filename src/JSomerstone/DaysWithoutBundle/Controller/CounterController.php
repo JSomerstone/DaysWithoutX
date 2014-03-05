@@ -22,15 +22,19 @@ class CounterController extends BaseController
     {
         $form = $this->getCounterForm();
         $form->handleRequest($request);
-        $storage = $this->getStorage();
-        $userStorage = $this->getUserStorage();
 
         if ( ! $form->isValid())
         {
             return $this->redirect($this->generateUrl('dwo_frontpage'));
         }
+
+        $storage = $this->getStorage();
+        $userStorage = $this->getUserStorage();
         $counter = $form->getData();
-        $owner = $counter->getOwner();
+
+        $owner = $this->isLoggedIn()
+            ? $this->getLoggedInUser()
+            : $counter->getOwner();
 
         if ($form->get('public')->isClicked())
         {
@@ -45,6 +49,7 @@ class CounterController extends BaseController
             {
                 $this->addNotice('New user saved, welcome ' . $owner->getNick());
                 $userStorage->store($owner);
+                //$this->get('session')->set('user', $user);
             }
             else if ( ! $this->authenticateUser($owner))
             {
@@ -128,10 +133,10 @@ class CounterController extends BaseController
      * @param string $owner
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    private function redirectFromNonExisting($name, $owner)
+    private function redirectFromNonExisting($name)
     {
         $this->addError('Counter did not exist - would you like to create one?');
-        $this->setForm($this->getCounterForm($name, $owner));
+        $this->setForm($this->getCounterForm($name));
 
         return $this->render(
             'JSomerstoneDaysWithoutBundle:Default:index.html.twig',

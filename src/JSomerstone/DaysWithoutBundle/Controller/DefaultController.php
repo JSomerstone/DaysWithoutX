@@ -5,7 +5,7 @@ class DefaultController extends BaseController
 {
     public function indexAction()
     {
-        $this->setForm($this->getCounterForm());
+        $this->setForm($this->getCounterForm(null, $this->isLoggedIn()));
 
         return $this->render(
             'JSomerstoneDaysWithoutBundle:Default:index.html.twig',

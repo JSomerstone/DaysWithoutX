@@ -86,21 +86,23 @@ abstract class BaseController extends Controller
     /**
      *
      * @param string $headline optional
-     * @param string $owner optional
+     * @param bool $loggedIn True if user is logged in, false otherwise
      * @return \Symfony\Component\Form\Form
      */
-    protected function getCounterForm($headline = null, $owner = null)
+    protected function getCounterForm($headline = null, $loggedIn = false)
     {
         $counter = new CounterModel(StringFormatter::getUrlUnsafe($headline));
-        $owner = new UserModel($owner);
 
-        return $this->createFormBuilder($counter)
+        $builder = $this->createFormBuilder($counter)
             ->add('headline', 'text')
             ->add('public', 'submit')
-            ->add('owner', new UserType())
-            ->add('private', 'submit')
-            ->getForm();
+            ->add('private', 'submit');
 
+        if ( ! $loggedIn)
+        {
+            $builder->add('owner', new UserType());
+        }
+        return $builder->getForm();
     }
 
     protected function getResetForm(CounterModel $counter, UserModel $loggedInUser = null)
@@ -128,7 +130,7 @@ abstract class BaseController extends Controller
         return $this->userStorage;
     }
 
-    protected function getLoginForm()
+    protected function getLoginForm($loggedIn = false)
     {
         return $this->createFormBuilder(new UserModel())
             ->add('nick', 'text')
@@ -158,7 +160,7 @@ abstract class BaseController extends Controller
 
     protected function isLoggedIn()
     {
-        return instance_of('JSomerstone\DaysWithoutBundle\Model\UserModel', $this->getLoggedInUser());
+        return \is_a($this->getLoggedInUser(), 'JSomerstone\DaysWithoutBundle\Model\UserModel');
     }
 
     /**
@@ -168,7 +170,7 @@ abstract class BaseController extends Controller
      */
     protected function authenticateUserForCounter(UserModel $user, CounterModel $counter)
     {
-        $owner = $this->getUserStorage()->load($counter->getOwner()->getNick());
-        return ($user->getPassword() === $owner->getPassword());
+        $autService = $this->get('dayswithout.service.authentication');
+        return $autService->authenticateUserForCounter($user, $counter);
     }
 }
