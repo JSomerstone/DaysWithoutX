@@ -15,6 +15,6 @@ web_profiler:
 j_somerstone_days_without:
     storage:
         # Absolute path to store Counters to
-        counter_path: /tmp/dayswithout-test/counters
+        counter_path: /tmp/dwo/test/counters
         # Absolute path to store Users to
-        user_path: /tmp/dayswithout-test/users
+        user_path: /tmp/dwo/test/users

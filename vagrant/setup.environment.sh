@@ -22,10 +22,18 @@ function compose_project()
 
 function setup_project_directories()
 {
-    [ ! -d /run/shm/dwo ] || rm -rf /run/shm/dwo
+    [ ! -d /tmp/dwo ] || rm -rf /tmp/dwo
 
-    mkdir -p /run/shm/dwo/{cache,logs,users,counters}
+    mkdir -p /tmp/dwo/{test,dev}/{cache,logs,users,counters}
+    mkdir -p /tmp/dwo/prod/{cache,users,counters}
+}
 
+function setup_project_directory_rights()
+{
+    APACHEUSER=`ps aux | grep -E '[a]pache|[h]ttpd|[_]www|[w]ww-data' | grep -v root | head -1 | cut -d\  -f1`
+
+    chown -R vagrant:$APACHEUSER /tmp/dwo
+    chmod -R 775 /tmp/dwo
 }
 
 function copy_resources()
@@ -34,21 +42,15 @@ function copy_resources()
     chown vagrant:vagrant /home/vagrant/{.bashrc,readme.txt}
 }
 
-function setup_directory_rights()
-{
-    APACHEUSER=`ps aux | grep -E '[a]pache|[h]ttpd|[_]www|[w]ww-data' | grep -v root | head -1 | cut -d\  -f1`
-
-    chown -R vagrant:$APACHEUSER /run/shm/dwo
-    chmod -R 775 /run/shm/dwo
-}
-
 umask 002
 
 disable_sendfile_for_apache
 
 setup_project_directories
+
 compose_project
-setup_directory_rights
+
+setup_project_directory_rights
 
 copy_resources
 

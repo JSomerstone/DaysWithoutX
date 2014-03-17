@@ -31,6 +31,6 @@ assetic:
 j_somerstone_days_without:
     storage:
         # Absolute path to store Counters to
-        counter_path: /run/shm/dwo/counters
+        counter_path: /tmp/dwo/dev/counters
         # Absolute path to store Users to
-        user_path: /run/shm/dwo/users
+        user_path: /tmp/dwo/dev/users

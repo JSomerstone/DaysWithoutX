@@ -21,3 +21,10 @@ monolog:
             type:  stream
             path:  %kernel.logs_dir%/%kernel.environment%.log
             level: debug
+
+j_somerstone_days_without:
+    storage:
+        # Absolute path to store Counters to
+        counter_path: /tmp/dwo/prod/counters
+        # Absolute path to store Users to
+        user_path: /tmp/dwo/prod/users

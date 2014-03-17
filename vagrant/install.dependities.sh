@@ -2,6 +2,7 @@
 
 function install_packages()
 {
+    apt-get update
     apt-get install -y language-pack-en apache2 php5 libapache2-mod-php5 php-pear curl git
 }
 
