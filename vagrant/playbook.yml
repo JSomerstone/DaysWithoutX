@@ -19,7 +19,6 @@
             - git
 
       - shell: pear config-set auto_discover 1
-
       - name: update pear channels
         ignore_errors: yes
         shell: pear channel-discover {{ item }}
@@ -70,7 +69,7 @@
       - file: path=/vagrant/vendor/behat/behat/bin/behat state=file owner=vagrant mode=0775
 
       - name: Create required folders
-        file: path=/run/shm/dwo/{{ item }} state=directory
+        file: path=/run/shm/dwo/{{ item }} state=directory mode=0775 owner=vagrant group=vagrant
         with_items:
           - cache
           - logs

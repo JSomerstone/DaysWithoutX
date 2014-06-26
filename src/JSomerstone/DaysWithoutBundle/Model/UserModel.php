@@ -7,20 +7,15 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 /**
  * Class UserModel
  * @package JSomerstone\DaysWithoutBundle\Model
- * @ODM\Document
  */
 class UserModel
 {
-    /** @ODM\Id */
     private $id;
 
-    /** @ODM\String */
     private $nick;
 
-    /** @ODM\String */
     private $password;
 
-    /** @ODM\ReferenceMany(targetDocument="CounterModel", cascade="all") */
     private $counters = array();
 
     /**
