@@ -1,0 +1,87 @@
+---
+- hosts: all
+  remote_user: vagrant
+  sudo: true
+  vars:
+      fw_accept_ports: 22,80,443,3306
+      project-root: /vagrant
+  tasks:
+      - name: install dependencies
+        apt: package={{ item }} state=present update_cache=yes
+        with_items:
+            - apache2
+            - php5-dev
+            - php-pear
+            - libapache2-mod-php5
+            - php-pear
+            - mongodb
+            - curl
+            - git
+
+      - shell: pear config-set auto_discover 1
+
+      - name: update pear channels
+        ignore_errors: yes
+        shell: pear channel-discover {{ item }}
+        with_items:
+            - pear.phpunit.de
+            - pear.symfony-project.com
+            - components.ez.no
+            - pear.symfony.com
+
+      - shell: pear upgrade pear
+
+      - name: Install pear packages
+        shell: yes '' | pear install {{ item }}
+        with_items:
+            - pear.phpunit.de/PHPUnit
+            - pear.netpirates.net/Autoload
+        ignore_errors: yes
+
+      - name: Install PHP-monbodb
+        shell: echo 'no' | sudo pecl install mongo
+        ignore_errors: yes
+        register: php-mongo
+
+      - name: Update php.ini's
+        shell: grep -q 'extension=mongo.so' {{ item }} || echo "extension=mongo.so" >> {{ item }}
+        with_items:
+          - /etc/php5/cli/php.ini
+          - /etc/php5/apache2/php.ini
+
+      - name: Set timezone to UTC
+        action: shell echo Etc/UTC > /etc/timezone
+
+      - name: create apache configuration
+        copy: src=resources/etc/apache2/sites-available/default dest=/etc/apache2/sites-available/default owner=root group=root mode=0644
+
+      - name: Enable rewrite-module
+        file: src=/etc/apache2/mods-available/rewrite.load dest=/etc/apache2/mods-enabled/rewrite state=link
+
+      - service: name=apache2 state=restarted
+
+      - name: Build composer
+        shell: curl -sS https://getcomposer.org/installer | php
+      - shell: mv composer.phar /usr/local/bin/composer
+
+      - name: Compose project
+        shell: cd /vagrant ; composer update
+
+      - file: path=/vagrant/vendor/behat/behat/bin/behat state=file owner=vagrant mode=0775
+
+      - name: Create required folders
+        file: path=/run/shm/dwo/{{ item }} state=directory
+        with_items:
+          - cache
+          - logs
+          - users
+          - counters
+
+#      - name: Setup Webroot-directory
+#        file: src={{ project-root }}/source/public dest=/var/www/html/eho-rest-api state=link
+
+#      - name: copy stuff
+#        copy: src=vagrant/home{{ project-root }}/.bashrc src=/home{{ project-root }}/.bashrc
+
+#      - name: copy readme
+#        copy: src=vagrant/home{{ project-root }}/readme.txt src=/home{{ project-root }}/readme.txt
