@@ -13,7 +13,7 @@ class CounterModel
     protected $name;
 
     /**
-     * @var UserModel
+     * @var string
      */
     private $owner;
 
@@ -30,7 +30,7 @@ class CounterModel
         $this->headline = $headline;
         $this->reseted = is_null($resetDate) ? date('Y-m-d') : $resetDate;
         $this->name = StringFormatter::getUrlSafe($headline);
-        $this->owner = $owner;
+        $this->owner = is_null($owner) ? $owner : $owner->getNick();
         $this->public = is_null($owner);
     }
 
@@ -55,7 +55,7 @@ class CounterModel
             'headline' => $this->headline,
             'reseted' => $this->reseted,
             'days' => $this->getDays(),
-            'owner' => ($this->owner) ? $this->owner->getNick() : null,
+            'owner' => $this->owner,
             'public' => $this->public
         );
     }
@@ -98,6 +98,9 @@ class CounterModel
         return $this;
     }
 
+    /**
+     * @return null|string
+     */
     public function getOwner()
     {
         return $this->owner;
@@ -145,10 +148,7 @@ class CounterModel
         $this->name =  isset($json->name) ? $json->name : null;
         $this->headline = isset($json->headline) ? $json->headline : null;
         $this->reseted = isset($json->reseted) ? $json->reseted : date('Y-m-d');
-        if (isset($json->owner))
-        {
-            $this->owner = new UserModel($json->owner);
-        }
+        $this->owner = isset($json->owner) ? $json->owner : null;
         $this->public = isset($json->public) ? $json->public : false;
         return $this;
     }

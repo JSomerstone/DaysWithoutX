@@ -118,7 +118,7 @@ class CounterModelTest extends WebTestCase
         $counter = new CounterModel(null, null, $owner);
 
         $this->assertSame(
-            $owner,
+            $owner->getNick(),
             $counter->getOwner()
         );
     }
@@ -132,7 +132,7 @@ class CounterModelTest extends WebTestCase
         $original = new CounterModel('Headline', date('Y-m-d'), $owner);
         $json = $original->toJson();
         $counter = new CounterModel(null);
-        $clone = $counter->fromJsonObject(json_decode($json));
+        $clone = $counter->fromJsonObject(json_decode($json ));
 
         $this->assertSame($original->toArray(), $clone->toArray());
     }

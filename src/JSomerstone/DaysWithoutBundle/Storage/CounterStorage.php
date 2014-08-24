@@ -3,6 +3,7 @@ namespace JSomerstone\DaysWithoutBundle\Storage;
 
 use JSomerstone\DaysWithoutBundle\Model\CounterModel,
     JSomerstone\DaysWithoutBundle\Lib\StringFormatter;
+use JSomerstone\DaysWithoutBundle\Model\UserModel;
 
 class CounterStorage
 {
@@ -48,16 +49,19 @@ class CounterStorage
      * @return \JSomerstone\DaysWithoutBundle\Model\CounterModel
      * @throws StorageException
      */
-    public function load($name, $owner = 'public')
+    public function load($name, $owner = null)
     {
-        $filename = $this->getFileName($name, $owner);
-        if ( ! file_exists($filename) || ! is_readable($filename))
-        {
-            throw new StorageException("Unable to read file from '$filename'");
-        }
+        $query = array(
+            'name' => StringFormatter::getUrlSafe($name),
+            'owner' => is_null($owner)
+                    ? null
+                    : $owner
+        );
+        $cursor = $this->getCollection()->find( $query );
 
-        $data = file_get_contents($filename);
-        return $this->unserialize($data);
+        return $cursor->hasNext()
+            ? $this->fromArray($cursor->getNext())
+            : null;
     }
 
     /**
@@ -79,14 +83,20 @@ class CounterStorage
      */
     public function store(CounterModel $counter)
     {
-        $name = $counter->getName();
-        $owner = is_null($counter->getOwner())
-                ? 'public'
-                : $counter->getOwner()->getNick();
-
-        $collection = $this->database->{self::COLLECTION};
-        $collection->insert($counter->toArray());
+        $result = $this->getCollection()->insert($counter->toArray());
+        if ($result['err'])
+        {
+            throw new StorageException('Storing counter failed');
+        }
         return $this;
+    }
+
+    /**
+     * @return \MongoCollection
+     */
+    private function getCollection()
+    {
+        return $this->database->{self::COLLECTION};
     }
 
     private function getFilePath($owner)
@@ -140,5 +150,18 @@ class CounterStorage
         {
             return serialize($counter);
         }
+    }
+
+    /**
+     * @param $counterArray
+     * @return CounterModel
+     */
+    private function fromArray($counterArray)
+    {
+        return new CounterModel(
+           isset($counterArray['headline']) ? $counterArray['headline'] : null,
+           isset($counterArray['reseted']) ? $counterArray['reseted'] : null,
+           isset($counterArray['owner']) ? new UserModel($counterArray['owner']) : null
+        );
     }
 }
