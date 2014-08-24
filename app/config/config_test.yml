@@ -18,3 +18,5 @@ j_somerstone_days_without:
         counter_path: /tmp/dwo/test/counters
         # Absolute path to store Users to
         user_path: /tmp/dwo/test/users
+        server: localhost:27017
+        database: dayswithout-test

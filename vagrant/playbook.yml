@@ -6,7 +6,7 @@
       fw_accept_ports: 22,80,443,3306
       project-root: /vagrant
   tasks:
-      - name: install dependencies
+      - name: Install packages
         apt: package={{ item }} state=present update_cache=yes
         with_items:
             - apache2
@@ -69,18 +69,14 @@
       - file: path=/vagrant/vendor/behat/behat/bin/behat state=file owner=vagrant mode=0775
 
       - name: Create required folders
-        file: path=/run/shm/dwo/{{ item }} state=directory mode=0775 owner=vagrant group=vagrant
+        file: path=/run/shm/dwo/{{ item }} state=directory mode=0775 owner=vagrant group=www-data
         with_items:
           - cache
           - logs
           - users
           - counters
 
-#      - name: Setup Webroot-directory
-#        file: src={{ project-root }}/source/public dest=/var/www/html/eho-rest-api state=link
+      - name: copy motd
+        copy: src=resources/motd dest=/etc/motd owner=root group=root mode=0644
 
-#      - name: copy stuff
-#        copy: src=vagrant/home{{ project-root }}/.bashrc src=/home{{ project-root }}/.bashrc
-
-#      - name: copy readme
-#        copy: src=vagrant/home{{ project-root }}/readme.txt src=/home{{ project-root }}/readme.txt
+      - shell: echo 'cd /vagrant' >> /home/vagrant/.bashrc

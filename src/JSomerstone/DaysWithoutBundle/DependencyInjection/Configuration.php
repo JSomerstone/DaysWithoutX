@@ -30,6 +30,14 @@ class Configuration implements ConfigurationInterface
                         ->info('Absolute path to store Users to')
                         ->cannotBeEmpty()
                         ->end()
+                    ->scalarNode('server')
+                        ->info('MongoDB location in format <domain>:<port>, for example "localhost:27017"')
+                        ->cannotBeEmpty()
+                        ->end()
+                    ->scalarNode('database')
+                        ->info('Name of the database, for example "dayswithout"')
+                        ->cannotBeEmpty()
+                        ->end()
                 ->end()
             ->end();
 

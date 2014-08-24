@@ -14,8 +14,11 @@
     bootstrap = "test/bootstrap.php" >
 
     <testsuites>
-        <testsuite>
-            <directory>src/JSomerstone/DaysWithoutBundle/Tests</directory>
+        <testsuite name="Unit">
+            <directory>src/JSomerstone/DaysWithoutBundle/Tests/unit</directory>
+        </testsuite>
+        <testsuite name="Module">
+            <directory>src/JSomerstone/DaysWithoutBundle/Tests/module</directory>
         </testsuite>
     </testsuites>
 

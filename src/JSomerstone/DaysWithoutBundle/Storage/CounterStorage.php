@@ -6,16 +6,37 @@ use JSomerstone\DaysWithoutBundle\Model\CounterModel,
 
 class CounterStorage
 {
+    const COLLECTION = 'counter';
+
+    /**
+     * @var \MongoClient
+     */
+    private $mongoClient;
+
+    /**
+     * @var MongoDatabase
+     */
+    private $database;
+
     const FORMAT_JSON = 'json';
     const FORMAT_SERIALIZED = 'serialized';
 
     private $format;
-    public function __construct($basePath, $format = self::FORMAT_JSON)
+
+    /**
+     * @param \MongoClient $mongoClient
+     * @param $database
+     * @param string $format Optional, 'json' or 'serialized'
+     * @throws StorageException
+     */
+    public function __construct(\MongoClient $mongoClient, $database, $format = self::FORMAT_JSON)
     {
-        $this->basePath = $basePath;
+        $this->mongoClient = $mongoClient;
+        $this->database = $mongoClient->$database;
+
         if ( ! in_array($format, array(self::FORMAT_JSON, self::FORMAT_SERIALIZED)))
         {
-            throw new StorageException('Unsuppoerted storing format: ' . $format);
+            throw new StorageException('Unsupported storing format: ' . $format);
         }
         $this->format = $format;
     }
@@ -54,6 +75,7 @@ class CounterStorage
      *
      * @param \JSomerstone\DaysWithoutBundle\Model\CounterModel $counter
      * @throws StorageException
+     * @return CounterStorage
      */
     public function store(CounterModel $counter)
     {
@@ -62,16 +84,9 @@ class CounterStorage
                 ? 'public'
                 : $counter->getOwner()->getNick();
 
-        $filePath = $this->getFilePath($owner);
-        $filename = $this->getFileName($name, $owner);
-        if ( ! file_exists($filePath))
-        {
-            mkdir($filePath);
-        }
-        if ( ! file_put_contents($filename, $this->serialize($counter)))
-        {
-            throw new StorageException("Unable to persist counter to '$filename'");
-        }
+        $collection = $this->database->{self::COLLECTION};
+        $collection->insert($counter->toArray());
+        return $this;
     }
 
     private function getFilePath($owner)

@@ -79,7 +79,9 @@ class FeatureContext extends BehatContext
      */
     public function __construct(array $parameters)
     {
-        $this->counterStorage = new CounterStorage(self::$counterStoragePath);
+        $mongoClient = new MongoClient();
+
+        $this->counterStorage = new CounterStorage($mongoClient, 'dayswithout-test');
         $this->userStorage = new UserStorage(self::$userStoragePath);
 
         $this->setKernel(new AppKernel('test', false));
