@@ -93,7 +93,7 @@ class CounterModelTest extends WebTestCase
 
         $this->assertSame(
             $owner->getNick(),
-            $counter->getOwner()->getNick()
+            $counter->getOwner()
         );
     }
 
@@ -114,7 +114,7 @@ class CounterModelTest extends WebTestCase
         $this->assertEquals($reseted, $counter->getReseted(), 'Reseted unexpected');
         $owner = new UserModel(uniqid('owner'));
         $counter->setOwner( $owner);
-        $this->assertEquals($owner, $counter->getOwner(), 'Owner unexpected');
+        $this->assertEquals($owner->getNick(), $counter->getOwner(), 'Owner unexpected');
 
     }
 

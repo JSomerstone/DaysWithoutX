@@ -8,7 +8,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
  * Class UserModel
  * @package JSomerstone\DaysWithoutBundle\Model
  */
-class UserModel
+class UserModel implements ModelInterface
 {
     private $id;
 

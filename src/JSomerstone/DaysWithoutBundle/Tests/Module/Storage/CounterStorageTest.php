@@ -4,6 +4,7 @@ namespace JSomerstone\DaysWithoutBundle\Tests\Storage;
 use JSomerstone\DaysWithoutBundle\Model\CounterModel;
 use JSomerstone\DaysWithoutBundle\Model\UserModel;
 use JSomerstone\DaysWithoutBundle\Storage\CounterStorage;
+use JSomerstone\DaysWithoutBundle\Storage\UserStorage;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class CounterStorageTest  extends WebTestCase

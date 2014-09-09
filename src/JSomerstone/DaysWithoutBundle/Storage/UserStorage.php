@@ -4,14 +4,18 @@ namespace JSomerstone\DaysWithoutBundle\Storage;
 use JSomerstone\DaysWithoutBundle\Model\UserModel,
     JSomerstone\DaysWithoutBundle\Lib\StringFormatter;
 
-class UserStorage
+class UserStorage extends BaseStorage
 {
-    private $basePath;
+    const COLLECTION = 'users';
 
-    public function __construct($basePath)
+    /**
+     * @return \MongoCollection
+     */
+    protected function getCollection()
     {
-        $this->basePath = $basePath;
+        return $this->database->{self::COLLECTION};
     }
+
     /**
      *
      * @param string $name
@@ -20,14 +24,7 @@ class UserStorage
      */
     public function load($name)
     {
-        $filename = $this->getFileName($name);
-        if ( ! file_exists($filename) || ! is_readable($filename))
-        {
-            throw new StorageException("Unable to read file from '$filename'");
-        }
-        $data = json_decode(file_get_contents($filename));
-        $user = new UserModel();
-        return $user->fromJsonObject($data);
+
     }
 
     /**
@@ -37,27 +34,38 @@ class UserStorage
      */
     public function exists($name)
     {
-        return file_exists($this->getFileName($name));
+
     }
 
     /**
      * @param UserModel $user
+     * @return UserStorage
      * @throws StorageException
      */
     public function store(UserModel $user)
     {
-        $filename = $this->getFileName($user->getNick());
-
-        if ( ! file_put_contents($filename, $user->toJson()))
+        $result = $this->getCollection()->update(
+            array(
+                'nick' => $user->getNick()
+            ),
+            $user->toArray(),
+            array('upsert' => true)
+        );
+        if ($result['err'])
         {
-            throw new StorageException("Unable to persist user to '$filename'");
+            throw new StorageException('Storing user failed');
         }
+        return $this;
     }
 
-    private function getFileName($name)
+    /**
+     * Authenticates the user
+     * @param UserModel $user
+     * @return bool
+     */
+    public function authenticate(userModel $user)
     {
-        $name = StringFormatter::getUrlSafe($name);
-
-        return "$this->basePath/$name.txt";
+        $persisted = $this->load($user->getNick());
+        return ($persisted->getPassword() === $user->getPassword());
     }
 }

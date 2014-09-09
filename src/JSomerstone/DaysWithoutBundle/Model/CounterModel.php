@@ -4,7 +4,7 @@ namespace JSomerstone\DaysWithoutBundle\Model;
 use JSomerstone\DaysWithoutBundle\Lib\StringFormatter;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
-class CounterModel
+class CounterModel implements ModelInterface
 {
     private $reseted;
 
@@ -30,7 +30,7 @@ class CounterModel
         $this->headline = $headline;
         $this->reseted = is_null($resetDate) ? date('Y-m-d') : $resetDate;
         $this->name = StringFormatter::getUrlSafe($headline);
-        $this->owner = $owner;
+        $this->setOwner($owner);
         $this->public = is_null($owner);
     }
 
@@ -55,7 +55,9 @@ class CounterModel
             'headline' => $this->headline,
             'reseted' => $this->reseted,
             'days' => $this->getDays(),
-            'owner' => is_object($this->owner) ? $this->owner->getNick() : $this->owner,
+            'owner' => is_object($this->owner)
+                    ? $this->owner->getNick()
+                    : $this->owner,
             'public' => $this->public
         );
     }
@@ -94,7 +96,7 @@ class CounterModel
 
     public function setOwner(UserModel $user = null)
     {
-        $this->owner = $user;
+        $this->owner = is_null($user) ? null : $user->getNick();
         return $this;
     }
 
@@ -110,7 +112,7 @@ class CounterModel
     {
         $now = time();
         $reseted = strtotime($this->reseted);
-        return floor(($now - $reseted)/(60*60*24));
+        return (int)floor(($now - $reseted)/(60*60*24));
     }
 
     public function setPublic()

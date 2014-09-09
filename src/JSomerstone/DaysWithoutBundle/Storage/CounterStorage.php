@@ -5,30 +5,9 @@ use JSomerstone\DaysWithoutBundle\Model\CounterModel,
     JSomerstone\DaysWithoutBundle\Lib\StringFormatter;
 use JSomerstone\DaysWithoutBundle\Model\UserModel;
 
-class CounterStorage
+class CounterStorage extends BaseStorage
 {
     const COLLECTION = 'counter';
-
-    /**
-     * @var \MongoClient
-     */
-    private $mongoClient;
-
-    /**
-     * @var MongoDatabase
-     */
-    private $database;
-
-    /**
-     * @param \MongoClient $mongoClient
-     * @param $database
-     * @throws StorageException
-     */
-    public function __construct(\MongoClient $mongoClient, $database)
-    {
-        $this->mongoClient = $mongoClient;
-        $this->database = $mongoClient->$database;
-    }
 
     /**
      *
@@ -48,16 +27,17 @@ class CounterStorage
     }
 
     /**
-     * @param $name
-     * @param null $owner
+     * @param string $name
+     * @param string $owner optional
      * @return array
      */
     private function getCounterQuery($name, $owner = null)
     {
-        return array(
+        $query = array(
             'name' => StringFormatter::getUrlSafe($name),
             'owner' => $owner
         );
+        return $query;
     }
 
     /**
@@ -97,7 +77,7 @@ class CounterStorage
     /**
      * @return \MongoCollection
      */
-    private function getCollection()
+    protected function getCollection()
     {
         return $this->database->{self::COLLECTION};
     }
