@@ -55,9 +55,7 @@ class CounterModel implements ModelInterface
             'headline' => $this->headline,
             'reseted' => $this->reseted,
             'days' => $this->getDays(),
-            'owner' => is_object($this->owner)
-                    ? $this->owner->getNick()
-                    : $this->owner,
+            'owner' => $this->owner,
             'public' => $this->public
         );
     }

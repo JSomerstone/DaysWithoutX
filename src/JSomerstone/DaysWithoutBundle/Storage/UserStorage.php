@@ -24,7 +24,22 @@ class UserStorage extends BaseStorage
      */
     public function load($name)
     {
+        $cursor = $this->getCollection()
+            ->find(array('nick' => $name));
 
+        return $cursor->hasNext()
+            ? $this->fromArray($cursor->getNext())
+            : null;
+    }
+
+    /**
+     * @param array $user
+     * @return UserModel
+     */
+    private function fromArray(array $user)
+    {
+        $userModel = new UserModel();
+        return $userModel->fromArray($user);
     }
 
     /**
@@ -34,7 +49,7 @@ class UserStorage extends BaseStorage
      */
     public function exists($name)
     {
-
+        return $this->getCollection()->count(array('nick' => $name)) === 1;
     }
 
     /**
@@ -68,4 +83,5 @@ class UserStorage extends BaseStorage
         $persisted = $this->load($user->getNick());
         return ($persisted->getPassword() === $user->getPassword());
     }
+
 }

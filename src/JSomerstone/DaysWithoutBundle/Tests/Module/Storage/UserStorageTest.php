@@ -32,10 +32,49 @@ class UserStorageTest  extends WebTestCase
         $this->mongoClient->dropDB($this->database);
     }
 
-    public function testStoringUser()
+    /**
+     * @test
+     */
+    public function storingPersistsUser()
     {
         $name = uniqid('testuser');
         $user = new UserModel($name);
         $this->userStorage->store($user);
+    }
+
+    /**
+     * @test
+     * @depends storingPersistsUser
+     */
+    public function existingUserIsFound()
+    {
+        $name = uniqid('Fooba');
+        $user = new UserModel($name);
+        $this->userStorage->store($user);
+
+        $this->assertTrue($this->userStorage->exists($name));
+    }
+
+    /**
+     * @test
+     */
+    public function nonExistingUserIsNotFound()
+    {
+        $this->assertFalse($this->userStorage->exists('NonExisting'));
+    }
+
+    /**
+     * @test
+     * @depends storingPersistsUser
+     */
+    public function loadReturnsPersistedUser()
+    {
+        $user = new UserModel('JSomerstone', uniqid());
+
+        $this->userStorage->store($user);
+
+        $persisted = $this->userStorage->load($user->getNick());
+
+        $this->assertEquals($user, $persisted);
     }
 } 

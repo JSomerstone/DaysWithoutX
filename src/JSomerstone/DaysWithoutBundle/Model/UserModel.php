@@ -140,6 +140,22 @@ class UserModel implements ModelInterface
     }
 
     /**
+     * @param array $user
+     * @return UserModel
+     */
+    public function fromArray(array $user)
+    {
+        if (isset($user['id']))
+            $this->id = $user['id'];
+        if (isset($user['nick']))
+            $this->nick = $user['nick'];
+        if (isset($user['password']))
+            $this->password = $user['password'];
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function toJson()
