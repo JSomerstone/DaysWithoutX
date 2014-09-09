@@ -24,5 +24,7 @@ Scenario: User views existing counter
 Scenario: User resets existing counter
     Given public counter "Resetme" with "1" days
     When user resets counter "Resetme"
+    Then user is redirected to "/resetme"
+      And "/resetme" page is loaded
       And the counter is "0"
       And page has "Days without Resetme"

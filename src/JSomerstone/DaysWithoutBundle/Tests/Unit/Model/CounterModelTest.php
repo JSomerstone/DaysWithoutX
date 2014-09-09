@@ -5,6 +5,7 @@ namespace JSomerstone\DaysWithoutBundle\Tests\Model;
 use JSomerstone\DaysWithoutBundle\Model\CounterModel,
     JSomerstone\DaysWithoutBundle\Model\UserModel;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * @group model
@@ -55,33 +56,6 @@ class CounterModelTest extends WebTestCase
     /**
      * @test
      */
-    public function modelConvertionToJson()
-    {
-        $headline = 'Headline of the counter';
-        $owner = new UserModel('testuser', null);
-
-        $counter = new CounterModel($headline, $this->yesterday, $owner);
-
-        $expected = json_encode(
-            array(
-                'name' => 'headline-of-the-counter',
-                'headline' => $headline,
-                'reseted' => $this->yesterday,
-                'days' => 1,
-                'owner' => 'testuser',
-                'public' => false
-            )
-        );
-        $actual = $counter->toJson();
-        $this->assertEquals(
-            $expected,
-            $actual
-        );
-    }
-
-    /**
-     * @test
-     */
     public function counterWithoutOwnerIsPublic()
     {
         $counter = new CounterModel(null);
@@ -119,39 +93,29 @@ class CounterModelTest extends WebTestCase
 
         $this->assertSame(
             $owner->getNick(),
-            $counter->getOwner()
+            $counter->getOwner()->getNick()
         );
     }
 
     /**
      * @test
      */
-    public function fromJsonWithAllProperties()
-    {
-        $owner = new UserModel('irrelevant', 'irrelevant');
-        $original = new CounterModel('Headline', date('Y-m-d'), $owner);
-        $json = $original->toJson();
-        $counter = new CounterModel(null);
-        $clone = $counter->fromJsonObject(json_decode($json ));
-
-        $this->assertSame($original->toArray(), $clone->toArray());
-    }
-
-    /**
-     * @test
-     * @dataProvider provideValidProperties
-     */
-    public function settersAndGettersWorks($property, $value)
+    public function settersAndGettersWorks()
     {
         $counter = new CounterModel('irrelevant');
-        $setter = 'set' . ucfirst($property);
-        $getter = 'get' . ucfirst($property);
+        $name = uniqid('name');
+        $counter->setName($name);
+        $this->assertEquals($name, $counter->getName(), 'Name unexpected');
+        $headline = uniqid('headline');
+        $counter->setHeadline($headline);
+        $this->assertEquals($headline, $counter->getHeadline(), 'Headline unexpected');
+        $reseted = '2014-01-01';
+        $counter->setReseted($reseted);
+        $this->assertEquals($reseted, $counter->getReseted(), 'Reseted unexpected');
+        $owner = new UserModel(uniqid('owner'));
+        $counter->setOwner( $owner);
+        $this->assertEquals($owner, $counter->getOwner(), 'Owner unexpected');
 
-        $counter->$setter($value);
-        $this->assertEquals(
-            $value,
-            $counter->$getter()
-        );
     }
 
     /**
@@ -172,8 +136,7 @@ class CounterModelTest extends WebTestCase
         return array(
             'name' => array('name', 'meaning-of-life'),
             'headline' => array('headline', 'Meaning of Life'),
-            'reset date' => array('reseted', date('Y-m-d')),
-            'owner' => array('owner', new UserModel('irrelevant', 'irrelevant')),
+            'reset date' => array('reseted', new \DateTime()),
         );
     }
 

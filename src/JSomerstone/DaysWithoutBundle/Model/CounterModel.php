@@ -30,7 +30,7 @@ class CounterModel
         $this->headline = $headline;
         $this->reseted = is_null($resetDate) ? date('Y-m-d') : $resetDate;
         $this->name = StringFormatter::getUrlSafe($headline);
-        $this->owner = is_null($owner) ? $owner : $owner->getNick();
+        $this->owner = $owner;
         $this->public = is_null($owner);
     }
 
@@ -55,7 +55,7 @@ class CounterModel
             'headline' => $this->headline,
             'reseted' => $this->reseted,
             'days' => $this->getDays(),
-            'owner' => $this->owner,
+            'owner' => is_object($this->owner) ? $this->owner->getNick() : $this->owner,
             'public' => $this->public
         );
     }
@@ -92,7 +92,7 @@ class CounterModel
         return $this->reseted;
     }
 
-    public function setOwner(UserModel $user)
+    public function setOwner(UserModel $user = null)
     {
         $this->owner = $user;
         return $this;

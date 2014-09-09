@@ -35,6 +35,8 @@ use AssertContext as Assert;
  */
 class FeatureContext extends BehatContext
 {
+    static $DB_HOST = 'mongodb://localhost:27017';
+    static $DB_NAME = 'dayswithout-test';
     /**
      *
      * @var Symfony\Component\HttpFoundation\Request
@@ -46,6 +48,11 @@ class FeatureContext extends BehatContext
      * @var Symfony\Component\HttpFoundation\Response
      */
     protected $response;
+
+    /**
+     * @var MongoClient
+     */
+    protected $mongoClient;
 
     protected $post = array();
     protected $get = array();
@@ -67,7 +74,6 @@ class FeatureContext extends BehatContext
      */
     private $userStorage;
 
-    private static $counterStoragePath = '/tmp/dayswithout-test/counters';
     private static $userStoragePath = '/tmp/dayswithout-test/users';
     private static $testUserPassword = 'testpassword';
 
@@ -79,9 +85,9 @@ class FeatureContext extends BehatContext
      */
     public function __construct(array $parameters)
     {
-        $mongoClient = new MongoClient();
+        $this->mongoClient = new MongoClient(self::$DB_HOST);
 
-        $this->counterStorage = new CounterStorage($mongoClient, 'dayswithout-test');
+        $this->counterStorage = new CounterStorage($this->mongoClient, self::$DB_NAME);
         $this->userStorage = new UserStorage(self::$userStoragePath);
 
         $this->setKernel(new AppKernel('test', false));
@@ -97,23 +103,13 @@ class FeatureContext extends BehatContext
         echo "Cleaning up cache ... ";
         exec($command);
         echo "Done\n";
-        FileHelper::createDirectoryOrFail(self::$counterStoragePath);
-        FileHelper::createDirectoryOrFail(self::$userStoragePath);
     }
 
-    /** @BeforeFeature */
+    /** @BeforeScenario */
     public static function prepareForTheFeature()
     {
-        FileHelper::cleanupDirectoryOrFail(self::$counterStoragePath);
-        FileHelper::cleanupDirectoryOrFail(self::$userStoragePath);
-    }
-
-    /**
-     * @AfterFeature
-     */
-    public static function cleanupAfterFeature()
-    {
-        //exec("rm -rf " . self::$counterStoragePath);
+        $client = new MongoClient(self::$DB_HOST);
+        $client->dropDB(self::$DB_NAME);
     }
 
     /**

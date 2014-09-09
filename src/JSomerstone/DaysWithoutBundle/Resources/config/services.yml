@@ -1,15 +1,13 @@
 parameters:
     dayswithout.storage.counter.class: JSomerstone\DaysWithoutBundle\Storage\CounterStorage
     dayswithout.storage.user.class: JSomerstone\DaysWithoutBundle\Storage\UserStorage
-    mongo.server: %j_somerstone_days_without.storage.server%
-    mongo.database: %j_somerstone_days_without.storage.database%
 services:
-    dayswithout.storage.client:
-        class: MongoClient
-        arguments: [%mongo.server%]
+    mongo_client:
+      class: MongoClient
+      arguments: [ %storage.server% ]
     dayswithout.storage.counter:
         class: %dayswithout.storage.counter.class%
-        arguments: [%dayswithout.storage.client%, %mongo.database%]
+        arguments: ["@mongo_client", %storage.database% ]
     dayswithout.storage.user:
         class: %dayswithout.storage.user.class%
         arguments: [%dayswithout.user_path%]

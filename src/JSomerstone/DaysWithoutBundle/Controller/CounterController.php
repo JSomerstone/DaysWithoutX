@@ -4,6 +4,7 @@ namespace JSomerstone\DaysWithoutBundle\Controller;
 use Symfony\Component\HttpFoundation\Request,
     Symfony\Component\DependencyInjection\ContainerInterface as Container,
     Symfony\Component\Form\Form as Form;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use JSomerstone\DaysWithoutBundle\Model\CounterModel,
     JSomerstone\DaysWithoutBundle\Model\UserModel,
     JSomerstone\DaysWithoutBundle\Storage\CounterStorage;
@@ -83,6 +84,9 @@ class CounterController extends BaseController
     {
         $storage = $this->getStorage();
         if ( $storage->exists($counter->getName(), $counter->getOwner()->getId()))
+=======
+        if ( $storage->exists($counter->getName(), $counter->getOwner()))
+>>>>>>> Got storing & searching from/to MongoDB working for Counters
         {
             $this->addNotice('Already existed, showing it');
         }
@@ -93,7 +97,7 @@ class CounterController extends BaseController
         }
     }
 
-    public function showAction($name, $owner = 'public')
+    public function showAction($name, $owner = null)
     {
         $storage = $this->getStorage();
         if ( ! $storage->exists($name, $owner))
@@ -115,10 +119,10 @@ class CounterController extends BaseController
 
     /**
      * @param string $name
-     * @param string $owner optional default 'public'
+     * @param string $owner optional default null
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function resetAction($name, $owner = 'public')
+    public function resetAction($name, $owner = null)
     {
         $storage = $this->getStorage();
 
@@ -145,13 +149,7 @@ class CounterController extends BaseController
 
         $storage->store($counter);
 
-        $this->setCounter($counter);
-        $this->setForm($this->getResetForm($counter));
-
-        return $this->render(
-            'JSomerstoneDaysWithoutBundle:Counter:index.html.twig',
-            $this->response
-        );
+        return $this->redirectToCounter($counter);
     }
 
     /**
@@ -193,7 +191,7 @@ class CounterController extends BaseController
     private function redirectToCounter(CounterModel $counter)
     {
         $owner = ($counter->isPublic())
-            ? 'public'
+            ? null
             : $counter->getOwner()->getNick();
 
         return $this->redirect(
@@ -217,5 +215,30 @@ class CounterController extends BaseController
             $this->counterStorage = $this->get('dayswithout.storage.counter');
         }
         return $this->counterStorage;
+    }
+
+    /**
+     * @return JSomerstone\DaysWithoutBundle\Storage\UserStorage|object
+     */
+    private function getUserStorage()
+    {
+        if ( ! $this->userStorage) {
+            $this->userStorage = $this->get('dayswithout.storage.user');
+        }
+        return $this->userStorage;
+    }
+
+    /**
+     * @param UserModel $user
+     * @return bool
+     */
+    private function authenticateUser(UserModel $user)
+    {
+        $userStorage = $this->getUserStorage();
+        if ( ! $userStorage->exists($user->getNick())) {
+            return false;
+        }
+
+        return $userStorage->authenticate($user);
     }
 }

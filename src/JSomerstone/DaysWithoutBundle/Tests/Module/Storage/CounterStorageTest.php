@@ -38,7 +38,7 @@ class CounterStorageTest  extends WebTestCase
     public function storingCounterPersistsToDatabase()
     {
         $owner = new UserModel(uniqid('testUser'));
-        $counter = new CounterModel(uniqid('testCounter'), date('Y-m-d'), $owner);
+        $counter = new CounterModel(uniqid('testCounter'), null, $owner);
 
         $this->counterStorage->store($counter);
     }
@@ -48,7 +48,7 @@ class CounterStorageTest  extends WebTestCase
      */
     public function storingWithoutOwnerSucceeds()
     {
-        $counter = new CounterModel(uniqid('testCounter'), date('Y-m-d'));
+        $counter = new CounterModel(uniqid('testCounter'));
 
         $this->counterStorage->store($counter);
     }
@@ -59,7 +59,7 @@ class CounterStorageTest  extends WebTestCase
     public function loadingExistingCounterSucceeds()
     {
         $name = 'Finding a Counter';
-        $counter = new CounterModel($name, date('Y-m-d'));
+        $counter = new CounterModel($name);
         $this->counterStorage->store($counter);
 
         $result = $this->counterStorage->load($name, null);
@@ -73,7 +73,7 @@ class CounterStorageTest  extends WebTestCase
     public function loadingCounterWithOwnerSucceeds()
     {
         $owner = new UserModel('JSomerstone');
-        $originalCounter = new CounterModel('Successfull tests', date('Y-m-d'), $owner);
+        $originalCounter = new CounterModel('Successfull tests', null, $owner);
         $this->counterStorage->store($originalCounter);
 
         $result = $this->counterStorage->load('Successfull tests', 'JSomerstone');

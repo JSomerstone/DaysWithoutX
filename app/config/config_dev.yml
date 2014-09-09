@@ -30,7 +30,5 @@ assetic:
 # JSomerstoneDaysWithoutBundleConfiguration
 j_somerstone_days_without:
     storage:
-        # Absolute path to store Counters to
-        counter_path: /tmp/dwo/dev/counters
-        # Absolute path to store Users to
-        user_path: /tmp/dwo/dev/users
+        server: "localhost:27017"
+        database: dayswithout-test

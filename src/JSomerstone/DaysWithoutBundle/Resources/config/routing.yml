@@ -24,10 +24,10 @@ dwo_logout:
 
 dwo_show_counter:
     pattern: /{name}/{owner}
-    defaults: { _controller: JSomerstoneDaysWithoutBundle:Counter:show, owner: public }
+    defaults: { _controller: JSomerstoneDaysWithoutBundle:Counter:show, owner: null }
     methods: [GET]
 
 dwo_reset_counter:
     pattern: /{name}/{owner}
-    defaults: { _controller: JSomerstoneDaysWithoutBundle:Counter:reset, owner: public }
+    defaults: { _controller: JSomerstoneDaysWithoutBundle:Counter:reset, owner: null }
     methods: [POST]

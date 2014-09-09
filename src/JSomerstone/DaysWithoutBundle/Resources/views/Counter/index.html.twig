@@ -10,13 +10,15 @@
         <h2>Days without {{ counter.headline }}:</h2>
         <div class="row">
             <div class="counterDays">{{ counter.days }}</div>
-            <span class="lead">by <b>{{ counter.owner.nick }}</b></span>
+            {% if counter.public == false %}
+                <span class="lead">by <b>{{ counter.owner }}</b></span>
+            {% endif %}
         </div>
         <div class="row">
             <p>
                 <i>
-                    <a href="{{ url('dwo_show_counter', { 'name': counter.name, 'owner': counter.owner.nick }) }}">
-                        {{ url('dwo_show_counter', { 'name': counter.name, 'owner': counter.owner.nick }) }}
+                    <a href="{{ url('dwo_show_counter', { 'name': counter.name, 'owner': counter.owner }) }}">
+                        {{ url('dwo_show_counter', { 'name': counter.name, 'owner': counter.owner }) }}
                     </a>
                 </i>
             </p>

@@ -19,27 +19,15 @@ class CounterStorage
      */
     private $database;
 
-    const FORMAT_JSON = 'json';
-    const FORMAT_SERIALIZED = 'serialized';
-
-    private $format;
-
     /**
      * @param \MongoClient $mongoClient
      * @param $database
-     * @param string $format Optional, 'json' or 'serialized'
      * @throws StorageException
      */
-    public function __construct(\MongoClient $mongoClient, $database, $format = self::FORMAT_JSON)
+    public function __construct(\MongoClient $mongoClient, $database)
     {
         $this->mongoClient = $mongoClient;
         $this->database = $mongoClient->$database;
-
-        if ( ! in_array($format, array(self::FORMAT_JSON, self::FORMAT_SERIALIZED)))
-        {
-            throw new StorageException('Unsupported storing format: ' . $format);
-        }
-        $this->format = $format;
     }
 
     /**
@@ -51,17 +39,25 @@ class CounterStorage
      */
     public function load($name, $owner = null)
     {
-        $query = array(
-            'name' => StringFormatter::getUrlSafe($name),
-            'owner' => is_null($owner)
-                    ? null
-                    : $owner
-        );
-        $cursor = $this->getCollection()->find( $query );
+        $cursor = $this->getCollection()
+            ->find($this->getCounterQuery($name, $owner));
 
         return $cursor->hasNext()
             ? $this->fromArray($cursor->getNext())
             : null;
+    }
+
+    /**
+     * @param $name
+     * @param null $owner
+     * @return array
+     */
+    private function getCounterQuery($name, $owner = null)
+    {
+        return array(
+            'name' => StringFormatter::getUrlSafe($name),
+            'owner' => $owner
+        );
     }
 
     /**
@@ -70,9 +66,12 @@ class CounterStorage
      * @param string $owner
      * @return bool
      */
-    public function exists($name, $owner = 'public')
+    public function exists($name, $owner = null)
     {
-        return file_exists($this->getFileName($name, $owner));
+        $count = $this->getCollection()
+            ->find($this->getCounterQuery($name, $owner))
+            ->count();
+        return $count === 1;
     }
 
     /**
@@ -83,7 +82,11 @@ class CounterStorage
      */
     public function store(CounterModel $counter)
     {
-        $result = $this->getCollection()->insert($counter->toArray());
+        $result = $this->getCollection()->update(
+            $this->getCounterQuery($counter->getName(), $counter->getOwner()),
+            $counter->toArray(),
+            array('upsert' => true)
+        );
         if ($result['err'])
         {
             throw new StorageException('Storing counter failed');
@@ -99,69 +102,17 @@ class CounterStorage
         return $this->database->{self::COLLECTION};
     }
 
-    private function getFilePath($owner)
-    {
-        return sprintf(
-            "%s/%s",
-            $this->basePath,
-            StringFormatter::getUrlSafe($owner)
-        );
-    }
-
-    private function getFileName($name, $owner)
-    {
-        return sprintf(
-            "%s/%s/%s.txt",
-            $this->basePath,
-            StringFormatter::getUrlSafe($owner),
-            StringFormatter::getUrlSafe($name)
-        );
-    }
-
-    /**
-     * @param string $counter Serialized or JSON-object according to $this->format
-     * @return CounterModel
-     * @throws StorageException if provided
-     */
-    private function unserialize($counter)
-    {
-        if ($this->format === self::FORMAT_JSON)
-        {
-            $counterModel = new CounterModel(null);
-            return $counterModel->fromJsonObject(json_decode($counter));
-        }
-        else
-        {
-            return unserialize($counter);
-        }
-    }
-
-    /**
-     * @param CounterModel $counter
-     * @return string
-     */
-    private function serialize(CounterModel $counter)
-    {
-        if ($this->format === self::FORMAT_JSON)
-        {
-            return $counter->toJson();
-        }
-        else
-        {
-            return serialize($counter);
-        }
-    }
-
     /**
      * @param $counterArray
      * @return CounterModel
      */
     private function fromArray($counterArray)
     {
-        return new CounterModel(
+        $model =  new CounterModel(
            isset($counterArray['headline']) ? $counterArray['headline'] : null,
            isset($counterArray['reseted']) ? $counterArray['reseted'] : null,
            isset($counterArray['owner']) ? new UserModel($counterArray['owner']) : null
         );
+        return $model;
     }
 }
