@@ -28,8 +28,7 @@ Scenario: User creates private counter
   Then user is redirected to "/being-sober/Mee"
 
   Scenario: User tries to reset private counter with wron password
-    Given user "Mee" with password "fuubar123"
-      And user "Mee" has a counter "Foobar" with "19" days
+    Given user "Mee" has a counter "Foobar" with "19" days
     When user "Mee" resets the counter "Foobar" with password "Wr0ng!"
     Then user is redirected to "/foobar/Mee"
       And "/foobar/Mee" page is loaded

@@ -29,16 +29,17 @@ class CounterController extends BaseController
         {
             return $this->getFrontPageRedirection();
         }
+
+        $userStorage = $this->getUserStorage();
+
         $counter = $form->getData();
-        $owner = $userStorage->load($counter->getOwerId());
 
         $counter = $form->getData();
         try
         {
             if ($form->get('public')->isClicked())
             {
-                $owner = new UserModel('public');
-                $counter->setOwner($owner)->setPublic();
+                $counter->setOwner(null)->setPublic();
             }
             else
             {
@@ -85,7 +86,7 @@ class CounterController extends BaseController
     private function storeCounterIfNeeded(CounterModel $counter)
     {
         $storage = $this->getStorage();
-        if ( $storage->exists($counter->getName(), $counter->getOwner()->getId()))
+        if ( $storage->exists($counter->getName(), $counter->getOwnerId()))
         {
             $this->addNotice('Already existed, showing it');
         }

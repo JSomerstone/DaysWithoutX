@@ -74,7 +74,6 @@ class FeatureContext extends BehatContext
      */
     private $userStorage;
 
-    private static $userStoragePath = '/tmp/dayswithout-test/users';
     private static $testUserPassword = 'testpassword';
 
     /**

@@ -155,17 +155,17 @@ class UserModel implements ModelInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function toJson()
-    {
-        return json_encode($this->toArray());
-    }
-
     private static function hashPassword($password, $nick)
     {
         return hash('sha256', "$nick-$password");
+    }
+
+    /**
+     * @return null|string
+     */
+    public function __toString()
+    {
+        return $this->nick;
     }
 
 }
