@@ -18,17 +18,17 @@ class UserStorage extends BaseStorage
 
     /**
      *
-     * @param string $name
+     * @param string $nick
      * @return \JSomerstone\DaysWithoutBundle\Model\UserModel
      * @throws StorageException
      */
-    public function load($name)
+    public function load($nick)
     {
-        $cursor = $this->getCollection()
-            ->find(array('nick' => $name));
+        $result = $this->getCollection()
+            ->findOne(array('nick' => $nick));
 
-        return $cursor->hasNext()
-            ? $this->fromArray($cursor->getNext())
+        return is_array($result)
+            ? $this->fromArray($result)
             : null;
     }
 

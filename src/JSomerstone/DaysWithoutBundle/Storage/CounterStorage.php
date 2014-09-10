@@ -12,17 +12,17 @@ class CounterStorage extends BaseStorage
     /**
      *
      * @param string $name
-     * @param string $owner Nick of the user owning counter, default "public"
+     * @param string $owner Optional, Nick of the user owning counter
      * @return \JSomerstone\DaysWithoutBundle\Model\CounterModel
      * @throws StorageException
      */
     public function load($name, $owner = null)
     {
-        $cursor = $this->getCollection()
-            ->find($this->getCounterQuery($name, $owner));
+        $result = $this->getCollection()
+            ->findOne($this->getCounterQuery($name, $owner));
 
-        return $cursor->hasNext()
-            ? $this->fromArray($cursor->getNext())
+        return is_array($result)
+            ? $this->fromArray($result)
             : null;
     }
 
@@ -35,7 +35,7 @@ class CounterStorage extends BaseStorage
     {
         $query = array(
             'name' => StringFormatter::getUrlSafe($name),
-            'owner' => $owner
+            'owner' => is_null($owner) ? null : $owner
         );
         return $query;
     }
@@ -48,14 +48,13 @@ class CounterStorage extends BaseStorage
      */
     public function exists($name, $owner = null)
     {
-        $count = $this->getCollection()
-            ->find($this->getCounterQuery($name, $owner))
-            ->count();
-        return $count === 1;
+        $counter = $this->getCollection()
+            ->findOne($this->getCounterQuery($name, $owner));
+        return is_array($counter);
     }
 
     /**
-     *
+     * Persist given CounterModel, update existing
      * @param \JSomerstone\DaysWithoutBundle\Model\CounterModel $counter
      * @throws StorageException
      * @return CounterStorage
@@ -63,7 +62,7 @@ class CounterStorage extends BaseStorage
     public function store(CounterModel $counter)
     {
         $result = $this->getCollection()->update(
-            $this->getCounterQuery($counter->getName(), $counter->getOwner()),
+            $this->getCounterQuery($counter->getName(), $counter->getOwnerId()),
             $counter->toArray(),
             array('upsert' => true)
         );

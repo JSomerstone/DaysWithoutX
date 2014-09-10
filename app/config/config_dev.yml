@@ -31,4 +31,4 @@ assetic:
 j_somerstone_days_without:
     storage:
         server: "localhost:27017"
-        database: dayswithout-test
+        database: dayswithout-dev

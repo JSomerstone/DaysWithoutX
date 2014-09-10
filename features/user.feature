@@ -13,8 +13,9 @@ Scenario: Front page shows expected
     And page has button "Private"
 
 Scenario: User opens private counter
-  Given user "Mee" has a counter "Foobar" with "19" days
-  When "/foobar/mee" page is loaded
+  Given user "Mee" with password "fuubar123"
+    And user "Mee" has a counter "Foobar" with "19" days
+  When "/foobar/Mee" page is loaded
     And the counter is "19"
     And page has "Days without Foobar"
 
@@ -25,3 +26,12 @@ Scenario: User creates counter with wrong password
 Scenario: User creates private counter
   When "Mee" posts private counter "being sober" with password "fuubar123"
   Then user is redirected to "/being-sober/Mee"
+
+  Scenario: User tries to reset private counter with wron password
+    Given user "Mee" with password "fuubar123"
+      And user "Mee" has a counter "Foobar" with "19" days
+    When user "Mee" resets the counter "Foobar" with password "Wr0ng!"
+    Then user is redirected to "/foobar/Mee"
+      And "/foobar/Mee" page is loaded
+      And page has "Wrong Nick and/or password"
+      And the counter is "19"

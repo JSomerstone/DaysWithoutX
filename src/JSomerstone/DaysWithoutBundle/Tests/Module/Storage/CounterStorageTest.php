@@ -26,10 +26,6 @@ class CounterStorageTest  extends WebTestCase
     {
         $this->mongoClient = new \MongoClient($this->server);
         $this->counterStorage = new CounterStorage($this->mongoClient, $this->database);
-    }
-
-    public function tearDown()
-    {
         $this->mongoClient->dropDB($this->database);
     }
 
@@ -59,12 +55,11 @@ class CounterStorageTest  extends WebTestCase
      */
     public function loadingExistingCounterSucceeds()
     {
-        $name = 'Finding a Counter';
-        $counter = new CounterModel($name);
+        $headline = 'Finding a Counter';
+        $counter = new CounterModel($headline);
         $this->counterStorage->store($counter);
 
-        $result = $this->counterStorage->load($name, null);
-
+        $result = $this->counterStorage->load($headline);
         $this->assertEquals($counter, $result);
     }
 
@@ -73,11 +68,13 @@ class CounterStorageTest  extends WebTestCase
      */
     public function loadingCounterWithOwnerSucceeds()
     {
-        $owner = new UserModel('JSomerstone');
-        $originalCounter = new CounterModel('Successfull tests', null, $owner);
+        $counterName = 'Successfull tests';
+        $userName = 'JSomerstone';
+
+        $originalCounter = new CounterModel($counterName, null, new UserModel($userName));
         $this->counterStorage->store($originalCounter);
 
-        $result = $this->counterStorage->load('Successfull tests', 'JSomerstone');
+        $result = $this->counterStorage->load($counterName, $userName);
         $this->assertEquals($originalCounter, $result);
     }
 } 

@@ -88,7 +88,7 @@ class FeatureContext extends BehatContext
         $this->mongoClient = new MongoClient(self::$DB_HOST);
 
         $this->counterStorage = new CounterStorage($this->mongoClient, self::$DB_NAME);
-        $this->userStorage = new UserStorage(self::$userStoragePath);
+        $this->userStorage = new UserStorage($this->mongoClient, self::$DB_NAME);
 
         $this->setKernel(new AppKernel('test', false));
         // Initialize your context here

@@ -13,7 +13,7 @@ class CounterModel implements ModelInterface
     protected $name;
 
     /**
-     * @var string
+     * @var UserModel|null
      */
     private $owner;
 
@@ -30,7 +30,7 @@ class CounterModel implements ModelInterface
         $this->headline = $headline;
         $this->reseted = is_null($resetDate) ? date('Y-m-d') : $resetDate;
         $this->name = StringFormatter::getUrlSafe($headline);
-        $this->setOwner($owner);
+        $this->owner = $owner;
         $this->public = is_null($owner);
     }
 
@@ -55,7 +55,7 @@ class CounterModel implements ModelInterface
             'headline' => $this->headline,
             'reseted' => $this->reseted,
             'days' => $this->getDays(),
-            'owner' => $this->owner,
+            'owner' => $this->getOwnerId(),
             'public' => $this->public
         );
     }
@@ -92,18 +92,29 @@ class CounterModel implements ModelInterface
         return $this->reseted;
     }
 
+    /**
+     * @param UserModel|null $user
+     * @return $this
+     */
     public function setOwner(UserModel $user = null)
     {
-        $this->owner = is_null($user) ? null : $user->getNick();
+        $this->owner = $user;
         return $this;
     }
 
     /**
-     * @return null|string
+     * @return null|UserModel
      */
     public function getOwner()
     {
         return $this->owner;
+    }
+
+    public function getOwnerId()
+    {
+        return is_object($this->owner)
+            ? $this->owner->getNick()
+            : null;
     }
 
     public function getDays()
@@ -128,15 +139,6 @@ class CounterModel implements ModelInterface
     public function isPublic()
     {
         return $this->public;
-    }
-
-    /**
-     *
-     * @return string JSON-notation
-     */
-    public function toJson()
-    {
-        return json_encode($this->toArray());
     }
 
     /**

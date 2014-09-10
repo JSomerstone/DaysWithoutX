@@ -29,6 +29,8 @@ class CounterController extends BaseController
         {
             return $this->getFrontPageRedirection();
         }
+        $counter = $form->getData();
+        $owner = $userStorage->load($counter->getOwerId());
 
         $counter = $form->getData();
         try
@@ -84,9 +86,6 @@ class CounterController extends BaseController
     {
         $storage = $this->getStorage();
         if ( $storage->exists($counter->getName(), $counter->getOwner()->getId()))
-=======
-        if ( $storage->exists($counter->getName(), $counter->getOwner()))
->>>>>>> Got storing & searching from/to MongoDB working for Counters
         {
             $this->addNotice('Already existed, showing it');
         }

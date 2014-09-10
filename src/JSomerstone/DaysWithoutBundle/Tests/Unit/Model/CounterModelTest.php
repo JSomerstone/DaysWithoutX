@@ -92,7 +92,7 @@ class CounterModelTest extends WebTestCase
         $counter = new CounterModel(null, null, $owner);
 
         $this->assertSame(
-            $owner->getNick(),
+            $owner,
             $counter->getOwner()
         );
     }
@@ -103,19 +103,18 @@ class CounterModelTest extends WebTestCase
     public function settersAndGettersWorks()
     {
         $counter = new CounterModel('irrelevant');
+
         $name = uniqid('name');
         $counter->setName($name);
         $this->assertEquals($name, $counter->getName(), 'Name unexpected');
+
         $headline = uniqid('headline');
         $counter->setHeadline($headline);
         $this->assertEquals($headline, $counter->getHeadline(), 'Headline unexpected');
+
         $reseted = '2014-01-01';
         $counter->setReseted($reseted);
         $this->assertEquals($reseted, $counter->getReseted(), 'Reseted unexpected');
-        $owner = new UserModel(uniqid('owner'));
-        $counter->setOwner( $owner);
-        $this->assertEquals($owner->getNick(), $counter->getOwner(), 'Owner unexpected');
-
     }
 
     /**
