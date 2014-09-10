@@ -24,7 +24,5 @@ monolog:
 
 j_somerstone_days_without:
     storage:
-        # Absolute path to store Counters to
-        counter_path: /tmp/dwo/prod/counters
-        # Absolute path to store Users to
-        user_path: /tmp/dwo/prod/users
+        server: "localhost:27017"
+        database: dayswithout
