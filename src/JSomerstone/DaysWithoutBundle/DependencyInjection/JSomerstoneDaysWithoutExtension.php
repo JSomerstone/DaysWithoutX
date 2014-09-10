@@ -28,11 +28,6 @@ class JSomerstoneDaysWithoutExtension extends Extension
         $loader->load('services.yml');
 
         $container->setParameter(
-            'dayswithout.user_path',
-            $config['storage']['user_path']
-        );
-
-        $container->setParameter(
             'storage.server',
             $config['storage']['server']
         );
