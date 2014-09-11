@@ -45,3 +45,11 @@ j_somerstone_days_without:
         server: localhost:27017
         database: dayswithout
 
+google:
+    analytics:
+        trackers:
+            default:
+                name:      DaysWithout
+                accountId: UA-54672528-1
+                domain:    .dayswithout.info
+                trackPageLoadTime: true

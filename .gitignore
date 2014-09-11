@@ -14,3 +14,4 @@ doc/coverage/
 .idea/
 .vagrant/
 .DS_Store
+app/config/config_prod.yml
