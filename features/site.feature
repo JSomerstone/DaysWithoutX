@@ -28,3 +28,8 @@ Scenario: User resets existing counter
       And "/resetme" page is loaded
       And the counter is "0"
       And page has "Days without Resetme"
+
+Scenario: Link to sign-up is available
+  Given "/" page is loaded
+  Then page has "Sign up"
+    And page has "Login"
