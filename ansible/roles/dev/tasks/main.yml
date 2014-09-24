@@ -33,3 +33,11 @@
   with_items:
       - pear.phpunit.de/PHPUnit
   ignore_errors: yes
+
+- name: create development directories
+  file: path={{item}} state=directory owner=vagrant group=www-data mode=775
+  with_items:
+    - /tmp/dwo/dev/cache/
+    - /tmp/dwo/dev/logs/
+    - /tmp/dwo/test/cache/
+    - /tmp/dwo/test/logs/

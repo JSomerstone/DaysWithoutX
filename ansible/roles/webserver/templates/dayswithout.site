@@ -2,13 +2,13 @@
 	ServerName dayswithout
 	ServerAlias dayswithout.dev
 
-	DocumentRoot /home/vagrant/dayswithout/web
-	DirectoryIndex app.php
+	DocumentRoot /vagrant/web
+	DirectoryIndex app_dev.php
 	<Directory />
 		Options FollowSymLinks
 		AllowOverride All
 	</Directory>
-	<Directory /home/vagrant/dayswithout/web/>
+	<Directory /vagrant/web/>
 		Options Indexes FollowSymLinks MultiViews
 		AllowOverride All
 		Order allow,deny
