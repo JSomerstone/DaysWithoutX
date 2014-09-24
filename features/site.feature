@@ -33,3 +33,10 @@ Scenario: Link to sign-up is available
   Given "/" page is loaded
   Then page has "Sign up"
     And page has "Login"
+
+Scenario: Sign up form is available
+  Given "/signup" page is loaded
+  Then page has "Nick"
+    And page has "Password"
+    And page has "Confirm"
+    And page has "Send"

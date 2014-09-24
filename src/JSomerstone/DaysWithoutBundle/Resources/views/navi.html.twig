@@ -10,5 +10,8 @@
         <li {% if app.request.get('_route') == 'dwo_loginpage' %} class="active"{% endif %}>
             <a href="{{ url('dwo_loginpage') }}" >Login</a>
         </li>
+        <li {% if app.request.get('_route') == 'dwo_signup' %} class="active"{% endif %}>
+            <a href="{{ url('dwo_signup') }}" >Sign up</a>
+        </li>
     {% endif %}
 </ul>

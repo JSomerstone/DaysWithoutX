@@ -39,5 +39,12 @@
   with_items:
     - /tmp/dwo/dev/cache/
     - /tmp/dwo/dev/logs/
-    - /tmp/dwo/test/cache/
-    - /tmp/dwo/test/logs/
+
+- name: clear cache
+  shell: /vagrant/app/console cache:clear --env=dev
+
+- name: reset file rights
+  shell: "{{item}} /tmp/dwo/*"
+  with_items:
+    - chmod -R 775
+    - "chown -R vagrant:www-data"

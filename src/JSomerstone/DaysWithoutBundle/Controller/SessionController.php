@@ -18,6 +18,14 @@ class SessionController extends BaseController
         );
     }
 
+    public function signupPageAction()
+    {
+        return $this->render(
+            'JSomerstoneDaysWithoutBundle:Default:signup.html.twig',
+            $this->response
+        );
+    }
+
     public function logoutAction()
     {
         $user = $this->get('session')->get('user');
