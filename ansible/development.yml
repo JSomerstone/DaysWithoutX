@@ -1,0 +1,10 @@
+---
+# This playbook deploys the whole application stack in this site.
+
+- name: Setup development environment
+  hosts: default
+  roles:
+    - common
+    - webserver
+    - php-mongo
+    - dev

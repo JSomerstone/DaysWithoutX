@@ -1,0 +1,11 @@
+local   ansible_ssh_host=127.0.0.1 ansible_ssh_port=22
+stage   ansible_ssh_host=10.0.2.15 ansible_ssh_port=22
+prod    ansible_ssh_host=dayswithout.info ansible_ssh_port=22
+
+[development]
+local
+
+[staging]
+
+
+[production]

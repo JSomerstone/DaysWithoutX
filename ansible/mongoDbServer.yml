@@ -1,0 +1,12 @@
+- name: Install packages
+  apt: package={{ item }} state=present update_cache=yes
+  with_items:
+      - php-pear
+      - mongodb
+
+- shell: pear config-set auto_discover 1
+
+- name: Install PHP-monbodb
+  shell: echo 'no' | sudo pecl install mongo
+  ignore_errors: yes
+  register: php-mongo
