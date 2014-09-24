@@ -70,20 +70,4 @@ class UserModelTest extends WebTestCase
         $this->setExpectedException('LogicException');
         $user->setPassword('any password without nick fails');
     }
-
-    /**
-     * @test
-     */
-    public function jsonEncodingDoesntChangeUser()
-    {
-        $original = new UserModel('TestNick', 'PlainTxtP4ssw0rc|');
-        $json = $original->toJson();
-        $user = new UserModel();
-        $clone = $user->fromJsonObject(json_decode($json));
-
-        $this->assertEquals(
-            $original->toArray(),
-            $clone->toArray()
-        );
-    }
 }
