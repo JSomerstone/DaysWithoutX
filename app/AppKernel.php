@@ -33,7 +33,7 @@ class AppKernel extends Kernel
     public function getCacheDir()
     {
         if (in_array($this->environment, array('dev', 'test'))) {
-            return '/tmp/dwo/' .  $this->environment . '/cache/';
+            return '/tmp/dwo/' .  $this->environment . '/cache';
         }
 
         return parent::getCacheDir();
@@ -42,7 +42,7 @@ class AppKernel extends Kernel
     public function getLogDir()
     {
         if (in_array($this->environment, array('dev', 'test', 'vagrant'))) {
-            return '/tmp/dwo/' .  $this->environment . '/logs/';
+            return '/tmp/dwo/' .  $this->environment . '/logs';
         }
 
         return parent::getLogDir();
