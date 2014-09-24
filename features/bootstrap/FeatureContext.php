@@ -257,6 +257,27 @@ class FeatureContext extends BehatContext
     }
 
 
+
+    /**
+     * @When /^user "([^"]*)" signs up with passwords "([^"]*)" and "([^"]*)"$/
+     */
+    public function userSignsUpWithPasswordsAnd($nick, $password1, $password2)
+    {
+        $post = array(
+            'nick' => $nick,
+            'password' => $password1,
+            'password-confirm' => $password1,
+            'send' => '',
+            '_token' => $this->requestToken
+        );
+        $this->request = Request::create(
+            "/signup",
+            'POST',
+            $post
+        );
+        $this->response = $this->getKernel()->handle($this->request);
+    }
+
     /**
      * @Then /^page has "([^"]*)"$/
      */
