@@ -1,0 +1,17 @@
+<script>
+    var checkMandatoryFields = function()
+    {
+        var fields = $('input.mandatory');
+        for (var index = 0; index < fields.length; index++)
+        {
+            if (fields[index].value.trim() == '')
+            {
+                $('#{{ button }}').attr('disabled', 'disabled');
+                return;
+            }
+        }
+        $('#{{ button }}').removeAttr('disabled');
+    };
+    $('input.mandatory').keyup(checkMandatoryFields);
+    $('input.mandatory').blur(checkMandatoryFields);
+</script>

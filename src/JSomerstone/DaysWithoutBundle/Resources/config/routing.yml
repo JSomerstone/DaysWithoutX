@@ -22,10 +22,15 @@ dwo_logout:
     defaults: { _controller: JSomerstoneDaysWithoutBundle:Session:logout }
     methods: [GET]
 
-dwo_signup:
+dwo_signup_page:
     pattern: /signup
     defaults: { _controller: JSomerstoneDaysWithoutBundle:Session:signupPage }
     methods: [GET]
+
+dwo_signup:
+    pattern: /signup
+    defaults: { _controller: JSomerstoneDaysWithoutBundle:Session:signup }
+    methods: [POST]
 
 dwo_show_counter:
     pattern: /{name}/{owner}

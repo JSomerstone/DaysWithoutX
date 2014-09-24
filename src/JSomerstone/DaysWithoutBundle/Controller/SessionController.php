@@ -26,6 +26,18 @@ class SessionController extends BaseController
         );
     }
 
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function signupAction(Request $request)
+    {
+        $nick = $request->get('nick');
+        var_dump($nick, $request->get('password'), $request->get('password-confirm'));
+        $this->addMessage($nick);
+        return $this->getFrontPageRedirection();
+    }
+
     public function logoutAction()
     {
         $user = $this->get('session')->get('user');
