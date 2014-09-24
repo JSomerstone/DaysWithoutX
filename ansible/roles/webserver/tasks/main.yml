@@ -1,0 +1,39 @@
+#########################
+# roles/webserver/tasks
+#########################
+
+- name: Install packages
+  apt: package={{ item }} state=present update_cache=yes
+  with_items:
+      - apache2
+      - libapache2-mod-php5
+      - php5-dev
+      - php-pear
+  tags: webserver
+  notify:
+    - restart apache
+
+- name: Configure apache
+  template: src=dayswithout.site dest=/etc/apache2/sites-available/default owner=root group=root mode=0644
+  notify:
+    - restart apache
+
+- shell: pear config-set auto_discover 1
+
+- name: update pear channels
+  ignore_errors: yes
+  shell: pear channel-discover {{ item }}
+  with_items:
+      - pear.symfony-project.com
+      - components.ez.no
+      - pear.symfony.com
+  ignore_errors: yes
+
+- name: update pear
+  shell: pear upgrade pear
+
+- name: Install pear packages
+  shell: yes '' | pear install {{ item }}
+  with_items:
+      - pear.netpirates.net/Autoload
+  ignore_errors: yes

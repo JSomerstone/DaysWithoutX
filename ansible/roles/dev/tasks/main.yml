@@ -1,0 +1,43 @@
+#########################
+# dev/tasks/main
+#########################
+- name: install deps
+  apt: package={{item}} state=present
+  with_items:
+    - php5-dev
+    - php-pear
+    - curl
+    - git
+  tags: php-dev
+
+
+- name: Copy motd
+  template: src=motd dest=/etc/motd.tail owner=root group=root mode=755
+
+- name: Change default dir
+  lineinfile: dest=/home/vagrant/.bashrc
+              line="cd /vagrant"
+              state=present
+
+- name: update pear channels
+  ignore_errors: yes
+  shell: pear channel-discover {{ item }}
+  with_items:
+      - pear.phpunit.de
+      - pear.symfony-project.com
+      - components.ez.no
+      - pear.symfony.com
+
+- name: Install pear packages
+  shell: yes '' | pear install {{ item }}
+  with_items:
+      - pear.phpunit.de/PHPUnit
+  ignore_errors: yes
+
+- name: create development directories
+  file: path={{item}} state=directory owner=vagrant group=www-data mode=775
+  with_items:
+    - /tmp/dwo/dev/cache/
+    - /tmp/dwo/dev/logs/
+    - /tmp/dwo/test/cache/
+    - /tmp/dwo/test/logs/
