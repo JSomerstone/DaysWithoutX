@@ -54,8 +54,8 @@
                     <input class="btn btn-primary" id="submitButton" disabled="disabled" type="submit" value="Send">
                     <a href="{{ path('dwo_frontpage') }}" class="btn btn-link ">Cancel</a>
                 </div>
-                <input type="hidden" name="_csrf_token"
-                    value="{{ csrf_token('authenticate') }}"
+                <input type="hidden" name="_token"
+                    value="{{ csrf_token('signup') }}"
                 >
             </form>
         </div>

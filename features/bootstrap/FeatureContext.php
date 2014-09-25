@@ -266,7 +266,7 @@ class FeatureContext extends BehatContext
         $post = array(
             'nick' => $nick,
             'password' => $password1,
-            'password-confirm' => $password1,
+            'password-confirm' => $password2,
             'send' => '',
             '_token' => $this->requestToken
         );
