@@ -7,11 +7,13 @@ class InputValidator
 {
     private $validationRules = array(
         'nick' => array(
-            'pattern' => '/^[a-z]{3,48}$/i',
+            'pattern' => '[a-zA-Z]{3,48}',
+            'regexp' => '/^[a-zA-Z]{3,48}$/',
             'message' => 'Nick must have 3-48 characters between A-z'
         ),
         'password' => array(
-            'pattern' => '/.{8,128}/',
+            'pattern' => '.{8,128}',
+            'regexp' => '/.{8,128}/',
             'message' => 'Password must be at least 8 characters long'
         ),
     );
@@ -40,7 +42,7 @@ class InputValidator
      */
     public function validateField($fieldName, $string)
     {
-        if (true !== self::validateString($this->getPatternForField($fieldName), $string))
+        if (true !== self::validateString($this->getRegexpForField($fieldName), $string))
         {
             throw new InputValidatorException(
                 $fieldName,
@@ -62,17 +64,17 @@ class InputValidator
      * @return string regular expression
      * @throws InputValidatorException
      */
-    public function getPatternForField($fieldName)
+    public function getRegexpForField($fieldName)
     {
         if ( ! isset($this->validationRules[$fieldName])
-            ||  ! isset($this->validationRules[$fieldName]['pattern']))
+            ||  ! isset($this->validationRules[$fieldName]['regexp']))
         {
             throw new InputValidatorException(
                 $fieldName,
                 "Missing pattern for field '$fieldName'"
             );
         }
-        return $this->validationRules[$fieldName]['pattern'];
+        return $this->validationRules[$fieldName]['regexp'];
     }
 
     /**
@@ -108,7 +110,7 @@ class InputValidator
     }
 }
 
-class InputValidatorException extends \Exception
+class InputValidatorException extends \JSomerstone\DaysWithoutBundle\Exception\PublicException
 {
     private $invalidField;
 

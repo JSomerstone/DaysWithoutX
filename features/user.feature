@@ -36,8 +36,9 @@ Scenario: User creates private counter
       And the counter is "19"
 
 Scenario: New user wants to sign up
-  When "/signup" page is loaded
-  Then user "NewDude" signs up with passwords "Qwerti09" and "Qwerti09"
-    Then user is redirected to "/"
+  Given "/signup" page is loaded
+  When user "NewDude" signs up with passwords "Qwerti09" and "Qwerti09"
+  Then user is redirected to "/"
+    And "/" page is loaded
     And page has "Welcome NewDude, time to create your first counter"
 

@@ -1,9 +1,11 @@
 <?php
 namespace JSomerstone\DaysWithoutBundle\Controller;
 
+use Behat\Behat\Exception\Exception;
+use JSomerstone\DaysWithoutBundle\Model\UserModel;
 use Symfony\Component\HttpFoundation\Session\Session,
     Symfony\Component\HttpFoundation\Request;
-use JSomerstone\DaysWithoutBundle\Lib\InputValidatorException;
+use JSomerstone\DaysWithoutBundle\Exception\PublicException;
 
 class SessionController extends BaseController
 {
@@ -40,19 +42,21 @@ class SessionController extends BaseController
         try
         {
             $this->validateSignup($nick, $password, $passwordConfirmation);
+            $user = $this->signUpUser($nick, $password);
+            $this->setLoggedInUser($user);
         }
-        catch (InputValidatorException $e)
+        catch (PublicException $e)
         {
             $this->addError($e->getMessage());
-
-            return $this->render(
-                'JSomerstoneDaysWithoutBundle:Default:signup.html.twig',
-                $this->response
-            );
+            return $this->redirect($this->generateUrl('dwo_signup_page'));
         }
-        $userStorage = $this->getUserStorage();
+        catch (\Exception $e)
+        {
+            $this->addError('Unexpected exception occurred');
+            return $this->redirect($this->generateUrl('dwo_signup_page'));
+        }
 
-
+        $this->addMessage("Welcome $nick, time to create your first counter");
         return $this->getFrontPageRedirection();
     }
 
@@ -63,6 +67,19 @@ class SessionController extends BaseController
         $inputValidator->validatePassword($password, $passwordConfirmation);
     }
 
+    private function signUpUser($nick, $password)
+    {
+        $userStorage = $this->getUserStorage();
+        if ($userStorage->exists($nick))
+        {
+            throw new PublicException(
+                "Unfortunately nick '$nick' is already taken"
+            );
+        }
+        $user = new UserModel($nick, $password);
+        $userStorage->store($user);
+        return $user;
+    }
 
 
     public function logoutAction()

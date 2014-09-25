@@ -26,9 +26,9 @@ class InputValidatorTest extends WebTestCase
      * @test
      * @dataProvider provideFieldNames
      */
-    public function testGetPatternForField($field)
+    public function testGetRegexpForField($field)
     {
-        $result = $this->inputValidator->getPatternForField($field);
+        $result = $this->inputValidator->getRegexpForField($field);
         $this->assertNotEmpty($result);
     }
 
