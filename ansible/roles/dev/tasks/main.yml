@@ -39,6 +39,8 @@
   with_items:
     - /tmp/dwo/dev/cache/
     - /tmp/dwo/dev/logs/
+    - /tmp/dwo/test/cache/
+    - /tmp/dwo/test/logs/
 
 - name: clear cache
   shell: /vagrant/app/console cache:clear --env=dev

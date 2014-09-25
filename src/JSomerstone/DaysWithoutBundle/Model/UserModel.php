@@ -2,14 +2,17 @@
 namespace JSomerstone\DaysWithoutBundle\Model;
 
 use JSomerstone\DaysWithoutBundle\Lib\StringFormatter;
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
+    Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class UserModel
  * @package JSomerstone\DaysWithoutBundle\Model
  */
-class UserModel implements ModelInterface
+class UserModel implements ModelInterface, UserInterface
 {
+    const ROLE_USER = 'user';
+
     private $id;
 
     private $nick;
@@ -28,7 +31,7 @@ class UserModel implements ModelInterface
         $this->id = StringFormatter::getUrlSafe($nick);
         $this->password = is_null($password)
             ? null
-            : self::hashPassword($password, $nick);
+            : $this->hashPassword($password);
     }
 
     /**
@@ -155,9 +158,41 @@ class UserModel implements ModelInterface
         return $this;
     }
 
-    private static function hashPassword($password, $nick)
+    private function hashPassword($password)
     {
-        return hash('sha256', "$nick-$password");
+        return hash('sha256', $this->getSalt() . "$password");
+    }
+
+    /**
+     * @return string
+     */
+    public function getSalt()
+    {
+        return hash('sha256', $this->nick);
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getUsername()
+    {
+        return $this->getNick();
+    }
+
+    /**
+     * @return array|\Symfony\Component\Security\Core\Role\Role[]
+     */
+    public function getRoles()
+    {
+        return array(self::ROLE_USER);
+    }
+
+    /**
+     * Removes sensitive data from object
+     */
+    public function eraseCredentials()
+    {
+        $this->password = null;
     }
 
     /**

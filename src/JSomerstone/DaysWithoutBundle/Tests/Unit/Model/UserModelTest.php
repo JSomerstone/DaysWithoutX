@@ -23,10 +23,7 @@ class UserModelTest extends WebTestCase
         $user = new UserModel($nick, $password);
 
         $this->assertEquals($nick, $user->getNick());
-        $this->assertEquals(
-            hash('sha256', "$nick-$password"),
-            $user->getPassword()
-        );
+        $this->assertNotEquals($password, $user->getPassword());
     }
 
     /**
@@ -34,7 +31,7 @@ class UserModelTest extends WebTestCase
      */
     public function nameSetterWorks()
     {
-        $user = new UserModel();
+        $user = new UserModel(null);
         $user->setNick('testnick');
 
         $this->assertEquals('testnick', $user->getNick());
@@ -56,9 +53,10 @@ class UserModelTest extends WebTestCase
     public function setPasswordIsHashed()
     {
         $user = new UserModel('Relevant');
-        $user->setPassword('PlainTextPassword');
-        $expected = hash('sha256', "Relevant-PlainTextPassword");
-        $this->assertEquals($expected, $user->getPassword());
+        $plainTextPassword = 'PlainTextPassword';
+        $user->setPassword($plainTextPassword);
+
+        $this->assertNotEquals($plainTextPassword, $user->getPassword());
     }
 
     /**
