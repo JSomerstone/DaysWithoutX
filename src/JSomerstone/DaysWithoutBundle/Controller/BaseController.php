@@ -24,6 +24,7 @@ abstract class BaseController extends Controller
         'messages' => array(),
         'notices' => array(),
         'errors' => array(),
+        'field' => array()
     );
 
     /**
@@ -36,7 +37,19 @@ abstract class BaseController extends Controller
         $loggedInUser = $this->get('session')->get('user');
         $parameters['user'] = $loggedInUser;
         $parameters['loggedIn'] = $loggedInUser ? true : false;
+        $this->setValidationRulesForView($parameters);
+
         return parent::render($view, $parameters, $response);
+    }
+
+    private function setValidationRulesForView(&$parameters)
+    {
+        $validationRules = $this->getInputValidator()->getValidationRules();
+        foreach($validationRules as $fieldName => $rules)
+        {
+            $parameters['field'][$fieldName]['pattern'] = $rules['pattern'];
+            $parameters['field'][$fieldName]['title'] = $rules['message'];
+        }
     }
 
     protected function bindToResponse($variable, &$value)
@@ -181,5 +194,13 @@ abstract class BaseController extends Controller
     protected function getFrontPageRedirection()
     {
         return $this->redirect($this->generateUrl('dwo_frontpage'));
+    }
+
+    /**
+     * @return JSomerstone\DaysWithoutBundle\Lib\InputValidator
+     */
+    protected function getInputValidator()
+    {
+        return $this->get('dayswithout.inputvalidator');
     }
 }

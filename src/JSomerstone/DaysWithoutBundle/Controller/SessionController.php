@@ -3,6 +3,7 @@ namespace JSomerstone\DaysWithoutBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Session\Session,
     Symfony\Component\HttpFoundation\Request;
+use JSomerstone\DaysWithoutBundle\Lib\InputValidatorException;
 
 class SessionController extends BaseController
 {
@@ -33,10 +34,36 @@ class SessionController extends BaseController
     public function signupAction(Request $request)
     {
         $nick = $request->get('nick');
-        var_dump($nick, $request->get('password'), $request->get('password-confirm'));
-        $this->addMessage($nick);
+        $password = $request->get('password');
+        $passwordConfirmation = $request->get('password-confirm');
+
+        try
+        {
+            $this->validateSignup($nick, $password, $passwordConfirmation);
+        }
+        catch (InputValidatorException $e)
+        {
+            $this->addError($e->getMessage());
+
+            return $this->render(
+                'JSomerstoneDaysWithoutBundle:Default:signup.html.twig',
+                $this->response
+            );
+        }
+        $userStorage = $this->getUserStorage();
+
+
         return $this->getFrontPageRedirection();
     }
+
+    private function validateSignup($nick, $password, $passwordConfirmation)
+    {
+        $inputValidator = $this->getInputValidator();
+        $inputValidator->validateNick($nick);
+        $inputValidator->validatePassword($password, $passwordConfirmation);
+    }
+
+
 
     public function logoutAction()
     {

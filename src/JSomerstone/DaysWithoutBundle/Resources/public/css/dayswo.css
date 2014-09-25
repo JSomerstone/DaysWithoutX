@@ -20,3 +20,7 @@ body {
 .wo-pad-right {
     padding-right: 0px;
 }
+
+.content-box {
+    padding-bottom: 25px;
+}

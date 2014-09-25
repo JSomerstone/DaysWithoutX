@@ -16,3 +16,5 @@ services:
         class: JSomerstone\DaysWithoutBundle\Service\AuthenticationService
         arguments: [ @dayswithout.storage.user ]
 
+    dayswithout.inputvalidator:
+        class: JSomerstone\DaysWithoutBundle\Lib\InputValidator
