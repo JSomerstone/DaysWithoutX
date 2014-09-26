@@ -2,11 +2,15 @@
 namespace JSomerstone\DaysWithoutBundle\Model;
 
 use JSomerstone\DaysWithoutBundle\Lib\StringFormatter;
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
 class CounterModel implements ModelInterface
 {
     private $reseted;
+
+    /**
+     * @var \DateTime
+     */
+    private $created;
 
     protected $headline;
 
@@ -24,14 +28,32 @@ class CounterModel implements ModelInterface
      * @param string $headline The headline of the counter
      * @param string $resetDate Optional, date in format YYYY-mm-dd
      * @param \JSomerstone\DaysWithoutBundle\Model\UserModel $owner, Optional
+     * @param \DateTime|null $created optional
      */
-    public function __construct($headline, $resetDate = null, UserModel $owner = null)
+    public function __construct($headline, $resetDate = null, UserModel $owner = null, \DateTime $created = null)
     {
         $this->headline = $headline;
         $this->reseted = is_null($resetDate) ? date('Y-m-d') : $resetDate;
         $this->name = StringFormatter::getUrlSafe($headline);
         $this->owner = $owner;
         $this->public = is_null($owner);
+
+        $this->created = $created ?: new \DateTime();
+    }
+
+    /**
+     * Instantiate new CounterModel from array
+     * @param array $properties
+     * @return CounterModel
+     */
+    public static function fromArray(array $properties)
+    {
+        return new CounterModel(
+            isset($properties['headline']) ? $properties['headline'] : null,
+            isset($properties['reseted']) ? $properties['reseted'] : null,
+            isset($properties['owner']) ? new UserModel($properties['owner']) : null,
+            isset($properties['created']) ? new \DateTime($properties['created']) : null
+        );
     }
 
     /**
@@ -56,7 +78,8 @@ class CounterModel implements ModelInterface
             'reseted' => $this->reseted,
             'days' => $this->getDays(),
             'owner' => $this->getOwnerId(),
-            'public' => $this->public
+            'public' => $this->public,
+            'created' => $this->created->format('Y-m-d H:i:s')
         );
     }
 
@@ -90,6 +113,14 @@ class CounterModel implements ModelInterface
     public function getReseted()
     {
         return $this->reseted;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreated()
+    {
+        return $this->created;
     }
 
     /**
@@ -140,19 +171,4 @@ class CounterModel implements ModelInterface
     {
         return $this->public;
     }
-
-    /**
-     * @param object $json
-     * @return $this
-     */
-    public function fromJsonObject($json)
-    {
-        $this->name =  isset($json->name) ? $json->name : null;
-        $this->headline = isset($json->headline) ? $json->headline : null;
-        $this->reseted = isset($json->reseted) ? $json->reseted : date('Y-m-d');
-        $this->owner = isset($json->owner) ? $json->owner : null;
-        $this->public = isset($json->public) ? $json->public : false;
-        return $this;
-    }
-
 }

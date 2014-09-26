@@ -112,4 +112,20 @@ class CounterStorageTest  extends WebTestCase
         }
         $this->assertCount($expectedCounters, $this->counterStorage->getLatestCounters());
     }
+
+    /**
+     * @test
+     */
+    public function creationDateIsPreserved()
+    {
+        $creationDate = new \DateTime('-7 days');
+        $headline = 'Irrelevant';
+
+        $counter = new CounterModel($headline, null, null, $creationDate);
+        $this->counterStorage->store($counter);
+
+        $persisted = $this->counterStorage->load($headline);
+
+        $this->assertEquals($creationDate, $persisted->getCreated());
+    }
 } 

@@ -22,7 +22,7 @@ class CounterStorage extends BaseStorage
             ->findOne($this->getCounterQuery($name, $owner));
 
         return is_array($result)
-            ? $this->fromArray($result)
+            ? CounterModel::fromArray($result)
             : null;
     }
 
@@ -82,20 +82,6 @@ class CounterStorage extends BaseStorage
     }
 
     /**
-     * @param $counterArray
-     * @return CounterModel
-     */
-    private function fromArray($counterArray)
-    {
-        $model =  new CounterModel(
-           isset($counterArray['headline']) ? $counterArray['headline'] : null,
-           isset($counterArray['reseted']) ? $counterArray['reseted'] : null,
-           isset($counterArray['owner']) ? new UserModel($counterArray['owner']) : null
-        );
-        return $model;
-    }
-
-    /**
      * @param int $limit optional, default 10
      * @param int $skip optional, default 0
      * @return array
@@ -111,7 +97,7 @@ class CounterStorage extends BaseStorage
         $result = array();
         while ($cursor->hasNext())
         {
-            $result[] = $this->fromArray($cursor->getNext());
+            $result[] = CounterModel::fromArray($cursor->getNext());
         }
         return $result;
     }

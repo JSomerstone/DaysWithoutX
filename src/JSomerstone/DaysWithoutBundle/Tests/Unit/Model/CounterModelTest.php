@@ -149,4 +149,19 @@ class CounterModelTest extends WebTestCase
             array('Fuu-bar 123', 'fuu-bar-123'),
         );
     }
+
+    /**
+     * @test
+     */
+    public function createdSettingAndGetting()
+    {
+        $fakeCreationDate = new \DateTime('now');
+
+        $counter = new CounterModel('irrelevant', null, null, $fakeCreationDate);
+
+        $this->assertSame(
+            $fakeCreationDate,
+            $counter->getCreated()
+        );
+    }
 }
