@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-md-offset-3 col-md-6">
+    <div class="{{ notification_classes }}">
         {% for flashMessage in app.session.flashbag.get('error') %}
                 <div class="alert alert-danger">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
