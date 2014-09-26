@@ -90,7 +90,7 @@ class CounterStorage extends BaseStorage
     {
         $cursor = $this->getCollection()
             ->find()
-            ->sort(array('reseted' => -1))
+            ->sort(array('created' => -1))
             ->skip($skip)
             ->limit($limit);
 
