@@ -31,7 +31,6 @@ Scenario: User creates private counter
     Given user "Mee" has a counter "Foobar" with "19" days
     When user "Mee" resets the counter "Foobar" with password "Wr0ng!"
     Then user is redirected to "/foobar/Mee"
-      And "/foobar/Mee" page is loaded
       And page has "Wrong Nick and/or password"
       And the counter is "19"
 
@@ -39,6 +38,5 @@ Scenario: New user wants to sign up
   Given "/signup" page is loaded
   When user "NewDude" signs up with passwords "Qwerti09" and "Qwerti09"
   Then user is redirected to "/"
-    And "/" page is loaded
     And page has "Welcome NewDude, time to create your first counter"
 

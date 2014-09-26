@@ -105,7 +105,6 @@ class CounterController extends BaseController
             return $this->redirectFromNonExisting($name, $owner);
         }
         $counterModel = $this->getStorage()->load($name, $owner);
-
         $this->setCounter($counterModel);
         $this->setForm($this->getResetForm(
             $counterModel,

@@ -164,6 +164,26 @@ class FeatureContext extends BehatContext
     }
 
     /**
+     * @When /^user "([^"]*)" tries to log in with password "([^"]*)"$/
+     */
+    public function useTriesToLogInWithPassword($userName, $password)
+    {
+        $post = array(
+            'form' => array(
+                'nick' => $userName,
+                'password' => $password,
+                '_token' => $this->requestToken
+            )
+        );
+        $this->request = Request::create(
+            '/login',
+            'POST',
+            $post
+        );
+        $this->response = $this->getKernel()->handle($this->request);
+    }
+
+    /**
      * @When /^user posts new counter "([^"]*)"$/
      */
     public function userPostsNewCounter($counterHeadline)
@@ -216,22 +236,30 @@ class FeatureContext extends BehatContext
      */
     public function userResetsCounter($counterHeadline)
     {
+        return $this->resetsCounterWithPassword(null, $counterHeadline, null);
+
+    }
+
+    /**
+     * @When /^"([^"]*)" resets counter "([^"]*)" with password "([^"]*)"$/
+     */
+    public function resetsCounterWithPassword($userName, $counterHeadline, $password)
+    {
         $url = self::getCounterName($counterHeadline);
         $post = array(
             'form' => array(
-                'nick' => '',
-                'password' => '',
+                'nick' => $userName,
+                'password' => $password,
                 'reset' => '',
                 '_token' => $this->requestToken
             )
         );
         $this->request = Request::create(
-            "/$url",
+            "/$url/$userName",
             'POST',
             $post
         );
         $this->response = $this->getKernel()->handle($this->request);
-
     }
 
     /**
@@ -386,11 +414,12 @@ class FeatureContext extends BehatContext
             $this->response->isRedirect($redirUrl),
             " - Was not " . $this->response->getContent()
         );
+        $this->pageIsLoaded($redirUrl);
     }
 
     private function pageMatchesRegexp($regexp, $messageIfNot = null)
     {
-        Assert::regexp($regexp, $this->response->getContent(), $messageIfNot);
+        Assert::regexp($regexp, $this->response->getContent(), $this->response->getContent());
     }
 
     private static function getCounterName($counterHeadline)

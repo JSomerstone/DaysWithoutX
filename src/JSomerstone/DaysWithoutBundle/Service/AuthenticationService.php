@@ -51,7 +51,7 @@ class AuthenticationService
      */
     public function authenticateUserForCounter(UserModel $user, CounterModel $counter)
     {
-        $owner = $this->userStorage->load($counter->getOwner());
+        $owner = $this->userStorage->load($counter->getOwner()->getNick());
         return ($user->getPassword() === $owner->getPassword());
     }
 }
