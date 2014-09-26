@@ -242,10 +242,15 @@ class FeatureContext extends BehatContext
 
     /**
      * @When /^"([^"]*)" resets counter "([^"]*)" with password "([^"]*)"$/
+     * @When /^user "([^"]*)" resets the counter "([^"]*)" with password "([^"]*)"$/
      */
     public function resetsCounterWithPassword($userName, $counterHeadline, $password)
     {
-        $url = self::getCounterName($counterHeadline);
+        $url = sprintf(
+            "/%s%s",
+            self::getCounterName($counterHeadline),
+            $userName ? "/$userName": ''
+        );
         $post = array(
             'form' => array(
                 'nick' => $userName,
@@ -255,36 +260,12 @@ class FeatureContext extends BehatContext
             )
         );
         $this->request = Request::create(
-            "/$url/$userName",
+            $url,
             'POST',
             $post
         );
         $this->response = $this->getKernel()->handle($this->request);
     }
-
-    /**
-     * @When /^user "([^"]*)" resets the counter "([^"]*)" with password "([^"]*)"$/
-     */
-    public function userResetsTheCounterWithPassword($nick, $headline, $password)
-    {
-        $url = self::getCounterName($headline);
-        $post = array(
-            'form' => array(
-                'nick' => $nick,
-                'password' => $password,
-                'reset' => '',
-                '_token' => $this->requestToken
-            )
-        );
-        $this->request = Request::create(
-            "/$url/$nick",
-            'POST',
-            $post
-        );
-        $this->response = $this->getKernel()->handle($this->request);
-    }
-
-
 
     /**
      * @When /^user "([^"]*)" signs up with passwords "([^"]*)" and "([^"]*)"$/
@@ -409,7 +390,7 @@ class FeatureContext extends BehatContext
      */
     public function userIsRedirectedTo($redirUrl)
     {
-        Assert::true($this->response->isRedirection(), 'Not a redirection');
+        Assert::true($this->response->isRedirection(), 'Not a redirection' . $this->response->getContent());
         Assert::true(
             $this->response->isRedirect($redirUrl),
             " - Was not " . $this->response->getContent()

@@ -23,6 +23,7 @@ Scenario: User views existing counter
 
 Scenario: User resets existing counter
     Given public counter "Resetme" with "1" days
+      And "/resetme" page is loaded
     When user resets counter "Resetme"
     Then user is redirected to "/resetme"
       And the counter is "0"

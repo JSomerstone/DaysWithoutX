@@ -121,14 +121,18 @@ abstract class BaseController extends Controller
     protected function getResetForm(CounterModel $counter, UserModel $loggedInUser = null)
     {
         $builder = $this->createFormBuilder(new UserModel());
-        if ( ! $counter->isPublic()
-            || is_null($loggedInUser)
+        $builder->add('reset', 'submit');
+        if ($counter->isPublic())
+        {
+            return $builder->getForm();
+        }
+
+        if ( is_null($loggedInUser)
             || ! $this->authenticateUserForCounter($loggedInUser, $counter))
         {
             $builder->add('nick', 'text')
                 ->add('password', 'password');
         }
-        $builder->add('reset', 'submit');
         return $builder->getForm();
     }
 
