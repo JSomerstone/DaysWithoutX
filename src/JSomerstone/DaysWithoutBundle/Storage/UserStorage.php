@@ -38,7 +38,7 @@ class UserStorage extends BaseStorage
      */
     private function fromArray(array $user)
     {
-        $userModel = new UserModel();
+        $userModel = new UserModel(null);
         return $userModel->fromArray($user);
     }
 

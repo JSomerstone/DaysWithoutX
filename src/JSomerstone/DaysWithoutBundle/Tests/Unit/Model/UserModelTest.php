@@ -42,7 +42,7 @@ class UserModelTest extends WebTestCase
      */
     public function settingNameSetsId()
     {
-        $user = new UserModel();
+        $user = new UserModel(null);
         $user->setNick('TestUser');
         $this->assertEquals('testuser', $user->getId());
     }

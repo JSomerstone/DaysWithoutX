@@ -184,6 +184,10 @@ abstract class BaseController extends Controller
      */
     protected function authenticateUserForCounter(UserModel $user, CounterModel $counter)
     {
+        if ($counter->isPublic())
+        {
+            return true;
+        }
         return $this->get('dayswithout.service.authentication')
             ->authenticateUserForCounter($user, $counter);
     }
