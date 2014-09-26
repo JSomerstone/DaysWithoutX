@@ -77,4 +77,39 @@ class CounterStorageTest  extends WebTestCase
         $result = $this->counterStorage->load($counterName, $userName);
         $this->assertEquals($originalCounter, $result);
     }
+
+    public function testGetLatestCountersExists()
+    {
+        $this->assertTrue(method_exists($this->counterStorage, 'getLatestCounters'), "Missing required method");
+    }
+    /**
+     * @test
+     * @depends testGetLatestCountersExists
+     */
+    public function loadLatestCountersWithoutCounters()
+    {
+
+        $this->assertCount(0, $this->counterStorage->getLatestCounters());
+    }
+
+    /**
+     * @test
+     * @depends testGetLatestCountersExists
+     */
+    public function loadLatestCountersWithCounters()
+    {
+        $countersInDb = 12;
+        $expectedCounters = 10;
+
+        for ($i = 0; $i < $countersInDb ; $i++)
+        {
+            $this->counterStorage->store(
+                new CounterModel(
+                    uniqid('Counter '),
+                    date('Y-m-d', time() - rand(0, 60*60*24*365))
+                )
+            );
+        }
+        $this->assertCount($expectedCounters, $this->counterStorage->getLatestCounters());
+    }
 } 

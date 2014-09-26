@@ -43,4 +43,15 @@ abstract class AssertContext
             );
         }
     }
+
+    public static function notContains($needle, $hayStack, $messageIfNot = null)
+    {
+        if (stripos($hayStack, $needle) === true)
+        {
+            echo $hayStack;
+            throw new AssertionException(
+                $messageIfNot ?: "Failed asserting that '$hayStack' does not have string '$needle'"
+            );
+        }
+    }
 }

@@ -24,3 +24,11 @@ body {
 .content-box {
     padding-bottom: 25px;
 }
+
+table.counter-list td {
+    padding: 5px;
+
+}
+table.counter-list td.counter-list-daycount {
+    text-align: right;
+}

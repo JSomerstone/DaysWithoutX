@@ -32,6 +32,11 @@ abstract class BaseController extends Controller
      */
     protected $userStorage;
 
+    /**
+     * @var JSomerstone\DaysWithoutBundle\Storage\CounterStorage
+     */
+    protected $counterStorage;
+
     public function render($view, array $parameters = array(), Response $response = null)
     {
         $loggedInUser = $this->get('session')->get('user');
@@ -52,11 +57,27 @@ abstract class BaseController extends Controller
         }
     }
 
+    /**
+     * @param string $variable Index of the response-parameter to set
+     * @param $value Value of response-parameter _as_reference_
+     */
     protected function bindToResponse($variable, &$value)
     {
         $this->response[$variable] = $value;
     }
 
+    /**
+     * @param string $variable Index of the response-parameter to set
+     * @param $value Value of response-parameter
+     */
+    protected function setToResponse($variable, $value)
+    {
+        $this->response[$variable] = $value;
+    }
+
+    /**
+     * @param array $array Array to merge with current response
+     */
     protected function applyToResponse(array $array)
     {
         $this->response = array_merge($this->response, $array);
@@ -210,5 +231,17 @@ abstract class BaseController extends Controller
     protected function getInputValidator()
     {
         return $this->get('dayswithout.inputvalidator');
+    }
+
+    /**
+     *
+     * @return JSomerstone\DaysWithoutBundle\Storage\CounterStorage
+     */
+    protected function getCounterStorage()
+    {
+        if ( ! isset($this->counterStorage)) {
+            $this->counterStorage = $this->get('dayswithout.storage.counter');
+        }
+        return $this->counterStorage;
     }
 }

@@ -12,14 +12,6 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class CounterController extends BaseController
 {
-    private $counterLocation = '/tmp/dayswithout-behat';
-
-    /**
-     *
-     * @var JSomerstone\DaysWithoutBundle\Storage\CounterStorage
-     */
-    private $counterStorage;
-
     public function createAction(Request $request)
     {
         $form = $this->getCounterForm();
@@ -85,7 +77,7 @@ class CounterController extends BaseController
 
     private function storeCounterIfNeeded(CounterModel $counter)
     {
-        $storage = $this->getStorage();
+        $storage = $this->getCounterStorage();
         if ( $storage->exists($counter->getName(), $counter->getOwnerId()))
         {
             $this->addNotice('Already existed, showing it');
@@ -99,12 +91,12 @@ class CounterController extends BaseController
 
     public function showAction($name, $owner = null)
     {
-        $storage = $this->getStorage();
+        $storage = $this->getCounterStorage();
         if ( ! $storage->exists($name, $owner))
         {
             return $this->redirectFromNonExisting($name, $owner);
         }
-        $counterModel = $this->getStorage()->load($name, $owner);
+        $counterModel = $this->getCounterStorage()->load($name, $owner);
         $this->setCounter($counterModel);
         $this->setForm($this->getResetForm(
             $counterModel,
@@ -123,7 +115,7 @@ class CounterController extends BaseController
      */
     public function resetAction($name, $owner = null)
     {
-        $storage = $this->getStorage();
+        $storage = $this->getCounterStorage();
 
         if ( ! $storage->exists($name, $owner))
         {
@@ -202,17 +194,5 @@ class CounterController extends BaseController
                 )
             )
         );
-    }
-
-    /**
-     *
-     * @return JSomerstone\DaysWithoutBundle\Storage\CounterStorage
-     */
-    private function getStorage()
-    {
-        if ( ! isset($this->counterStorage)) {
-            $this->counterStorage = $this->get('dayswithout.storage.counter');
-        }
-        return $this->counterStorage;
     }
 }

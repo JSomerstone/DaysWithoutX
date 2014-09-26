@@ -1,1 +1,21 @@
 <h2>Latest counters</h2>
+<table class="counter-list">
+    <tbody>
+        {% for counter in latest %}
+            <tr>
+                <td class="counter-list-daycount">
+                    {{ counter.days }}
+                </td>
+                <td class="counter-list-head">
+                    days without <b>{{ counter.headline }}</b>
+                    {% if counter.public %}
+                    {% else %}
+                        &NonBreakingSpace;- <i>{{ counter.owner }}</i>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+
+    </tbody>
+
+</table>

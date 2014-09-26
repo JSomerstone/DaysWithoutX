@@ -321,6 +321,19 @@ class FeatureContext extends BehatContext
     }
 
     /**
+     * @Given /^page doesn\'t have "([^"]*)"$/
+     */
+    public function pageDoesntHave($expectedString)
+    {
+        Assert::false($this->response->isEmpty(), 'Unexpected empty page');
+        Assert::notContains(
+            $expectedString,
+            $this->response->getContent(),
+            " - But did not"
+        );
+    }
+
+    /**
      * @Given /^public counter "([^"]*)" with "([^"]*)" days$/
      */
     public function publicCounterWithDays($headline, $days)

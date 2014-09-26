@@ -94,4 +94,25 @@ class CounterStorage extends BaseStorage
         );
         return $model;
     }
+
+    /**
+     * @param int $limit optional, default 10
+     * @param int $skip optional, default 0
+     * @return array
+     */
+    public function getLatestCounters($limit = 10, $skip = 0)
+    {
+        $cursor = $this->getCollection()
+            ->find()
+            ->sort(array('days' => -1))
+            ->limit($limit)
+            ->skip($skip);
+
+        $result = array();
+        while ($cursor->hasNext())
+        {
+            $result[] = $this->fromArray($cursor->getNext());
+        }
+        return $result;
+    }
 }
