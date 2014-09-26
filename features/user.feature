@@ -33,10 +33,3 @@ Scenario: User creates private counter
     Then user is redirected to "/foobar/Mee"
       And page has "Wrong Nick and/or password"
       And the counter is "19"
-
-Scenario: New user wants to sign up
-  Given "/signup" page is loaded
-  When user "NewDude" signs up with passwords "Qwerti09" and "Qwerti09"
-  Then user is redirected to "/"
-    And page has "Welcome NewDude, time to create your first counter"
-
