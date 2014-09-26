@@ -2,4 +2,4 @@
 clear
 phpunit
 
-bin/behat features/
+bin/behat --format progress features/
