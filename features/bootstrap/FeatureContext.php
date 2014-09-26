@@ -150,6 +150,26 @@ class FeatureContext extends BehatContext
     }
 
     /**
+     * @Given /^system has counters:$/
+     */
+    public function systemHasCounters(TableNode $table)
+    {
+        $hash = $table->getHash();
+        foreach ( $hash as $row)
+        {
+            $owner = $row['Owner'] ? new UserModel($row['Owner']) : null;
+            $resetDate = date('Y-m-d', time() - 60 * 60 * 24 * (int)$row['Days']);
+            $counterModel = new CounterModel(
+                $row['Counter'],
+                $resetDate,
+                $owner
+            );
+
+            $this->counterStorage->store($counterModel);
+        }
+    }
+
+    /**
      * @When /^"([^"]*)" page is loaded$/
      */
     public function pageIsLoaded($uri)
