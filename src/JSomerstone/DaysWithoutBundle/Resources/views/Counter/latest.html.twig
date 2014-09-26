@@ -9,12 +9,7 @@
                 <td class="counter-list-head">
                     <a href="{{ url('dwo_show_counter', { 'name': counter.name, 'owner': counter.owner }) }}">
                         days without <b>{{ counter.headline }}</b>
-                    </a>
-
-                    {% if counter.public %}
-                    {% else %}
-                        &NonBreakingSpace;- <i>{{ counter.owner }}</i>
-                    {% endif %}
+                    </a>{% if not counter.public %} - <i>{{ counter.owner }}</i>{% endif %}
                 </td>
             </tr>
         {% endfor %}
