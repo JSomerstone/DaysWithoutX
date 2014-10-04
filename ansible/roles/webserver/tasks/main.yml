@@ -14,7 +14,17 @@
     - restart apache
 
 - name: Configure apache
-  template: src=dayswithout.site dest=/etc/apache2/sites-available/default owner=root group=root mode=0644
+  template: src=dayswithout.conf dest=/etc/apache2/sites-available/dayswithout.conf owner=root group=root mode=0644
+  notify:
+      - restart apache
+
+- name: Enable configuration
+  file: src=/etc/apache2/sites-available/dayswithout.conf dest=/etc/apache2/sites-enabled/dayswithout.conf state=link
+  notify:
+    - restart apache
+
+- name: remove default apache configuration
+  file: path=/etc/apache2/sites-enabled/000-default.conf state=absent
   notify:
     - restart apache
 
