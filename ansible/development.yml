@@ -3,6 +3,10 @@
 
 - name: Setup development environment
   hosts: default
+  vars:
+      directory_index: app_dev.php
+      document_root: /var/www/html/dayswithout/
+      application_path: /vagrant
   roles:
     - common
     - webserver

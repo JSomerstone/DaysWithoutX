@@ -10,7 +10,6 @@
     - git
   tags: php-dev
 
-
 - name: Copy motd
   template: src=motd dest=/etc/motd.tail owner=root group=root mode=755
 
@@ -42,6 +41,15 @@
     - /tmp/dwo/test/cache/
     - /tmp/dwo/test/logs/
 
+- name: Symlink sources to correct path
+  file: src=/vagrant/web dest=/var/www/html/dayswithout state=link owner=root group=www-data
+
+- name: Compose Project
+  shell: composer {{item}} --working-dir {{application_path}}
+  with_items:
+    - update
+    - install
+
 - name: clear cache
   shell: /vagrant/app/console cache:clear --env=dev
 
@@ -50,7 +58,3 @@
   with_items:
     - chmod -R 775
     - "chown -R vagrant:www-data"
-
-- name: Symlink sources to correct path
-  file: src=/vagrant/web dest=/var/www/html/dayswithout state=link owner=root group=www-data
-

@@ -1,0 +1,16 @@
+---
+# This playbook deploys the whole application stack in this site.
+
+- name: Setup PRODUCTION environment
+  hosts: production
+  vars:
+      directory_index: app.php
+      document_root: /var/www/html/dayswithout/
+      version: 2.2.0
+      project_root: "../../../../../dayswithout"
+      application_path: "/opt/jsomerstone/dayswithout-{{version}}"
+  roles:
+    - common
+    - webserver
+    - php-mongo
+    - prod
