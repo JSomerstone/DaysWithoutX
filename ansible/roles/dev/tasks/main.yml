@@ -8,53 +8,62 @@
     - php-pear
     - curl
     - git
-  tags: php-dev
+  tags: dev
 
 - name: Copy motd
-  template: src=motd dest=/etc/motd.tail owner=root group=root mode=755
+  template: src=motd dest=/etc/motd.tail owner={{owner}} group={{owner}} mode=755
+  tags: dev
 
 - name: Change default dir
   lineinfile: dest=/home/vagrant/.bashrc
               line="cd /vagrant"
               state=present
+  tags: dev
 
 - name: update pear channels
+  shell: pear channel-discover pear.phpunit.de
   ignore_errors: yes
-  shell: pear channel-discover {{ item }}
-  with_items:
-      - pear.phpunit.de
-      - pear.symfony-project.com
-      - components.ez.no
-      - pear.symfony.com
+  tags: dev
 
 - name: Install pear packages
-  shell: yes '' | pear install {{ item }}
-  with_items:
-      - pear.phpunit.de/PHPUnit
+  shell: yes '' | pear install pear.phpunit.de/PHPUnit
   ignore_errors: yes
+  register: pear_result
+  changed_when: "'installed' not in pear_result.stdout"
+#  failed_when: "'6.2.0.0' not in pear_result.stdout"
+  tags: dev
 
 - name: create development directories
-  file: path={{item}} state=directory owner=vagrant group=www-data mode=775
+  file:
+    path={{item}}
+    state=directory
+    owner={{owner}}
+    group={{apache_user}}
+    mode=775
   with_items:
     - /tmp/dwo/dev/cache/
     - /tmp/dwo/dev/logs/
     - /tmp/dwo/test/cache/
     - /tmp/dwo/test/logs/
 
-- name: Symlink sources to correct path
-  file: src=/vagrant/web dest=/var/www/html/dayswithout state=link owner=root group=www-data
+- name: Warmup cache
+  shell: "{{application_path}}/app/console cache:clear --env={{env}} --no-debug"
+  tags: dev
 
-- name: Compose Project
-  shell: composer {{item}} --working-dir {{application_path}}
-  with_items:
-    - update
-    - install
+- name: enable cache
+  file:
+    path=/tmp/dwo/dev/cache/
+    state=directory
+    recurse=yes
+    owner={{owner}}
+    group={{apache_user}}
+    mode=775
+  tags: dev
 
-- name: clear cache
-  shell: /vagrant/app/console cache:clear --env=dev
-
-- name: reset file rights
-  shell: "{{item}} /tmp/dwo/*"
-  with_items:
-    - chmod -R 775
-    - "chown -R vagrant:www-data"
+- name: Symlink sources to production path
+  file:
+      src={{application_path}}
+      dest=/opt/jsomerstone/dayswithout-{{version}}
+      state=link
+      owner={{owner}}
+      group={{apache_user}}
