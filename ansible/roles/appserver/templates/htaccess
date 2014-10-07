@@ -3,7 +3,7 @@
 # mod_rewrite). Additionally, this reduces the matching process for the
 # start page (path "/") because otherwise Apache will apply the rewriting rules
 # to each configured DirectoryIndex file (e.g. index.php, index.html, index.pl).
-DirectoryIndex app.php
+DirectoryIndex {{directory_index}}
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
@@ -18,7 +18,7 @@ DirectoryIndex app.php
 
     # Change below before deploying to production
     #RewriteRule ^(.*)$ app.php [QSA,L]
-    RewriteRule ^(.*)$ app_dev.php [QSA,L]
+    RewriteRule ^(.*)$ {{directory_index}} [QSA,L]
 </IfModule>
 
 <IfModule !mod_rewrite.c>
@@ -26,7 +26,7 @@ DirectoryIndex app.php
         # When mod_rewrite is not available, we instruct a temporary redirect of
         # the start page to the front controller explicitly so that the website
         # and the generated links can still be used.
-        RedirectMatch 302 ^/$ /app.php/
+        RedirectMatch 302 ^/$ /{{directory_index}}/
         # RedirectTemp cannot be used instead
     </IfModule>
 </IfModule>

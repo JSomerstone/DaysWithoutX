@@ -14,3 +14,5 @@ doc/coverage/
 .idea/
 .vagrant/
 .DS_Store
+app/config/parameters_dev.yml
+web/.htaccess
