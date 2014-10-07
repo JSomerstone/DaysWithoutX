@@ -1,93 +1,11 @@
 #########################
 # prod/tasks/main
 #########################
-- name: install deps
-  apt: package=php-pear state=present
-  tags: pear
-
-- name: update pear channels
-  ignore_errors: yes
-  shell: pear channel-discover {{ item }}
-  with_items:
-      - pear.symfony-project.com
-      - components.ez.no
-      - pear.symfony.com
-  tags: pear
 
 - name: Clone app
   git: repo=https://github.com/JSomerstone/DaysWithoutX.git
        dest={{application_path}}
        version=v{{version}}
   tags: app
+  notify: compose project
 
-- name: Remove testing related
-  file: path="{{application_path}}/{{item}}" state=absent
-  with_items:
-      - ansible
-      - features
-      - test
-      - .gitignore
-      - .travis.yml
-      - phpunit.xml
-      - runtests.sh
-      - Vagrantfile
-      - vagrant_ansible_inventory_default
-      - app/config/config_test.yml
-
-- name: Create cache/log dirs
-  file: path="{{application_path}}/{{item}}" state=directory owner=root group=www-data mode=774
-  with_items:
-    - app/cache
-    - app/cache/prod/*
-    - app/logs
-  tags: app
-
-- name: Create cache/log dirs
-  file: path="{{application_path}}/app/logs/prod.log" state=touch owner=root group=www-data mode=664
-  tags: app
-
-- name: Compose project
-  shell: composer install --working-dir {{application_path}} --no-dev --optimize-autoloader
-  tags:
-    - composer
-    - app
-
-- name: Generate symfony cache
-  shell: php "{{application_path}}/vendor/sensio/distribution-bundle/Sensio/Bundle/DistributionBundle/Resources/bin/build_bootstrap.php"
-  tags: app
-
-- name: Configure app parameters
-  template: src=parameters.yml dest="{{application_path}}/app/config/parameters.yml"
-  tags: app
-
-- name: Warmup cache
-  shell: "{{application_path}}/app/console cache:clear --env=prod --no-debug"
-  tags: app
-
-- name: Enable write to cache
-  file: path="{{application_path}}/app/cache/prod" state=directory recurse=yes owner=root group=www-data mode=775
-  tags: app
-
-- name: Install assets
-  shell: "{{application_path}}/app/console assets:install {{application_path}}/web --env=prod --no-debug"
-  tags: app
-
-- name: Symlink to current version
-  file: src="/opt/jsomerstone/dayswithout-{{version}}" dest=/opt/jsomerstone/dayswithout state=link
-  tags: app
-
-- name: Symlink to document root
-  file:
-    src=/opt/jsomerstone/dayswithout/web
-    dest=/var/www/html/dayswithout
-    state=link
-    owner=root
-    group=www-data
-  tags: app
-
-- name: Ensure requested services are on
-  service: name={{item}} state=started
-  with_items:
-    - apache2
-    - mongodb
-  tags: app

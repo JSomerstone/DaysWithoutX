@@ -1,0 +1,16 @@
+
+- name: compose project
+  shell: composer install --working-dir {{application_path}} --optimize-autoloader
+  tags:
+    - composer
+    - app
+
+- name: enable cache
+  file:
+    path="{{application_path}}/app/cache/{{env}}"
+    state=directory
+    recurse=yes
+    owner={{owner}}
+    group={{apache_user}}
+    mode=775
+  tags: app

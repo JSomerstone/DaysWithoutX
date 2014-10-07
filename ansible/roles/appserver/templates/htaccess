@@ -16,8 +16,6 @@ DirectoryIndex {{directory_index}}
 
     RewriteCond %{REQUEST_FILENAME} !-f
 
-    # Change below before deploying to production
-    #RewriteRule ^(.*)$ app.php [QSA,L]
     RewriteRule ^(.*)$ {{directory_index}} [QSA,L]
 </IfModule>
 

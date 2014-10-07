@@ -1,9 +1,31 @@
 #########################
-# prod/tasks/main
+# appserver/tasks/main
 #########################
+
+- name: Create directory for dayswithout
+  file: path=/opt/jsomerstone state=directory owner=root group={{apache_user}}
+
+- name: install composer
+  shell: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin creates=/usr/local/bin/composer
+  tags:
+    - composer
+    - app
+
 - name: install deps
   apt: package=php-pear state=present
   tags: pear
+
+- name: rename composer.phar to composer
+  shell: mv /usr/local/bin/composer.phar /usr/local/bin/composer creates=/usr/local/bin/composer
+  tags:
+      - composer
+      - app
+
+- name: make composer executable
+  shell: chmod a+x /usr/local/bin/composer
+  tags:
+      - composer
+      - app
 
 - name: update pear channels
   ignore_errors: yes
@@ -14,66 +36,81 @@
       - pear.symfony.com
   tags: pear
 
-- name: Clone app
-  git: repo=https://github.com/JSomerstone/DaysWithoutX.git
-       dest={{application_path}}
-       version=v{{version}}
-  tags: app
-
-- name: Remove testing related
-  file: path="{{application_path}}/{{item}}" state=absent
+- name: Install pear packages
+  shell: yes '' | pear install {{ item }}
   with_items:
-      - ansible
-      - features
-      - test
-      - .gitignore
-      - .travis.yml
-      - phpunit.xml
-      - runtests.sh
-      - Vagrantfile
-      - vagrant_ansible_inventory_default
-      - app/config/config_test.yml
+      - pear.netpirates.net/Autoload
+  ignore_errors: yes
 
 - name: Create cache/log dirs
-  file: path="{{application_path}}/{{item}}" state=directory owner=root group=www-data mode=774
+  file: path="{{application_path}}/{{item}}" state=directory owner={{owner}} group={{apache_user}} mode=774
   with_items:
     - app/cache
-    - app/cache/prod/*
+    - app/cache/prod
+    - app/cache/dev
+    - app/cache/test
     - app/logs
   tags: app
 
 - name: Create cache/log dirs
-  file: path="{{application_path}}/app/logs/prod.log" state=touch owner=root group=www-data mode=664
+  file: path="{{application_path}}/app/logs/{{item}}" state=touch owner={{owner}} group={{apache_user}} mode=664
+  with_items:
+    - prod.log
+    - dev.log
+    - test.log
   tags: app
 
-- name: Compose project
-  shell: composer install --working-dir {{application_path}} --no-dev --optimize-autoloader
+- name: compose project
+  shell: composer install --working-dir {{application_path}} --optimize-autoloader
+  args:
+        creates: "{{application_path}}/vendor/autoload.php"
   tags:
     - composer
     - app
 
 - name: Generate symfony cache
   shell: php "{{application_path}}/vendor/sensio/distribution-bundle/Sensio/Bundle/DistributionBundle/Resources/bin/build_bootstrap.php"
+  args:
+          creates: "{{application_path}}/app/bootstrap.php.cache"
   tags: app
 
 - name: Configure app parameters
-  template: src=parameters.yml dest="{{application_path}}/app/config/parameters.yml"
+  template:
+    src=parameters.yml
+    dest="{{application_path}}/app/config/parameters_{{env}}.yml"
+    owner={{owner}}
+    group={{apache_user}}
+    mode=775
+
   tags: app
 
 - name: Warmup cache
-  shell: "{{application_path}}/app/console cache:clear --env=prod --no-debug"
+  shell: "{{application_path}}/app/console cache:clear --env={{env}} --no-debug"
+  args:
+      creates: "{{application_path}}/app/cache/{{env}}/classes.map"
   tags: app
-
-- name: Enable write to cache
-  file: path="{{application_path}}/app/cache/prod" state=directory recurse=yes owner=root group=www-data mode=775
-  tags: app
+  notify:
+    - enable cache
 
 - name: Install assets
-  shell: "{{application_path}}/app/console assets:install {{application_path}}/web --env=prod --no-debug"
+  shell: "{{application_path}}/app/console assets:install {{application_path}}/web --env={{env}} --no-debug"
   tags: app
 
+- name: Set .htaccess
+  template:
+    src=htaccess
+    dest="{{application_path}}/web/.htaccess"
+    owner={{owner}}
+    group={{apache_user}}
+    mode=440
+
 - name: Symlink to current version
-  file: src="/opt/jsomerstone/dayswithout-{{version}}" dest=/opt/jsomerstone/dayswithout state=link
+  file:
+    src="/opt/jsomerstone/dayswithout-{{version}}"
+    dest=/opt/jsomerstone/dayswithout
+    state=link
+    owner={{owner}}
+    group={{apache_user}}
   tags: app
 
 - name: Symlink to document root
@@ -81,13 +118,6 @@
     src=/opt/jsomerstone/dayswithout/web
     dest=/var/www/html/dayswithout
     state=link
-    owner=root
-    group=www-data
-  tags: app
-
-- name: Ensure requested services are on
-  service: name={{item}} state=started
-  with_items:
-    - apache2
-    - mongodb
+    owner={{owner}}
+    group={{apache_user}}
   tags: app
