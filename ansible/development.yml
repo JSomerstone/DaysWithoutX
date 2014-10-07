@@ -7,8 +7,13 @@
       directory_index: app_dev.php
       document_root: /var/www/html/dayswithout/
       application_path: /vagrant
+      env: dev
+      version: dev
+      owner: vagrant
+      apache_user: www-data
   roles:
     - common
     - webserver
     - php-mongo
     - dev
+    - appserver

@@ -7,10 +7,13 @@
       directory_index: app.php
       document_root: /var/www/html/dayswithout/
       version: 2.2.0
-      project_root: "../../../../../dayswithout"
       application_path: "/opt/jsomerstone/dayswithout-{{version}}"
+      env: prod
+      owner: root
+      apache_user: www-data
   roles:
     - common
     - webserver
     - php-mongo
     - prod
+    - appserver
