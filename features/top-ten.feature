@@ -13,18 +13,20 @@ Scenario: Newest counters div is present
   When "/" page is loaded
   Then page has "Latest counters"
 
-Scenario: Newest counters are shown in front-page
+Scenario: 10 Newest counters are shown in front-page
   Given system has counters:
-  | Owner     | Counter  | Days |
-  | Abba      | First    | 0    |
-  |           | Second   | 1    |
-  | Coldplay  | Third    | 2    |
-  | DaftPunk  | Sixth    | 3    |
-  |           | Seventh  | 4    |
-  | Beegees   | Eight    | 5    |
-  | Coldplay  | Ninth    | 6    |
-  | DaftPunk  | Tenth    | 7    |
-  | Abba      | Eleventh | 47   |
+  | Owner     | Counter  | Days | Created    |
+  | Abba      | First    | 0    | 2014-01-09 |
+  |           | Second   | 1    | 2014-01-08 |
+  | Coldplay  | Third    | 2    | 2014-01-07 |
+  | Coldplay  | Fourth   | 2    | 2014-01-07 |
+  | Coldplay  | Fifth    | 2    | 2014-01-07 |
+  | DaftPunk  | Sixth    | 3    | 2014-01-06 |
+  |           | Seventh  | 4    | 2014-01-05 |
+  | Beegees   | Eight    | 5    | 2014-01-04 |
+  | Coldplay  | Ninth    | 6    | 2014-01-03 |
+  | DaftPunk  | Tenth    | 7    | 2014-01-02 |
+  | Abba      | Eleventh | 47   | 2014-01-01 |
   When "/" page is loaded
   Then page has "First"
     And page has "Second"

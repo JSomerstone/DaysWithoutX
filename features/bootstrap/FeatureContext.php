@@ -159,10 +159,12 @@ class FeatureContext extends BehatContext
         {
             $owner = $row['Owner'] ? new UserModel($row['Owner']) : null;
             $resetDate = date('Y-m-d', time() - 60 * 60 * 24 * (int)$row['Days']);
+            $createdDate = isset($row['Created']) ? new \DateTime($row['Created']) : null;
             $counterModel = new CounterModel(
                 $row['Counter'],
                 $resetDate,
-                $owner
+                $owner,
+                $createdDate
             );
 
             $this->counterStorage->store($counterModel);
@@ -329,7 +331,7 @@ class FeatureContext extends BehatContext
         Assert::notContains(
             $expectedString,
             $this->response->getContent(),
-            " - But did not"
+            " - But did"
         );
     }
 

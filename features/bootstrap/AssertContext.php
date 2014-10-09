@@ -46,7 +46,7 @@ abstract class AssertContext
 
     public static function notContains($needle, $hayStack, $messageIfNot = null)
     {
-        if (stripos($hayStack, $needle) === true)
+        if (is_int(stripos($hayStack, $needle)))
         {
             echo $hayStack;
             throw new AssertionException(
