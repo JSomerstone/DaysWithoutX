@@ -48,7 +48,12 @@
     </div>
     <div class="row">
         <div class="{{ content_classes }}">
-            {% include 'JSomerstoneDaysWithoutBundle:Counter:latest.html.twig' %}
+            <div class="col-lg-6">
+                {% include 'JSomerstoneDaysWithoutBundle:Counter:latest.html.twig' %}
+            </div>
+            <div class="col-lg-6">
+                {% include 'JSomerstoneDaysWithoutBundle:Counter:resent.html.twig' %}
+            </div>
         </div>
     </div>
 {% endblock %}

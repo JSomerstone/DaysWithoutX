@@ -41,8 +41,10 @@
     group={{apache_user}}
     mode=775
   with_items:
+    - /tmp/dwo/dev/
     - /tmp/dwo/dev/cache/
     - /tmp/dwo/dev/logs/
+    - /tmp/dwo/test/
     - /tmp/dwo/test/cache/
     - /tmp/dwo/test/logs/
 

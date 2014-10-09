@@ -6,7 +6,8 @@ class DefaultController extends BaseController
     public function indexAction()
     {
         $this->setForm($this->getCounterForm(null, $this->isLoggedIn()));
-        $this->setLatestCounters(array());
+        $this->setToResponse('latest', $this->getLatestCounters());
+        $this->setToResponse('resentResets', $this->getResentResets());
 
         return $this->render(
             'JSomerstoneDaysWithoutBundle:Default:index.html.twig',
@@ -14,9 +15,13 @@ class DefaultController extends BaseController
         );
     }
 
-    private function setLatestCounters(array $latestCounters)
+    private function getLatestCounters()
     {
-        $latestCounters = $this->getCounterStorage()->getLatestCounters();
-        $this->setToResponse('latest', $latestCounters);
+        return $this->getCounterStorage()->getLatestCounters();
+    }
+
+    private function getResentResets()
+    {
+        return $this->getCounterStorage()->getResentResetsCounters();
     }
 }

@@ -94,6 +94,27 @@ class CounterStorage extends BaseStorage
             ->skip($skip)
             ->limit($limit);
 
+        return $this->getResultsFromCursor($cursor);
+    }
+
+    /**
+     * @param int $limit optional, default 10
+     * @param int $skip optional, default 0
+     * @return array
+     */
+    public function getResentResetsCounters($limit = 10, $skip = 0)
+    {
+        $cursor = $this->getCollection()
+            ->find()
+            ->sort(array('reseted' => -1))
+            ->skip($skip)
+            ->limit($limit);
+
+        return $this->getResultsFromCursor($cursor);
+    }
+
+    private function getResultsFromCursor(\MongoCursor $cursor)
+    {
         $result = array();
         while ($cursor->hasNext())
         {
