@@ -32,6 +32,11 @@ dwo_signup:
     defaults: { _controller: JSomerstoneDaysWithoutBundle:Session:signup }
     methods: [POST]
 
+dwo_list_user_counters:
+    pattern: /user/{user}/counters
+    defaults: { _controller: JSomerstoneDaysWithoutBundle:Counter:showUsersCounters }
+    methods: [GET]
+
 dwo_show_counter:
     pattern: /{name}/{owner}
     defaults: { _controller: JSomerstoneDaysWithoutBundle:Counter:show, owner: null }

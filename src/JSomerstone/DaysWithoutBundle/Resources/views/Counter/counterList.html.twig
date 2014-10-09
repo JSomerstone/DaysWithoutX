@@ -1,7 +1,7 @@
-<h2>Latest counters</h2>
+<h2>{{ list_headline }}</h2>
 <table class="counter-list">
     <tbody>
-        {% for counter in latest %}
+        {% for counter in counters %}
             <tr>
                 <td class="counter-list-daycount">
                     {{ counter.days }}
@@ -9,7 +9,12 @@
                 <td class="counter-list-head">
                     <a href="{{ url('dwo_show_counter', { 'name': counter.name, 'owner': counter.owner }) }}">
                         days without <b>{{ counter.headline }}</b>
-                    </a>{% if not counter.public %} - <i>{{ counter.owner }}</i>{% endif %}
+                    </a>
+                    {% if not counter.public %}
+                        - <a href="{{ url('dwo_list_user_counters', { 'user': counter.owner}) }}">
+                            {{ counter.owner }}
+                        </a>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}

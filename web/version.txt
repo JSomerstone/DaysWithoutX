@@ -1,3 +1,7 @@
+2.2.3
+- 10 resently reset counters
+- List of users counters
+
 2.2.1
 - Redone deployment
 

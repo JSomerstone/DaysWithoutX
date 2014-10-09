@@ -8,6 +8,7 @@ use JSomerstone\DaysWithoutBundle\Model\UserModel;
 class CounterStorage extends BaseStorage
 {
     const COLLECTION = 'counter';
+    const SANITY_LIMIT = 200;
 
     /**
      *
@@ -109,6 +110,22 @@ class CounterStorage extends BaseStorage
             ->sort(array('reseted' => -1))
             ->skip($skip)
             ->limit($limit);
+
+        return $this->getResultsFromCursor($cursor);
+    }
+
+    /**
+     * @param string $nick
+     * @param string $sortBy optional default 'reseted'
+     * @param int $direction 1 | -1
+     * @return array
+     */
+    public function getUsersCounters($nick, $sortBy = 'reseted', $direction = -1)
+    {
+        $cursor = $this->getCollection()
+            ->find(array('owner' => $nick))
+            ->sort(array($sortBy => $direction))
+            ->limit(self::SANITY_LIMIT);
 
         return $this->getResultsFromCursor($cursor);
     }

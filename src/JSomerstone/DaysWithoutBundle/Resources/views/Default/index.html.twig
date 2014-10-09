@@ -49,10 +49,20 @@
     <div class="row">
         <div class="{{ content_classes }}">
             <div class="col-lg-6">
-                {% include 'JSomerstoneDaysWithoutBundle:Counter:latest.html.twig' %}
+                {% include 'JSomerstoneDaysWithoutBundle:Counter:counterList.html.twig'
+                    with {
+                        list_headline: 'Latest counters',
+                        counters: latest
+                    }
+                %}
             </div>
             <div class="col-lg-6">
-                {% include 'JSomerstoneDaysWithoutBundle:Counter:resent.html.twig' %}
+                {% include 'JSomerstoneDaysWithoutBundle:Counter:counterList.html.twig'
+                    with {
+                        list_headline: 'Resent resets',
+                        counters: resentResets
+                    }
+                %}
             </div>
         </div>
     </div>

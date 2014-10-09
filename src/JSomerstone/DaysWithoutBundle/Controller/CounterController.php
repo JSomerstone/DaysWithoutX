@@ -143,6 +143,28 @@ class CounterController extends BaseController
         return $this->redirectToCounter($counter);
     }
 
+    public function showUsersCountersAction($user)
+    {
+        $counterStorage = $this->getCounterStorage();
+        $userStorage  = $this->getUserStorage();
+        $userObject = $userStorage->load($user);
+        if ( ! $userObject)
+        {
+            $this->addError('User not found');
+            return $this->getFrontPageRedirection();
+        }
+        $this->setToResponse('owner', $userObject);
+        $this->setToResponse(
+            'counters',
+            $this->counterStorage->getUsersCounters($userObject->getNick())
+        );
+
+        return $this->render(
+            'JSomerstoneDaysWithoutBundle:Counter:usersCounters.html.twig',
+            $this->response
+        );
+    }
+
     /**
      * @param string $name
      * @return \Symfony\Component\HttpFoundation\Response
