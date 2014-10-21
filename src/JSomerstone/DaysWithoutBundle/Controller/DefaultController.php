@@ -5,9 +5,14 @@ class DefaultController extends BaseController
 {
     public function indexAction()
     {
-        $this->setToResponse('loggedIn', $this->isLoggedIn());
-        $this->setToResponse('latest', $this->getLatestCounters());
-        $this->setToResponse('resentResets', $this->getResentResets());
+        $this->applyToResponse(
+            array(
+                'loggedIn' =>       $this->isLoggedIn(),
+                'latest' =>         $this->getLatestCounters(),
+                'resentResets' =>   $this->getResentResets(),
+                'succession' =>     $this->getSuccession(),
+            )
+        );
 
         return $this->render(
             'JSomerstoneDaysWithoutBundle:Default:index.html.twig',
@@ -23,5 +28,23 @@ class DefaultController extends BaseController
     private function getResentResets()
     {
         return $this->getCounterStorage()->getResentResetsCounters();
+    }
+
+    private function getSuccession()
+    {
+        $pool = array(
+            'Smoking',
+            'TV',
+            'Sweets',
+            'Internet',
+            'Porn',
+            'Drinking',
+            'Russia invading a country',
+            'USA invading a country',
+            'Getting laid',
+            'Rain',
+            'Seeing the sun',
+        );
+        return $pool[rand(0, count($pool) -1 )];
     }
 }

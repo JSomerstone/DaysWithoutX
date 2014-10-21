@@ -10,13 +10,13 @@ Background:
 Scenario: Front page for not logged in doesn't show button for Private counter
   When "/" page is loaded
   Then page has button "Public"
-    But page does not have button "Private"
+    But page does not have button "Protected"
 
 Scenario: Front page for not logged in doesn't show button for Private counter
   Given user "Mee" is logged in
   When "/" page is loaded
   Then page has button "Public"
-    And page has button "Private"
+    And page has button "Protected"
 
 Scenario: User opens private counter
   Given user "Mee" with password "fuubar123"
