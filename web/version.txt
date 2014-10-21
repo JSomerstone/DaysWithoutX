@@ -1,5 +1,6 @@
 2.3.0
-- Login required to create private counters
+- Login required to create private/protected counters
+- Counter headline successions
 
 2.2.3
 - 10 resently reset counters
