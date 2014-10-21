@@ -5,59 +5,7 @@
 {% block content %}
     <div class="row">
         <div class="{{ content_classes }}">
-            <h2>Start new counter:</h2>
-            <h3>0 days without</h3>
-            <form action="{{ path('dwo_create_counter') }}" method="post" class="form-horizontal" role="form">
-                <div class="form-group">
-                    <div class="col-xs-12">
-                        <input
-                            name="headline"
-                            type="text"
-                            class="form-control mandatory input-lg"
-                            placeholder="... what?"
-                            required="1"
-                            pattern="{{ field.headline.pattern }}"
-                            title="{{ field.headline.title }}"
-                        >
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-8">
-                        <button
-                            name="public"
-                            class="btn btn-lg btn-success btn-block"
-                            value="Public"
-                            title="Anyone can see & reset the counter"
-                        >Public</button>
-                    </div>
-                    <div class="col-sm-4">
-                        <p>
-                            Anyone can see & reset
-                        </p>
-                    </div>
-                </div>
-                {% if loggedIn %}
-                    <div class="form-group">
-                        <div class="col-sm-8">
-                            <button
-                                name="private"
-                                class="btn btn-lg btn-danger btn-block"
-                                value="Private"
-                                title="Anyone can see, only You can reset"
-                            >Private</button>
-                        </div>
-                        <div class="col-sm-4">
-                            Anyone can see, only You can reset
-                        </div>
-                    {% else %}
-                        <p>
-                            To create <b>Protected</b> or <b>Private</b> counters, please
-                            <a href="{{ path('dwo_login') }}">login</a> or
-                            <a href="{{ path('dwo_signup') }}">sign up</a>
-                        </p>
-                    </div>
-                {% endif %}
-            </form>
+            {% include 'JSomerstoneDaysWithoutBundle:Counter:newCounter.html.twig' %}
         </div>
     </div>
     <div class="row">

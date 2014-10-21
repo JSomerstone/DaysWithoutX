@@ -14,79 +14,40 @@ class CounterController extends BaseController
 {
     public function createAction(Request $request)
     {
-        $form = $this->getCounterForm();
-        $form->handleRequest($request);
+        $headline = $request->get('headline');
+        $public =  ! is_null($request->get('public'));
+        $private = ! is_null($request->get('private'));
+        $counterStorage = $this->getCounterStorage();
 
-        if ( ! $form->isValid())
+
+        if ( $this->getInputValidator()->validateField('headline', $headline))
         {
+            $this->addWarning('Invalid headline for counter');
             return $this->getFrontPageRedirection();
         }
 
-        $userStorage = $this->getUserStorage();
-
-        $counter = $form->getData();
-
-        $counter = $form->getData();
-        try
+        if ( ! $this->isLoggedIn() || $public)
         {
-            if ($form->get('public')->isClicked())
-            {
-                $counter->setOwner(null)->setPublic();
-            }
-            else
-            {
-                $owner = $this->getAuthenticatedUser($counter);
-                $this->setLoggedInUser($owner);
-                $counter->setOwner($owner)->setPrivate();
-            }
-
-            $this->storeCounterIfNeeded($counter);
+            $counter = new CounterModel($headline);
+            $counter->setPublic();
         }
-        catch (AuthenticationException $e)
+        else if ($private)
         {
-            $this->addError($e->getMessage());
-            return $this->getFrontPageRedirection();
+            $counter = new CounterModel($headline, null, $this->getLoggedInUser());
+            $counter->setPrivate();
         }
 
-        return $this->redirectToCounter($counter);
-    }
-
-    /**
-     * @param CounterModel $counter
-     * @return UserModel
-     * @throws AuthenticationException if authentication fails
-     */
-    private function getAuthenticatedUser(CounterModel $counter)
-    {
-        $owner = $this->isLoggedIn()
-            ? $this->getLoggedInUser()
-            : $counter->getOwner();
-
-        $userStorage = $this->getUserStorage();
-
-        if ( ! $userStorage->exists($owner->getNick()))
-        {
-            $userStorage->store($owner);
-        }
-        elseif ( ! $this->authenticateUser($owner))
-        {
-            throw new AuthenticationException('Wrong Nick and/or password');
-        }
-        return $owner;
-    }
-
-    private function storeCounterIfNeeded(CounterModel $counter)
-    {
-        $storage = $this->getCounterStorage();
-        if ( $storage->exists($counter->getName(), $counter->getOwnerId()))
+        if ( $counterStorage->exists($counter->getName(), $counter->getOwnerId()))
         {
             $this->addNotice('Already existed, showing it');
         }
         else
         {
-            $storage->store($counter);
+            $counterStorage->store($counter);
             $this->addMessage('Counter created');
         }
+
+        return $this->redirectToCounter($counter);
     }
 
     public function showAction($name, $owner = null)

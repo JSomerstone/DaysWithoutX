@@ -25,12 +25,9 @@ Scenario: User opens private counter
     And the counter is "19"
     And page has "Days without Foobar"
 
-Scenario: User creates counter with wrong password
-  When "Mee" posts private counter "being sober" with password "wr0ngPw"
-  Then user is redirected to "/"
-
 Scenario: User creates private counter
-  When "Mee" posts private counter "being sober" with password "fuubar123"
+  Given user "Mee" is logged in
+  When "Mee" posts private counter "being sober"
   Then user is redirected to "/being-sober/Mee"
 
   Scenario: User tries to reset private counter with wron password

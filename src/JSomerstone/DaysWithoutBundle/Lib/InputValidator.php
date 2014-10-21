@@ -19,7 +19,7 @@ class InputValidator
         'headline' => array(
             'pattern' => '.{1,100}',
             'regexp' => '/.{1,100}/',
-            'message' => 'What have you been without?'
+            'message' => 'max 100 chars'
         ),
     );
 

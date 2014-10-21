@@ -41,14 +41,17 @@ Scenario: Login & Logout
   Then user is redirected to "/"
     And page has "Logged out"
 
-Scenario: Creating private counter also logs user in
-  Given "/" page is loaded
-  When "Mee" posts private counter "being sober" with password "fuubar123"
-  Then user is redirected to "/being-sober/Mee"
-    And page has link "Logout" to "/logout"
-
 Scenario: Resetting private counter also logs user in
   Given "/foobar/mee" page is loaded
   When "Mee" resets counter "Foobar" with password "fuubar123"
   Then user is redirected to "/foobar/Mee"
     And page has link "Logout" to "/logout"
+
+Scenario: Counters created without signing in are public
+  When "Mee" posts private counter "Going to be public"
+  Then user is redirected to "/going-to-be-public"
+
+Scenario: Private counters created when logged in are private
+  Given user "Mee" is logged in
+  When "Mee" posts private counter "Going to be private"
+  Then user is redirected to "/going-to-be-private/Mee"

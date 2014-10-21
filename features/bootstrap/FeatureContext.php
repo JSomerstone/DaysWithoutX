@@ -223,15 +223,8 @@ class FeatureContext extends BehatContext
     public function userPostsNewCounter($counterHeadline)
     {
         $post = array(
-            'form' => array(
-                'headline' => $counterHeadline,
-                'public' => '',
-                'owner' => array(
-                    'nick' => '',
-                    'password' => '',
-                ),
-                '_token' => $this->requestToken
-            )
+            'headline' => $counterHeadline,
+            'public' => '',
         );
 
         $this->response = $this->handlePostRequest('/create', $post);
@@ -239,19 +232,13 @@ class FeatureContext extends BehatContext
 
     /**
      * @When /^"([^"]*)" posts private counter "([^"]*)" with password "([^"]*)"$/
+     * @When /^"([^"]*)" posts private counter "([^"]*)"$/
      */
-    public function UserPostsPrivateCounter($nick, $headline, $password)
+    public function UserPostsPrivateCounter($nick, $headline, $password = null)
     {
         $post = array(
-            'form' => array(
-                'headline' => $headline,
-                'private' => '',
-                'owner' => array(
-                    'nick' => $nick,
-                    'password' => $password,
-                ),
-                '_token' => $this->requestToken
-            )
+            'headline' => $headline,
+            'private' => '',
         );
         $this->response = $this->handlePostRequest('/create', $post);
     }
