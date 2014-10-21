@@ -5,7 +5,7 @@ class DefaultController extends BaseController
 {
     public function indexAction()
     {
-        $this->setForm($this->getCounterForm(null, $this->isLoggedIn()));
+        $this->setToResponse('loggedIn', $this->isLoggedIn());
         $this->setToResponse('latest', $this->getLatestCounters());
         $this->setToResponse('resentResets', $this->getResentResets());
 

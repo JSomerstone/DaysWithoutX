@@ -33,6 +33,16 @@ abstract class AssertContext
         }
     }
 
+    public static function notRegexp($regexp, $testetString, $messageIfNot = null)
+    {
+        if ( preg_match($regexp, $testetString) === 1)
+        {
+            throw new AssertionException(
+                $messageIfNot ?: "Failed asserting that '$testetString' does not match '$regexp'"
+            );
+        }
+    }
+
     public static function contains($needle, $hayStack, $messageIfNot = null)
     {
         if (stripos($hayStack, $needle) === false)

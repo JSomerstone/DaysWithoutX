@@ -16,6 +16,11 @@ class InputValidator
             'regexp' => '/.{8,128}/',
             'message' => 'Password must be at least 8 characters long'
         ),
+        'headline' => array(
+            'pattern' => '.{1,100}',
+            'regexp' => '/.{1,100}/',
+            'message' => 'What have you been without?'
+        ),
     );
 
     /**

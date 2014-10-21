@@ -59,6 +59,8 @@ class FeatureContext extends BehatContext
     protected $server = array();
     protected $requestToken;
 
+    protected $systemUsers = array();
+
     /**
      * @var JSomerstone\DaysWithoutBundle\Model\UserModel
      */
@@ -176,7 +178,7 @@ class FeatureContext extends BehatContext
      */
     public function pageIsLoaded($uri)
     {
-        $this->request = Request::create($uri);
+        $this->request = Request::create($uri, 'GET', $parameters = array());
         $this->response = $this->getKernel()->handle($this->request);
         $token = $this->getRequestTokenFromResponse($this->response);
         if ($token)
@@ -197,12 +199,22 @@ class FeatureContext extends BehatContext
                 '_token' => $this->requestToken
             )
         );
+        $this->response = $this->handlePostRequest('/login', $post);
+    }
+
+    /**
+     * @param $url
+     * @param array $post
+     * @return Response
+     */
+    private function handlePostRequest($url, array $post)
+    {
         $this->request = Request::create(
-            '/login',
+            $url,
             'POST',
             $post
         );
-        $this->response = $this->getKernel()->handle($this->request);
+        return $this->getKernel()->handle($this->request);
     }
 
     /**
@@ -221,12 +233,8 @@ class FeatureContext extends BehatContext
                 '_token' => $this->requestToken
             )
         );
-        $this->request = Request::create(
-            '/create',
-            'POST',
-            $post
-        );
-        $this->response = $this->getKernel()->handle($this->request);
+
+        $this->response = $this->handlePostRequest('/create', $post);
     }
 
     /**
@@ -245,12 +253,7 @@ class FeatureContext extends BehatContext
                 '_token' => $this->requestToken
             )
         );
-        $this->request = Request::create(
-            '/create',
-            'POST',
-            $post
-        );
-        $this->response = $this->getKernel()->handle($this->request);
+        $this->response = $this->handlePostRequest('/create', $post);
     }
 
     /**
@@ -281,12 +284,7 @@ class FeatureContext extends BehatContext
                 '_token' => $this->requestToken
             )
         );
-        $this->request = Request::create(
-            $url,
-            'POST',
-            $post
-        );
-        $this->response = $this->getKernel()->handle($this->request);
+        $this->response = $this->handlePostRequest($url, $post);
     }
 
     /**
@@ -301,12 +299,7 @@ class FeatureContext extends BehatContext
             'send' => '',
             '_token' => $this->requestToken
         );
-        $this->request = Request::create(
-            "/signup",
-            'POST',
-            $post
-        );
-        $this->response = $this->getKernel()->handle($this->request);
+        $this->response = $this->handlePostRequest('/signup', $post);
     }
 
     /**
@@ -384,7 +377,18 @@ class FeatureContext extends BehatContext
     public function pageHasButton($textInButton)
     {
         $this->pageMatchesRegexp(
-            sprintf('|<button.*>%s</button>|i', $textInButton),
+            sprintf('|%s</button>|i', $textInButton),
+            "Page did not have button '$textInButton'"
+        );
+    }
+
+    /**
+     * @Given /^page does not have button "([^"]*)"$/
+     */
+    public function pageDoesNotHaveButtonPrivate($textInButton)
+    {
+        $this->pageNotMatchesRegexp(
+            sprintf('|%s</button>|i', $textInButton),
             "Page did not have button '$textInButton'"
         );
     }
@@ -396,6 +400,20 @@ class FeatureContext extends BehatContext
     {
         $this->user = new UserModel($nick, $password);
         $this->userStorage->store($this->user);
+        $this->systemUsers[$nick] = $password;
+    }
+
+    /**
+     * @Given /^user "([^"]*)" is logged in$/
+     */
+    public function userIsLoggedIn($nick)
+    {
+        if ( ! isset($this->systemUsers[$nick]))
+        {
+            throw new \Exception("System doesn't have use '$nick'");
+        }
+        $this->pageIsLoaded('/login');
+        $this->useTriesToLogInWithPassword($nick, $this->systemUsers[$nick]);
     }
 
     /**
@@ -436,6 +454,11 @@ class FeatureContext extends BehatContext
     private function pageMatchesRegexp($regexp, $messageIfNot = null)
     {
         Assert::regexp($regexp, $this->response->getContent(), $this->response->getContent());
+    }
+
+    private function pageNotMatchesRegexp($regexp)
+    {
+        Assert::notRegexp($regexp, $this->response->getContent(), $this->response->getContent());
     }
 
     private static function getCounterName($counterHeadline)

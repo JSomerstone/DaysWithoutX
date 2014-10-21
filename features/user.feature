@@ -7,9 +7,15 @@ Background:
   Given "/" page is loaded
     And user "Mee" with password "fuubar123"
 
-Scenario: Front page shows expected
+Scenario: Front page for not logged in doesn't show button for Private counter
   When "/" page is loaded
-  Then page has "Nick"
+  Then page has button "Public"
+    But page does not have button "Private"
+
+Scenario: Front page for not logged in doesn't show button for Private counter
+  Given user "Mee" is logged in
+  When "/" page is loaded
+  Then page has button "Public"
     And page has button "Private"
 
 Scenario: User opens private counter
