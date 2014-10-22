@@ -1,4 +1,4 @@
-2.3.0
+2.2.4
 - Login required to create private/protected counters
 - Counter headline successions
 
