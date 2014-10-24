@@ -1,3 +1,6 @@
+2.2.5
+- Share to Twitter/Google+/Facebook -links added
+
 2.2.4
 - Login required to create private/protected counters
 - Counter headline successions
