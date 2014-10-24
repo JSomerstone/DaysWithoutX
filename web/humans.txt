@@ -1,0 +1,24 @@
+/* TEAM */
+
+Creator: Joona Somerkivi
+Contact: https://jsomerstone.github.io
+Twitter: @JSomerstone
+Location: Espoo, Finland
+
+/* THANKS */
+
+Hosting: DigitalOcean, https://www.digitalocean.com/
+Framework: Symfony2, http://symfony.com/
+Framework: Bootstrap, http://getbootstrap.com/
+Icon-library: Font-awesome, http://fortawesome.github.io/Font-Awesome/
+Database: MongoDB, http://www.mongodb.org/
+Backlog: Scrumy, http://scrumy.com/
+
+/* SITE */
+
+Last update: 2014-10-24
+Standards: HTML5, CSS3
+
+Components: Symfony2, jQuery, Bootstrap, Composer, Font-Awesome, MongoDB
+
+Software: PhpStorm, Vagrant, Ansible, Composer
