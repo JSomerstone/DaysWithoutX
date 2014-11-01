@@ -62,6 +62,32 @@ Scenario: Front page has link to user's counters
   Then page has "/user/Mee/counters"
     And page has "/user/Alpha/counters"
 
+Scenario: Only public/protected counters shown for others
+  Given user "Alpha" with password "fuubar123"
+    And user "Mee" is logged in
+    And system has counters:
+    | Owner     | Counter   | Days | Visibility |
+    | Alpha     | Public    | 2    | public    |
+    | Alpha     | Protected | 3    | protected |
+    | Alpha     | Private   | 4    | private   |
+  When "/user/Alpha/counters" page is loaded
+  Then page has "Public"
+    And page has "Protected"
+    But page doesn't have "Private"
+
+Scenario: All counters are shown to owner
+  Given user "Alpha" with password "fuubar123"
+    And user "Alpha" is logged in
+    And system has counters:
+    | Owner     | Counter   | Days | Visibility |
+    | Alpha     | Public    | 2    | public     |
+    | Alpha     | Protected | 3    | protected  |
+    | Alpha     | Private   | 4    | private    |
+  When "/user/Alpha/counters" page is loaded
+  Then page has "Public"
+    And page has "Protected"
+    And page has "Private"
+
 Scenario: Protected counter has link to its owner
   Given user "Mee" has protected counter "Foobar" with "19" days
   When "/foobar/Mee" page is loaded

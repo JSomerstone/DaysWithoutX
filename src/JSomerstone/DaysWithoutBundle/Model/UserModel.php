@@ -52,6 +52,15 @@ class UserModel implements ModelInterface, UserInterface
     }
 
     /**
+     * @param UserModel $other
+     * @return bool
+     */
+    public function isSameAs(UserModel $other)
+    {
+        return ($this->nick === $other->getNick());
+    }
+
+    /**
      * @return string
      */
     public function getId()

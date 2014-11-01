@@ -20,7 +20,6 @@ class CounterController extends BaseController
         $private = ! is_null($request->get('private'));
         $counterStorage = $this->getCounterStorage();
 
-
         if ( $this->getInputValidator()->validateField('headline', $headline))
         {
             $this->addWarning('Invalid headline for counter');
@@ -40,7 +39,8 @@ class CounterController extends BaseController
                 $counter->setPrivate();
             }
         }
-        else
+
+        if ($public)
         {
             $counter->setPublic();
         }
@@ -122,19 +122,23 @@ class CounterController extends BaseController
 
     public function showUsersCountersAction($user)
     {
-        $counterStorage = $this->getCounterStorage();
         $userStorage  = $this->getUserStorage();
-        $userObject = $userStorage->load($user);
-        if ( ! $userObject)
+        $owner = $userStorage->load($user);
+        if ( ! $owner)
         {
             $this->addError('User not found');
             return $this->getFrontPageRedirection();
         }
-        $this->setToResponse('owner', $userObject);
-        $this->setToResponse(
-            'counters',
-            $this->counterStorage->getUsersCounters($userObject->getNick())
-        );
+
+        $showPrivateCounters = ($this->isLoggedIn() && $owner->isSameAs($this->getLoggedInUser()));
+
+        $this->applyToResponse([
+            'owner' => $owner,
+            'counters' => $this->getCounterStorage()->getUsersCounters(
+                $owner->getNick(),
+                $showPrivateCounters
+            )
+        ]);
 
         return $this->render(
             'JSomerstoneDaysWithoutBundle:Counter:usersCounters.html.twig',

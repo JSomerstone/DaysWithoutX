@@ -26,8 +26,6 @@ class CounterModel implements ModelInterface
      */
     private $owner;
 
-    private $public;
-
     /**
      *
      * @param string $headline The headline of the counter

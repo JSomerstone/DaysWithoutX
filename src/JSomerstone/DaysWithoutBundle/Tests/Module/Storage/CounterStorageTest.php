@@ -128,4 +128,48 @@ class CounterStorageTest  extends WebTestCase
 
         $this->assertEquals($creationDate, $persisted->getCreated());
     }
+
+    /**
+     * @test
+     */
+    public function usersCountersAreFilteredByVisibility()
+    {
+        $getPrivateCounters = false;
+
+        $owner = new UserModel('Irrelevant');
+        $private = new CounterModel('Private', null, $owner);
+        $private->setPrivate();
+        $protected = new CounterModel('Protected', null, $owner);
+        $protected->setProtected();
+        $public = new CounterModel('Public', null, $owner);
+        $public->setPublic();
+
+        $this->counterStorage->store($private)->store($protected)->store($public);
+
+        $list = $this->counterStorage->getUsersCounters($owner->getNick(), $getPrivateCounters);
+        $this->assertCount(2, $list, var_export($list, true));
+    }
+
+
+
+    /**
+     * @test
+     */
+    public function privateCountersCanBeListed()
+    {
+        $getPrivateCounters = true;
+
+        $owner = new UserModel('Irrelevant');
+        $private = new CounterModel('Private', null, $owner);
+        $private->setPrivate();
+        $protected = new CounterModel('Protected', null, $owner);
+        $protected->setProtected();
+        $public = new CounterModel('Public', null, $owner);
+        $public->setPublic();
+
+        $this->counterStorage->store($private)->store($protected)->store($public);
+
+        $list = $this->counterStorage->getUsersCounters($owner->getNick(), $getPrivateCounters);
+        $this->assertCount(3, $list);
+    }
 } 

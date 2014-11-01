@@ -124,15 +124,28 @@ class CounterStorage extends BaseStorage
 
     /**
      * @param string $nick
-     * @param string $sortBy optional default 'reseted'
-     * @param int $direction 1 | -1
+     * @param bool $includePrivates true to include private counters, default false
      * @return array
      */
-    public function getUsersCounters($nick, $sortBy = 'reseted', $direction = -1)
+    public function getUsersCounters($nick, $includePrivates = false)
     {
+        $acceptableVisibilities = [
+            CounterModel::VISIBILITY_PUBLIC,
+            CounterModel::VISIBILITY_PROTECTED
+        ];
+        if ( $includePrivates )
+        {
+            $acceptableVisibilities[] = CounterModel::VISIBILITY_PRIVATE;
+        }
+
         $cursor = $this->getCollection()
-            ->find(array('owner' => $nick))
-            ->sort(array($sortBy => $direction))
+            ->find([
+                'owner' => $nick,
+                'visibility' => [
+                    self::IN => $acceptableVisibilities
+                ]
+            ])
+            ->sort(array('reseted' => -1))
             ->limit(self::SANITY_LIMIT);
 
         return $this->getResultsFromCursor($cursor);
