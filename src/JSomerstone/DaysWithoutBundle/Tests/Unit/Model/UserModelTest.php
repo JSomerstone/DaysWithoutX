@@ -68,4 +68,17 @@ class UserModelTest extends WebTestCase
         $this->setExpectedException('LogicException');
         $user->setPassword('any password without nick fails');
     }
+
+    /**
+     * @test
+     */
+    public function isSameAsDetectsIdenticalNicks()
+    {
+        $original = new UserModel('Original');
+        $clone = new UserModel('Original');
+        $someOneElse = new UserModel('NotOriginal');
+
+        $this->assertTrue($original->isSameAs($clone));
+        $this->assertFalse($original->isSameAs($someOneElse));
+    }
 }
