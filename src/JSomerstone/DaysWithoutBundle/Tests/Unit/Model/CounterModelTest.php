@@ -120,14 +120,22 @@ class CounterModelTest extends WebTestCase
     /**
      * @test
      */
-    public function settingPrivateOrPublicWorks()
+    public function settingVisibilityWorks()
     {
-        $counter = new CounterModel('irrelevant');
+        $owner = new UserModel('Dude');
+        $counter = new CounterModel('irrelevant', null, $owner);
 
+        $this->assertTrue($counter->isPublic());
+        $this->assertFalse($counter->isProtected());
+        $this->assertFalse($counter->isPrivate());
+        $counter->setProtected();
+        $this->assertFalse($counter->isPublic());
+        $this->assertTrue($counter->isProtected());
+        $this->assertFalse($counter->isPrivate());
         $counter->setPrivate();
         $this->assertFalse($counter->isPublic());
-        $counter->setPublic();
-        $this->assertTrue($counter->isPublic());
+        $this->assertFalse($counter->isProtected());
+        $this->assertTrue($counter->isPrivate());
     }
 
     public function provideValidProperties()

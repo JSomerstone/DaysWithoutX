@@ -162,11 +162,13 @@ class FeatureContext extends BehatContext
             $owner = $row['Owner'] ? new UserModel($row['Owner']) : null;
             $resetDate = date('Y-m-d', time() - 60 * 60 * 24 * (int)$row['Days']);
             $createdDate = isset($row['Created']) ? new \DateTime($row['Created']) : null;
+            $visibility = isset($row['Visibility']) ? $row['Visibility'] : CounterModel::VISIBILITY_PUBLIC;
             $counterModel = new CounterModel(
                 $row['Counter'],
                 $resetDate,
                 $owner,
-                $createdDate
+                $createdDate,
+                $visibility
             );
 
             $this->counterStorage->store($counterModel);
@@ -231,14 +233,14 @@ class FeatureContext extends BehatContext
     }
 
     /**
-     * @When /^"([^"]*)" posts private counter "([^"]*)" with password "([^"]*)"$/
-     * @When /^"([^"]*)" posts private counter "([^"]*)"$/
+     * @When /^"([^"]*)" posts (public|protected|private) counter "([^"]*)" with password "([^"]*)"$/
+     * @When /^"([^"]*)" posts (public|protected|private) counter "([^"]*)"$/
      */
-    public function UserPostsPrivateCounter($nick, $headline, $password = null)
+    public function UserPostsPrivateCounter($nick, $visibility, $headline, $password = null)
     {
         $post = array(
             'headline' => $headline,
-            'private' => '',
+            $visibility => '',
         );
         $this->response = $this->handlePostRequest('/create', $post);
     }
@@ -327,24 +329,26 @@ class FeatureContext extends BehatContext
     }
 
     /**
-     * @Given /^user "([^"]*)" has a counter "([^"]*)" with "([^"]*)" days$/
+     * @Given /^user "([^"]*)" has (public|protected|private) counter "([^"]*)" with "([^"]*)" days$/
      */
-    public function userHasCounterWithDays($nick, $headline, $days)
+    public function userHasCounterWithDays($nick, $visibility, $headline, $days)
     {
         $this->storeCounter(
             $headline,
             time() - 60 * 60 * 24 * $days,
-            new UserModel($nick, self::$testUserPassword)
+            new UserModel($nick, self::$testUserPassword),
+            $visibility
         );
     }
 
-    private function storeCounter($headline, $date, $user = null)
+    private function storeCounter($headline, $date, $user = null, $visibility = 'public')
     {
         $counterModel = new CounterModel(
             $headline,
             date('Y-m-d', $date),
             $user
         );
+        $counterModel->setVisibility($visibility);
         $this->counterStorage->store($counterModel);
     }
 

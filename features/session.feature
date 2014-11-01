@@ -5,7 +5,7 @@ Feature: Users are able to login/logout
 
 Background:
   Given user "Mee" with password "fuubar123"
-    And user "Mee" has a counter "Foobar" with "19" days
+    And user "Mee" has protected counter "Foobar" with "19" days
 
 Scenario: Front-page has link to login
   When "/" page is loaded

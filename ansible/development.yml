@@ -15,5 +15,5 @@
     - common
     - webserver
     - php-mongo
-    - dev
     - appserver
+    - dev

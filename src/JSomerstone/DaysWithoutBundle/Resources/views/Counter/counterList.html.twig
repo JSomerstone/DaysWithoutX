@@ -10,7 +10,7 @@
                     <a href="{{ url('dwo_show_counter', { 'name': counter.name, 'owner': counter.owner }) }}">
                         days without <b>{{ counter.headline }}</b>
                     </a>
-                    {% if not counter.public %}
+                    {% if counter.owner %}
                         - <a href="{{ url('dwo_list_user_counters', { 'user': counter.owner}) }}">
                             {{ counter.owner }}
                         </a>

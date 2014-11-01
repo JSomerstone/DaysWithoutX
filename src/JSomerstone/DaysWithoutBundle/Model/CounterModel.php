@@ -5,6 +5,11 @@ use JSomerstone\DaysWithoutBundle\Lib\StringFormatter;
 
 class CounterModel implements ModelInterface
 {
+    const VISIBILITY_PUBLIC = 'public';
+    const VISIBILITY_PROTECTED = 'protected';
+    const VISIBILITY_PRIVATE = 'private';
+
+    private $visiblity = self::VISIBILITY_PUBLIC;
     private $reseted;
 
     /**
@@ -29,14 +34,21 @@ class CounterModel implements ModelInterface
      * @param string $resetDate Optional, date in format YYYY-mm-dd
      * @param \JSomerstone\DaysWithoutBundle\Model\UserModel $owner, Optional
      * @param \DateTime|null $created optional
+     * @param string $visibility, optional a self::VISIBILITY_ constant, default PUBLIC
      */
-    public function __construct($headline, $resetDate = null, UserModel $owner = null, \DateTime $created = null)
+    public function __construct(
+        $headline,
+        $resetDate = null,
+        UserModel $owner = null,
+        \DateTime $created = null,
+        $visibility = self::VISIBILITY_PUBLIC
+    )
     {
         $this->headline = $headline;
         $this->reseted = is_null($resetDate) ? date('Y-m-d') : $resetDate;
         $this->name = StringFormatter::getUrlSafe($headline);
         $this->owner = $owner;
-        $this->public = is_null($owner);
+        $this->setVisibility($visibility);
 
         $this->created = $created ?: new \DateTime();
     }
@@ -52,7 +64,8 @@ class CounterModel implements ModelInterface
             isset($properties['headline']) ? $properties['headline'] : null,
             isset($properties['reseted']) ? $properties['reseted'] : null,
             isset($properties['owner']) ? new UserModel($properties['owner']) : null,
-            isset($properties['created']) ? new \DateTime($properties['created']) : null
+            isset($properties['created']) ? new \DateTime($properties['created']) : null,
+            isset($properties['visibility']) ? $properties['visibility'] : self::VISIBILITY_PUBLIC
         );
     }
 
@@ -78,7 +91,7 @@ class CounterModel implements ModelInterface
             'reseted' => $this->reseted,
             'days' => $this->getDays(),
             'owner' => $this->getOwnerId(),
-            'public' => $this->public,
+            'visibility' => $this->visiblity,
             'created' => $this->created->format('Y-m-d H:i:s')
         );
     }
@@ -155,20 +168,66 @@ class CounterModel implements ModelInterface
         return (int)floor(($now - $reseted)/(60*60*24));
     }
 
+    /**
+     * @param string $visibility a self::VISIBILITY_* constant
+     * @throws \InvalidArgumentException
+     */
+    public function setVisibility($visibility)
+    {
+        switch ($visibility)
+        {
+            case self::VISIBILITY_PUBLIC:
+                $this->setPublic();
+                break;
+            case self::VISIBILITY_PROTECTED:
+                $this->setProtected();
+                break;
+            case self::VISIBILITY_PRIVATE:
+                $this->setPrivate();
+                break;
+            default:
+                throw new \InvalidArgumentException("Unrecognized visibility '$visibility'");
+        }
+    }
+
     public function setPublic()
     {
-        $this->public = true;
+        $this->visiblity = self::VISIBILITY_PUBLIC;
+        return $this;
+    }
+
+    public function setProtected()
+    {
+        if ( ! isset($this->owner))
+        {
+            throw new \LogicException("Cannot set counter without owner as 'protected'");
+        }
+        $this->visiblity = self::VISIBILITY_PROTECTED;
         return $this;
     }
 
     public function setPrivate()
     {
-        $this->public = false;
+        if ( ! isset($this->owner))
+        {
+            throw new \LogicException("Cannot set counter without owner as 'private'");
+        }
+        $this->visiblity = self::VISIBILITY_PRIVATE;
         return $this;
     }
 
     public function isPublic()
     {
-        return $this->public;
+        return (self::VISIBILITY_PUBLIC === $this->visiblity);
+    }
+
+    public function isProtected()
+    {
+        return (self::VISIBILITY_PROTECTED === $this->visiblity);
+    }
+
+    public function isPrivate()
+    {
+        return (self::VISIBILITY_PRIVATE === $this->visiblity);
     }
 }

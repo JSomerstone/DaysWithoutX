@@ -16,6 +16,7 @@ class CounterController extends BaseController
     {
         $headline = $request->get('headline');
         $public =  ! is_null($request->get('public'));
+        $protected = ! is_null($request->get('private'));
         $private = ! is_null($request->get('private'));
         $counterStorage = $this->getCounterStorage();
 
@@ -26,14 +27,16 @@ class CounterController extends BaseController
             return $this->getFrontPageRedirection();
         }
 
-        if ( ! $this->isLoggedIn() || $public)
+        $counter = new CounterModel($headline);
+        if ( $this->isLoggedIn() )
         {
-            $counter = new CounterModel($headline);
-            $counter->setPublic();
+            $counter->setOwner($this->getLoggedInUser());
         }
-        else if ($private)
+        if ($protected && $this->isLoggedIn())
         {
-            $counter = new CounterModel($headline, null, $this->getLoggedInUser());
+            $counter->setProtected();
+        } else if ($private && $this->isLoggedIn())
+        {
             $counter->setPrivate();
         }
 
@@ -164,7 +167,7 @@ class CounterController extends BaseController
 
     private function redirectToCounter(CounterModel $counter)
     {
-        $owner = ($counter->isPublic())
+        $owner = ($counter->getOwner() === null)
             ? null
             : $counter->getOwner()->getNick();
 

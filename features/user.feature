@@ -18,20 +18,20 @@ Scenario: Front page for not logged in doesn't show button for Private counter
   Then page has button "Public"
     And page has button "Protected"
 
-Scenario: User opens private counter
+Scenario: User opens protected counter
   Given user "Mee" with password "fuubar123"
-    And user "Mee" has a counter "Foobar" with "19" days
+    And user "Mee" has protected counter "Foobar" with "19" days
   When "/foobar/Mee" page is loaded
     And the counter is "19"
     And page has "Days without Foobar"
 
-Scenario: User creates private counter
+Scenario: User creates protected counter
   Given user "Mee" is logged in
-  When "Mee" posts private counter "being sober"
+  When "Mee" posts protected counter "being sober"
   Then user is redirected to "/being-sober/Mee"
 
-  Scenario: User tries to reset private counter with wron password
-    Given user "Mee" has a counter "Foobar" with "19" days
+  Scenario: User tries to reset protected counter with wrong password
+    Given user "Mee" has protected counter "Foobar" with "19" days
     When user "Mee" resets the counter "Foobar" with password "Wr0ng!"
     Then user is redirected to "/foobar/Mee"
       And page has "Wrong Nick and/or password"
@@ -62,7 +62,7 @@ Scenario: Front page has link to user's counters
   Then page has "/user/Mee/counters"
     And page has "/user/Alpha/counters"
 
-Scenario: Private counter has link to its owner
-  Given user "Mee" has a counter "Foobar" with "19" days
+Scenario: Protected counter has link to its owner
+  Given user "Mee" has protected counter "Foobar" with "19" days
   When "/foobar/Mee" page is loaded
   Then page has "/user/Mee/counters"
