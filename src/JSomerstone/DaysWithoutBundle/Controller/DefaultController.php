@@ -14,7 +14,7 @@ class DefaultController extends BaseController
                 'counter_title' =>  $this->getSession()->get('counter-title')
             )
         );
-
+        $this->getSession()->remove('counter-title');
         return $this->render(
             'JSomerstoneDaysWithoutBundle:Default:index.html.twig',
             $this->response
