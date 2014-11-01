@@ -39,7 +39,7 @@ abstract class BaseController extends Controller
 
     public function render($view, array $parameters = array(), Response $response = null)
     {
-        $loggedInUser = $this->get('session')->get('user');
+        $loggedInUser = $this->getSession()->get('user');
         $parameters['user'] = $loggedInUser;
         $parameters['loggedIn'] = $loggedInUser ? true : false;
         $this->setValidationRulesForView($parameters);
@@ -83,9 +83,17 @@ abstract class BaseController extends Controller
         $this->response = array_merge($this->response, $array);
     }
 
+    /**
+     * @return \Symfony\Component\HttpFoundation\Session\Session
+     */
+    protected function getSession()
+    {
+        return $this->get('session');
+    }
+
     protected function addMessage($msg)
     {
-        $this->get('session')->getFlashBag()->add(
+        $this->getSession()->getFlashBag()->add(
             'message',
             $msg
         );
@@ -93,7 +101,7 @@ abstract class BaseController extends Controller
 
     protected function addNotice($msg)
     {
-        $this->get('session')->getFlashBag()->add(
+        $this->getSession()->getFlashBag()->add(
             'notice',
             $msg
         );
@@ -101,7 +109,7 @@ abstract class BaseController extends Controller
 
     protected function addError($msg)
     {
-        $this->get('session')->getFlashBag()->add(
+        $this->getSession()->getFlashBag()->add(
             'error',
             $msg
         );
@@ -189,12 +197,12 @@ abstract class BaseController extends Controller
 
     protected function setLoggedInUser(UserModel $user = null)
     {
-        return $this->get('session')->set('user', $user);
+        return $this->getSession()->set('user', $user);
     }
 
     protected function getLoggedInUser()
     {
-        return $this->get('session')->get('user');
+        return $this->getSession()->get('user');
     }
 
     protected function isLoggedIn()

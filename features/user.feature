@@ -66,3 +66,18 @@ Scenario: Protected counter has link to its owner
   Given user "Mee" has protected counter "Foobar" with "19" days
   When "/foobar/Mee" page is loaded
   Then page has "/user/Mee/counters"
+
+Scenario: User can view his own private counter
+  Given user "Mee" has private counter "My own" with "7" days
+    And user "Mee" is logged in
+  When "/my-own/Mee" page is loaded
+  Then page has "My own"
+    And the counter is "7"
+
+Scenario: Other people cannot see private counters
+  Given user "Someone" with password "fuubar123"
+    And user "Someone" has private counter "My own" with "7" days
+    And user "Mee" is logged in
+  When "/my-own/Someone" page is loaded
+  Then user is redirected to "/"
+    And page has "Counter did not exist"

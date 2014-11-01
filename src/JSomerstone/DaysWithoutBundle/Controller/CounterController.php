@@ -16,7 +16,7 @@ class CounterController extends BaseController
     {
         $headline = $request->get('headline');
         $public =  ! is_null($request->get('public'));
-        $protected = ! is_null($request->get('private'));
+        $protected = ! is_null($request->get('protected'));
         $private = ! is_null($request->get('private'));
         $counterStorage = $this->getCounterStorage();
 
@@ -31,13 +31,18 @@ class CounterController extends BaseController
         if ( $this->isLoggedIn() )
         {
             $counter->setOwner($this->getLoggedInUser());
+
+            if ($protected)
+            {
+                $counter->setProtected();
+            } else if ($private)
+            {
+                $counter->setPrivate();
+            }
         }
-        if ($protected && $this->isLoggedIn())
+        else
         {
-            $counter->setProtected();
-        } else if ($private && $this->isLoggedIn())
-        {
-            $counter->setPrivate();
+            $counter->setPublic();
         }
 
         if ( $counterStorage->exists($counter->getName(), $counter->getOwnerId()))
@@ -60,7 +65,15 @@ class CounterController extends BaseController
         {
             return $this->redirectFromNonExisting($name, $owner);
         }
-        $counterModel = $this->getCounterStorage()->load($name, $owner);
+        $counterModel = $storage->load($name, $owner);
+        if ( $counterModel->isPrivate() )
+        {
+            if ( ! $this->isLoggedIn() || $this->getLoggedInUser()->getNick() !== $owner)
+            {
+                return $this->redirectFromNonExisting($name, $owner);
+            }
+        }
+
         $this->setCounter($counterModel);
         $this->setForm($this->getResetForm(
             $counterModel,
@@ -136,12 +149,9 @@ class CounterController extends BaseController
     private function redirectFromNonExisting($name)
     {
         $this->addError('Counter did not exist - would you like to create one?');
-        $this->setForm($this->getCounterForm($name, $this->isLoggedIn()));
+        $this->getSession()->set('counter-title', ucfirst(str_replace('-', ' ', $name)));
 
-        return $this->render(
-            'JSomerstoneDaysWithoutBundle:Default:index.html.twig',
-            $this->response
-        );
+        return $this->redirect($this->generateUrl('dwo_frontpage'));
     }
 
     /**

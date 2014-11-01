@@ -11,6 +11,7 @@ class DefaultController extends BaseController
                 'latest' =>         $this->getLatestCounters(),
                 'resentResets' =>   $this->getResentResets(),
                 'succession' =>     $this->getSuccession(),
+                'counter_title' =>  $this->getSession()->get('counter-title')
             )
         );
 
