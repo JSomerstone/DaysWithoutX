@@ -7,7 +7,8 @@ use Symfony\Component\HttpFoundation\Request,
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use JSomerstone\DaysWithoutBundle\Model\CounterModel,
     JSomerstone\DaysWithoutBundle\Model\UserModel,
-    JSomerstone\DaysWithoutBundle\Storage\CounterStorage;
+    JSomerstone\DaysWithoutBundle\Storage\CounterStorage,
+    JSomerstone\DaysWithoutBundle\Lib\InputValidatorException;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class CounterController extends BaseController
@@ -20,9 +21,13 @@ class CounterController extends BaseController
         $private = ! is_null($request->get('private'));
         $counterStorage = $this->getCounterStorage();
 
-        if ( $this->getInputValidator()->validateField('headline', $headline))
+        try
         {
-            $this->addWarning('Invalid headline for counter');
+            $this->getInputValidator()->validateField('headline', $headline);
+        }
+        catch ( InputValidatorException $e )
+        {
+            $this->addError("Headline for counter was invalid");
             return $this->getFrontPageRedirection();
         }
 

@@ -12,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 class InputValidatorTest extends WebTestCase
 {
     /**
-     * @var JSomerstone\DaysWithoutBundle\Lib\InputValidator
+     * @var \JSomerstone\DaysWithoutBundle\Lib\InputValidator
      */
     protected $inputValidator;
 
@@ -79,5 +79,50 @@ class InputValidatorTest extends WebTestCase
             array('__POST'),
             array('L4TF'),
         );
+    }
+
+    public function provideInvalidHeadline()
+    {
+        return [
+            [''],
+            ['      '],
+            ['#'],
+            [str_repeat('X', 101)],
+            ['!"#%!"%"#€!"#€!'],
+            ['?'],
+        ];
+    }
+
+    /**
+     * @param $invalidHeadline
+     * @test
+     * @dataProvider provideInvalidHeadline
+     */
+    public function testHeadlineValidationFails($invalidHeadline)
+    {
+        $this->setExpectedException(
+            'JSomerstone\DaysWithoutBundle\Lib\InputValidatorException'
+        );
+        $this->inputValidator->validateField('headline', $invalidHeadline);
+    }
+    public function provideValidHeadline()
+    {
+        return [
+            ['It'],
+            ['Sex'],
+            ['WTF?!'],
+            [str_repeat('X', 100)],
+            ['Lol wut?'],
+            ['Getting this darn thing to work'],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideValidHeadline
+     */
+    public function testHeadlineValidationSucceess($validHeadline)
+    {
+        $this->inputValidator->validateField('headline', $validHeadline);
     }
 }

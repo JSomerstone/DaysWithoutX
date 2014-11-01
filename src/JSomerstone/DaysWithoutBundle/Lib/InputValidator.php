@@ -18,8 +18,9 @@ class InputValidator
         ),
         'headline' => array(
             'pattern' => '.{1,100}',
-            'regexp' => '/.{1,100}/',
-            'message' => 'max 100 chars'
+            'regexp' => '/^.{1,100}$/',
+            'message' => 'Max 100 chars with one or more of a-z',
+            'custom' => 'validateHeadline'
         ),
     );
 
@@ -47,7 +48,17 @@ class InputValidator
      */
     public function validateField($fieldName, $string)
     {
-        if (true !== self::validateString($this->getRegexpForField($fieldName), $string))
+        if ($this->hasCustomValidation($fieldName))
+        {
+            if ( ! $this->customValidation($fieldName, $string))
+            {
+                throw new InputValidatorException(
+                    $fieldName,
+                    $this->getMessageForField($fieldName)
+                );
+            }
+        }
+        if ( ! self::validateString($this->getRegexpForField($fieldName), $string))
         {
             throw new InputValidatorException(
                 $fieldName,
@@ -82,6 +93,17 @@ class InputValidator
         return $this->validationRules[$fieldName]['regexp'];
     }
 
+    private function hasCustomValidation($fieldName)
+    {
+        return isset($this->validationRules[$fieldName])
+            && isset($this->validationRules[$fieldName]['custom']);
+    }
+
+    private function getCustomValidationMethod($fieldName)
+    {
+       return $this->validationRules[$fieldName]['custom'];
+    }
+
     /**
      * @param string $fieldName
      * @return string regular expression
@@ -112,6 +134,25 @@ class InputValidator
             throw new InputValidatorException('password', 'Passwords do not match');
         }
         return $this->validateField('password', $password);
+    }
+
+    private function customValidation($fieldName, $value)
+    {
+        $method = $this->getCustomValidationMethod($fieldName);
+        if ( ! method_exists($this, $method))
+        {
+            throw new \InvalidArgumentException(
+                "Unable to use non-existing custom validation method InputValidator::$method"
+            );
+        }
+
+        return $this->$method($value);
+    }
+
+    public function validateHeadline($headline)
+    {
+        $urlSafe = StringFormatter::getUrlSafe($headline);
+        return self::validateString('/^[a-z0-9-]+$/', $urlSafe);
     }
 }
 

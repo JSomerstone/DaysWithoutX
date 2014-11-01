@@ -234,7 +234,7 @@ abstract class BaseController extends Controller
     }
 
     /**
-     * @return JSomerstone\DaysWithoutBundle\Lib\InputValidator
+     * @return \JSomerstone\DaysWithoutBundle\Lib\InputValidator
      */
     protected function getInputValidator()
     {
@@ -243,7 +243,7 @@ abstract class BaseController extends Controller
 
     /**
      *
-     * @return JSomerstone\DaysWithoutBundle\Storage\CounterStorage
+     * @return \JSomerstone\DaysWithoutBundle\Storage\CounterStorage
      */
     protected function getCounterStorage()
     {
