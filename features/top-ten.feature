@@ -57,3 +57,14 @@ Scenario: 10 Latest reset counters are shown in front-page
   Then page has "First"
   And page has "Tenth"
   But page doesn't have "Eleventh"
+
+  Scenario: Private counters are not shown
+    Given system has counters:
+      | Owner     | Counter  | Days | Created    | Visibility |
+      | Abba      | First    | 0    | 2014-01-02 | public     |
+      | Coldplay  | Second   | 2    | 2014-01-02 | protected  |
+      | DaftPunk  | Third    | 3    | 2014-01-02 | private    |
+    When "/" page is loaded
+    Then page has "First"
+      And page has "Second"
+    But page doesn't have "Third"

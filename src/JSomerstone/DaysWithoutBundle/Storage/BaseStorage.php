@@ -11,6 +11,8 @@ namespace JSomerstone\DaysWithoutBundle\Storage;
 
 abstract class BaseStorage
 {
+    const NOT_EQUALS = '$ne';
+
     /**
      * @var \MongoClient
      */

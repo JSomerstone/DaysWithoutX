@@ -90,7 +90,11 @@ class CounterStorage extends BaseStorage
     public function getLatestCounters($limit = 10, $skip = 0)
     {
         $cursor = $this->getCollection()
-            ->find()
+            ->find([
+                'visibility' => [
+                    self::NOT_EQUALS => CounterModel::VISIBILITY_PRIVATE
+                ]
+            ])
             ->sort(array('created' => -1))
             ->skip($skip)
             ->limit($limit);
@@ -106,7 +110,11 @@ class CounterStorage extends BaseStorage
     public function getResentResetsCounters($limit = 10, $skip = 0)
     {
         $cursor = $this->getCollection()
-            ->find()
+            ->find([
+                'visibility' => [
+                    self::NOT_EQUALS => CounterModel::VISIBILITY_PRIVATE
+                ]
+            ])
             ->sort(array('reseted' => -1))
             ->skip($skip)
             ->limit($limit);
