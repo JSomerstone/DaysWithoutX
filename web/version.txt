@@ -1,3 +1,6 @@
+2.3.0
+- Added "Private" counters (hidden from others than owner)
+
 2.2.6
 - Humans.txt included
 
