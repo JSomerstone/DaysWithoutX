@@ -14,7 +14,8 @@
                 {% include 'JSomerstoneDaysWithoutBundle:Counter:counterList.html.twig'
                     with {
                         list_headline: 'Latest counters',
-                        counters: latest
+                        counters: latest,
+                        showUser: true
                     }
                 %}
             </div>
@@ -22,7 +23,8 @@
                 {% include 'JSomerstoneDaysWithoutBundle:Counter:counterList.html.twig'
                     with {
                         list_headline: 'Resent resets',
-                        counters: resentResets
+                        counters: resentResets,
+                        showUser: true
                     }
                 %}
             </div>

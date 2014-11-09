@@ -3,19 +3,31 @@
     <tbody>
         {% for counter in counters %}
             <tr>
-                <td class="counter-list-daycount">
+
+                <th class="counter-list-daycount">
                     {{ counter.days }}
-                </td>
+                </th>
                 <td class="counter-list-head">
                     <a href="{{ url('dwo_show_counter', { 'name': counter.name, 'owner': counter.owner }) }}">
                         days without <b>{{ counter.headline }}</b>
                     </a>
-                    {% if counter.owner %}
-                        - <a href="{{ url('dwo_list_user_counters', { 'user': counter.owner}) }}">
-                            {{ counter.owner }}
-                        </a>
+                </td>
+                <td>
+                    {% if counter.protected %}
+                        <i class="fa fa-user"></i>
+                    {% elseif counter.private %}
+                        <i class="fa fa-eye"></i>
+                    {% else %}
+                        <i class="fa fa-globe"></i>
                     {% endif %}
                 </td>
+                {% if counter.owner and showUser %}
+                <td>
+                    <a href="{{ url('dwo_list_user_counters', { 'user': counter.owner}) }}">
+                        {{ counter.owner }}
+                    </a>
+                </td>
+                {% endif %}
             </tr>
         {% endfor %}
     </tbody>
