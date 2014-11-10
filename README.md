@@ -30,4 +30,4 @@ Running tests:
 ```
 vagrant ssh
 ./runtests.sh
-``
+```
