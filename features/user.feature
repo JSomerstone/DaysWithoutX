@@ -1,11 +1,10 @@
-Feature: User can create & reset password protected counters
+Feature: User can create, reset and delete private/protected/public counters
     In order to create password protected counters
     User must provide nick & password
     So that created counter can be protected
 
 Background:
-  Given "/" page is loaded
-    And user "Mee" with password "fuubar123"
+  Given user "Mee" with password "fuubar123"
 
 Scenario: Front page for not logged in doesn't show button for Private counter
   When "/" page is loaded
@@ -107,3 +106,29 @@ Scenario: Other people cannot see private counters
   When "/my-own/Someone" page is loaded
   Then user is redirected to "/"
     And page has "Counter did not exist"
+
+Scenario: Counter has link to delete counter
+  Given user "Mee" has private counter "removable" with "7" days
+    And user "Mee" is logged in
+  When "/removable/Mee" page is loaded
+  Then page has "Delete"
+
+Scenario: Counter has link to delete counter - only for the owner
+  Given user "Yuu" with password "irrelevant"
+    And user "Yuu" has private counter "removable" with "7" days
+    And user "Mee" is logged in
+  When "/removable/Yuu" page is loaded
+  Then page doesn't have "Delete"
+
+Scenario: Counter-list has link to delete counter
+  Given user "Mee" has private counter "removable" with "7" days
+  And user "Mee" is logged in
+  When "/user/Mee/counters" page is loaded
+  Then page has "Delete"
+
+Scenario: Counter-list has link to delete counter - only for the owner
+  Given user "Yuu" with password "irrelevant"
+  And user "Yuu" has private counter "removable" with "7" days
+  And user "Mee" is logged in
+  When "/user/Yuu/counters" page is loaded
+  Then page doesn't have "Delete"
