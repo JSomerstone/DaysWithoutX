@@ -8,13 +8,20 @@
 <div class="row">
     <div class="col-lg-6 col-sm-6 col-sm-offset-3 col-xs-12">
         <h2>Days without {{ counter.headline }}:</h2>
-        <div class="row">
-            <div class="counterDays">{{ counter.days }}</div>
-
+        <div class="row counter-postit">
+            <div class="counter-days">{{ counter.days }}</div>
+            <div class="visibility-icon">
+                {% include 'JSomerstoneDaysWithoutBundle:Counter:visibilityIcon.html.twig'
+                    with {
+                        size: 2
+                    }
+                %}
+            </div>
         </div>
         <div class="row">
-            <div class="col-sm-6">
-                <span class="lead">by <b>
+            <div class="col-xs-6">
+                <span class="lead">
+                    by <b>
                     {% if counter.owner %}
                             <a href="{{ url('dwo_list_user_counters', { 'user': counter.owner.nick }) }}">
                                 {{ counter.owner.nick }}
@@ -25,21 +32,23 @@
                     {% endif %}
                 </span>
             </div>
-            <div class="col-sm-6" id="share-buttons">
-                <!-- Facebook -->
-                <a href="http://www.facebook.com/sharer.php?u={{ url('dwo_show_counter', { 'name': counter.name, 'owner': counter.owner }) }}" target="_blank" title="Share on Facebook">
-                    <i class="fa fa-3x fa-facebook-square"></i>
-                </a>
+            <div class="col-xs-6" id="share-buttons">
+                {% if not counter.private %}
+                    <!-- Facebook -->
+                    <a href="http://www.facebook.com/sharer.php?u={{ url('dwo_show_counter', { 'name': counter.name, 'owner': counter.owner }) }}" target="_blank" title="Share on Facebook">
+                        <i class="fa fa-3x fa-facebook-square"></i>
+                    </a>
 
-                <!-- Twitter -->
-                <a href="http://twitter.com/share?url={{ url('dwo_show_counter', { 'name': counter.name, 'owner': counter.owner }) }}&text={{ counter.days }} Days without {{ counter.headline }}&hashtags=#dayswithout" target="_blank" title="Share on Twitter">
-                    <i class="fa fa-3x fa-twitter-square"></i>
-                </a>
+                    <!-- Twitter -->
+                    <a href="http://twitter.com/share?url={{ url('dwo_show_counter', { 'name': counter.name, 'owner': counter.owner }) }}&text={{ counter.days }} Days without {{ counter.headline }}&hashtags=#dayswithout" target="_blank" title="Share on Twitter">
+                        <i class="fa fa-3x fa-twitter-square"></i>
+                    </a>
 
-                <!-- Google+ -->
-                <a href="https://plus.google.com/share?url={{ url('dwo_show_counter', { 'name': counter.name, 'owner': counter.owner }) }}" target="_blank" title="Share on Google+">
-                    <i class="fa fa-3x fa-google-plus-square"></i>
-                </a>
+                    <!-- Google+ -->
+                    <a href="https://plus.google.com/share?url={{ url('dwo_show_counter', { 'name': counter.name, 'owner': counter.owner }) }}" target="_blank" title="Share on Google+">
+                        <i class="fa fa-3x fa-google-plus-square"></i>
+                    </a>
+                {% endif %}
             </div>
         </div>
         <div class="row">

@@ -13,13 +13,7 @@
                     </a>
                 </td>
                 <td>
-                    {% if counter.protected %}
-                        <i class="fa fa-user"></i>
-                    {% elseif counter.private %}
-                        <i class="fa fa-eye"></i>
-                    {% else %}
-                        <i class="fa fa-group"></i>
-                    {% endif %}
+                    {% include 'JSomerstoneDaysWithoutBundle:Counter:visibilityIcon.html.twig' %}
                 </td>
                 {% if counter.owner and showUser %}
                 <td>

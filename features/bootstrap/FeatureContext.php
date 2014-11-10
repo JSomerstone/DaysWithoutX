@@ -413,7 +413,7 @@ class FeatureContext extends BehatContext
     public function theCounterIs($counter)
     {
         $this->pageHas(
-            "<div class=\"counterDays\">$counter</div>",
+            "<div class=\"counter-days\">$counter</div>",
             "The page doesn't have counter at '$counter'"
         );
     }
