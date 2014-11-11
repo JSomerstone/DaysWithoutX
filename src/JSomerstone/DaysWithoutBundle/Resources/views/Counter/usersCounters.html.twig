@@ -10,9 +10,10 @@
         <h2>{{ owner.nick }}'s counters</h2>
         {% include 'JSomerstoneDaysWithoutBundle:Counter:counterList.html.twig'
             with {
-                'list_headline': '',
-                'counters': counters,
-                'showUser' : false
+                list_headline: '',
+                counters: counters,
+                showUser: false,
+                showContext: true
         }
         %}
     </div>

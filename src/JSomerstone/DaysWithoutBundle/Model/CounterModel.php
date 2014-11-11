@@ -228,4 +228,9 @@ class CounterModel implements ModelInterface
     {
         return (self::VISIBILITY_PRIVATE === $this->visiblity);
     }
+
+    public function isResettable()
+    {
+        return ($this->getDays() >= 1);
+    }
 }

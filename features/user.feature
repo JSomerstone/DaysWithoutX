@@ -66,26 +66,26 @@ Scenario: Only public/protected counters shown for others
     And user "Mee" is logged in
     And system has counters:
     | Owner     | Counter   | Days | Visibility |
-    | Alpha     | Public    | 2    | public    |
-    | Alpha     | Protected | 3    | protected |
-    | Alpha     | Private   | 4    | private   |
+    | Alpha     | PublicOne    | 2    | public    |
+    | Alpha     | ProtectedOne | 3    | protected |
+    | Alpha     | PrivateOne   | 4    | private   |
   When "/user/Alpha/counters" page is loaded
-  Then page has "Public"
-    And page has "Protected"
-    But page doesn't have "Private"
+  Then page has "PublicOne"
+    And page has "ProtectedOne"
+    But page doesn't have "PrivateOne"
 
 Scenario: All counters are shown to owner
   Given user "Alpha" with password "fuubar123"
     And user "Alpha" is logged in
     And system has counters:
     | Owner     | Counter   | Days | Visibility |
-    | Alpha     | Public    | 2    | public     |
-    | Alpha     | Protected | 3    | protected  |
-    | Alpha     | Private   | 4    | private    |
+    | Alpha     | PublicOne    | 2    | public     |
+    | Alpha     | ProtectedOne | 3    | protected  |
+    | Alpha     | PrivateOne   | 4    | private    |
   When "/user/Alpha/counters" page is loaded
-  Then page has "Public"
-    And page has "Protected"
-    And page has "Private"
+  Then page has "PublicOne"
+    And page has "ProtectedOne"
+    And page has "PrivateOne"
 
 Scenario: Protected counter has link to its owner
   Given user "Mee" has protected counter "Foobar" with "19" days
