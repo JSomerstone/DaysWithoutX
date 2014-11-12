@@ -200,4 +200,59 @@ class CounterController extends BaseController
             )
         );
     }
+
+    /**
+     * @param $counter
+     * @param null $owner
+     */
+
+    /**
+     * @param string $name
+     * @param string|null $owner
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function deleteAction($name, $owner = null)
+    {
+        $counter = $this->getCounterStorage()->load($name, $owner);
+
+        if ( ! $counter)
+        {
+            return $this->jsonResponse( false, "Counter removed" );
+        }
+
+        $this->getCounterStorage()->remove($counter);
+
+        $redirUrl = isset($owner)
+            ? $this->generateUrl('dwo_list_user_counters', array('user' => $owner))
+            : $this->generateUrl('dwo_frontpage');
+
+        return $this->jsonResponse(
+            true,
+            "Counter removed",
+            array(),
+            $redirUrl
+        );
+    }
+
+    /**
+     * @param $success
+     * @param null $message
+     * @param array $errors
+     * @param null $redirUrl
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    protected function jsonResponse($success, $message = null, $errors = array(), $redirUrl = null)
+    {
+        $this->applyToResponse([
+            'success' => $success,
+            'message' => $message,
+            'errors' => $errors,
+            'redirection' => $redirUrl
+        ]);
+
+        return $this->render(
+            'JSomerstoneDaysWithoutBundle:response.json.twig',
+            $this->response
+        );
+    }
 }

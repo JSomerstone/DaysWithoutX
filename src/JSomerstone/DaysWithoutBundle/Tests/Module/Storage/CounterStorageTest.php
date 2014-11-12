@@ -185,4 +185,4 @@ class CounterStorageTest  extends WebTestCase
         $this->counterStorage->remove($counter);
         $this->assertFalse($this->counterStorage->exists('removable'));
     }
-} 
+}

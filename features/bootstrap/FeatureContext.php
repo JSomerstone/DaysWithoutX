@@ -442,6 +442,37 @@ class FeatureContext extends BehatContext
         $this->pageIsLoaded($redirUrl);
     }
 
+    /**
+     * @When /^user deletes counter "([^"]*)" by "([^"]*)"$/
+     */
+    public function userDeletesCounterBy($counter, $owner)
+    {
+        $url = sprintf("/delete/%s/%s", $counter, $owner);
+        var_dump($url);
+        $this->response = $this->handlePostRequest($url, array());
+    }
+
+    /**
+     * @Then /^counter "([^"]*)" by "([^"]*)" doesn\'t exist$/
+     * @Then /^counter "([^"]*)" doesn\'t exist$/
+     */
+    public function counterByDoesNotExist($counter, $owner = null)
+    {
+        Assert::false(
+            $this->counterStorage->exists($counter, $owner),
+            'But it did'
+        );
+    }
+
+    /**
+     * @Then /^json response has message "([^"]*)"$/
+     */
+    public function jsonResponseHasMessage($expectedMessage)
+    {
+        $response = json_decode($this->response->getContent());
+        var_dump($this->response->getContent(), $response);
+    }
+
     private function pageMatchesRegexp($regexp, $messageIfNot = null)
     {
         Assert::regexp($regexp, $this->response->getContent(), $this->response->getContent());

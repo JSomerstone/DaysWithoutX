@@ -132,3 +132,10 @@ Scenario: Counter-list has link to delete counter - only for the owner
   And user "Mee" is logged in
   When "/user/Yuu/counters" page is loaded
   Then page doesn't have "Delete"
+
+Scenario: Counter can be removed
+  Given user "Mee" has private counter "removable" with "7" days
+    And user "Mee" is logged in
+  When user deletes counter "removable" by "Mee"
+    Then json response has message "Counter removed"
+    And  counter "removable" by "Mee" doesn't exist
