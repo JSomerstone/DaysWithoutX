@@ -203,11 +203,6 @@ class CounterController extends BaseController
     }
 
     /**
-     * @param $counter
-     * @param null $owner
-     */
-
-    /**
      * @param string $name
      * @param string|null $owner
      * @return \Symfony\Component\HttpFoundation\Response
