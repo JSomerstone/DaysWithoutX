@@ -252,4 +252,21 @@ abstract class BaseController extends Controller
         }
         return $this->counterStorage;
     }
+
+    /**
+     * @param $success
+     * @param null $message
+     * @param null $redirUrl
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    protected function jsonResponse($success, $message = null, $redirUrl = null)
+    {
+        $jsonResponse = new Response();
+        $jsonResponse->setContent(json_encode([
+            'success' => $success,
+            'message' => $message,
+            'redirection' => $redirUrl
+        ]));
+        return $jsonResponse;
+    }
 }

@@ -226,6 +226,7 @@ class CounterController extends BaseController
         }
 
         $this->getCounterStorage()->remove($counter);
+        $this->addNotice('Counter Removed');
 
         $redirUrl = isset($owner)
             ? $this->generateUrl('dwo_list_user_counters', array('user' => $owner))
@@ -234,27 +235,7 @@ class CounterController extends BaseController
         return $this->jsonResponse(
             true,
             "Counter removed",
-            array(),
             $redirUrl
         );
-    }
-
-    /**
-     * @param $success
-     * @param null $message
-     * @param array $errors
-     * @param null $redirUrl
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    protected function jsonResponse($success, $message = null, $errors = array(), $redirUrl = null)
-    {
-        $jsonResponse = new Response();
-        $jsonResponse->setContent(json_encode([
-            'success' => $success,
-            'message' => $message,
-            'errors' => $errors,
-            'redirection' => $redirUrl
-        ]));
-        return $jsonResponse;
     }
 }
