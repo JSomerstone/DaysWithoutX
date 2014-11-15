@@ -220,6 +220,10 @@ class CounterController extends BaseController
         {
             return $this->jsonResponse( false, "Counter not found" );
         }
+        else if ( ! $this->isLoggedIn() || ! $counter->isOwnedBy($this->getLoggedInUser()))
+        {
+            return $this->jsonResponse( false, "Unauthorized action" );
+        }
 
         $this->getCounterStorage()->remove($counter);
 

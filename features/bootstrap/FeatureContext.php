@@ -459,7 +459,19 @@ class FeatureContext extends BehatContext
     {
         Assert::false(
             $this->counterStorage->exists($counter, $owner),
-            'But it did'
+            "Counter '$counter' does exist"
+        );
+    }
+
+    /**
+     * @Then /^counter "([^"]*)" by "([^"]*)" exists$/
+     * @Then /^counter "([^"]*)" exists$/
+     */
+    public function counterDoesExist($counter, $owner = null)
+    {
+        Assert::true(
+            $this->counterStorage->exists($counter, $owner),
+            "Counter '$counter' does not exist"
         );
     }
 

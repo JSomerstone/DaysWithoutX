@@ -172,4 +172,31 @@ class CounterModelTest extends WebTestCase
             $counter->getCreated()
         );
     }
+
+    /**
+     * @test
+     */
+    public function isOwnedByDetectsCorrectOwner()
+    {
+        $alfred = new UserModel('Alfred');
+
+        $counterUnderTest = new CounterModel('Alfred´s public counter');
+        $counterUnderTest->setOwner($alfred);
+
+        $this->assertTrue($counterUnderTest->isOwnedBy($alfred));
+    }
+
+    /**
+     * @test
+     */
+    public function isOwnedByDetectsNonOwner()
+    {
+        $alfred = new UserModel('Alfred');
+        $bertha = new UserModel('Bertha');
+
+        $counterUnderTest = new CounterModel('Alfred´s public counter');
+        $counterUnderTest->setOwner($alfred);
+
+        $this->assertFalse($counterUnderTest->isOwnedBy($bertha));
+    }
 }

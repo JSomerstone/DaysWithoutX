@@ -139,3 +139,18 @@ Scenario: Counter can be removed
   When user deletes counter "removable" by "Mee"
     Then json response has message "Counter removed"
     And  counter "removable" by "Mee" doesn't exist
+
+Scenario: 0-Counter can be removed
+  Given user "Mee" has private counter "new" with "0" days
+    And user "Mee" is logged in
+  When user deletes counter "new" by "Mee"
+    Then json response has message "Counter removed"
+    And  counter "new" by "Mee" doesn't exist
+
+Scenario: User cannot remove other users counters
+  Given user "Bertha" with password "irrelevant"
+    And user "Bertha" has private counter "removable" with "47" days
+    And user "Mee" is logged in
+  When user deletes counter "removable" by "Bertha"
+    Then json response has message "Unauthorized action"
+    And counter "removable" by "Bertha" exists

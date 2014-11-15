@@ -233,4 +233,9 @@ class CounterModel implements ModelInterface
     {
         return ($this->getDays() >= 1);
     }
+
+    public function isOwnedBy(UserModel $user)
+    {
+        return ($this->getOwner()->getNick() === $user->getNick());
+    }
 }
