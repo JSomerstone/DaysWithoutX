@@ -2,6 +2,7 @@
 namespace JSomerstone\DaysWithoutBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request,
+    Symfony\Component\HttpFoundation\Response,
     Symfony\Component\DependencyInjection\ContainerInterface as Container,
     Symfony\Component\Form\Form as Form;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -217,7 +218,7 @@ class CounterController extends BaseController
 
         if ( ! $counter)
         {
-            return $this->jsonResponse( false, "Counter removed" );
+            return $this->jsonResponse( false, "Counter not found" );
         }
 
         $this->getCounterStorage()->remove($counter);
@@ -243,16 +244,13 @@ class CounterController extends BaseController
      */
     protected function jsonResponse($success, $message = null, $errors = array(), $redirUrl = null)
     {
-        $this->applyToResponse([
+        $jsonResponse = new Response();
+        $jsonResponse->setContent(json_encode([
             'success' => $success,
             'message' => $message,
             'errors' => $errors,
             'redirection' => $redirUrl
-        ]);
-
-        return $this->render(
-            'JSomerstoneDaysWithoutBundle:response.json.twig',
-            $this->response
-        );
+        ]));
+        return $jsonResponse;
     }
 }

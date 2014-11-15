@@ -64,4 +64,17 @@ abstract class AssertContext
             );
         }
     }
+
+    public static function equals($excepcted, $actual, $messageIfNot = null)
+    {
+        if ( $actual !== $excepcted )
+        {
+            $message = $messageIfNot ?: sprintf(
+                "Failed asserting that\n%s\nmatches expected\n%s",
+                var_export($actual, true),
+                var_export($excepcted, true)
+            );
+            throw new AssertionException($message);
+        }
+    }
 }

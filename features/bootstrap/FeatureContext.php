@@ -445,10 +445,9 @@ class FeatureContext extends BehatContext
     /**
      * @When /^user deletes counter "([^"]*)" by "([^"]*)"$/
      */
-    public function userDeletesCounterBy($counter, $owner)
+    public function userDeletesCounter($counter, $owner)
     {
         $url = sprintf("/delete/%s/%s", $counter, $owner);
-        var_dump($url);
         $this->response = $this->handlePostRequest($url, array());
     }
 
@@ -469,8 +468,15 @@ class FeatureContext extends BehatContext
      */
     public function jsonResponseHasMessage($expectedMessage)
     {
-        $response = json_decode($this->response->getContent());
-        var_dump($this->response->getContent(), $response);
+        $response = json_decode($this->response->getContent(), true);
+        if ( ! isset($response['message']))
+        {
+            throw new Exception('No message in response: ' . $this->response->getContent());
+        }
+        Assert::equals(
+            $expectedMessage,
+            $response['message']
+        );
     }
 
     private function pageMatchesRegexp($regexp, $messageIfNot = null)

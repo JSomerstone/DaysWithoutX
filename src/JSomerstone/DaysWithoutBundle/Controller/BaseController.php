@@ -68,7 +68,7 @@ abstract class BaseController extends Controller
 
     /**
      * @param string $variable Index of the response-parameter to set
-     * @param $value misc Value of response-parameter
+     * @param mixed $value Value of response-parameter
      */
     protected function setToResponse($variable, $value)
     {
