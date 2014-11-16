@@ -228,4 +228,14 @@ class CounterModel implements ModelInterface
     {
         return (self::VISIBILITY_PRIVATE === $this->visiblity);
     }
+
+    public function isResettable()
+    {
+        return ($this->getDays() >= 1);
+    }
+
+    public function isOwnedBy(UserModel $user)
+    {
+        return ($this->getOwner()->getNick() === $user->getNick());
+    }
 }

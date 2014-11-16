@@ -27,5 +27,10 @@
   notify:
     - restart apache
 
+- name: Enable mod-rewrite
+  file: src=/etc/apache2/mods-available/rewrite.load dest=/etc/apache2/mods-enabled/rewrite.load state=link
+  notify:
+    - restart apache
+
 - name: Ensure apache2 running
   service: name=apache2 state=started

@@ -6,7 +6,7 @@
   vars:
       directory_index: app.php
       document_root: /var/www/html/dayswithout/
-      version: 2.3.1
+      version: 2.4.2
       application_path: "/opt/jsomerstone/dayswithout-{{version}}"
       env: prod
       owner: root

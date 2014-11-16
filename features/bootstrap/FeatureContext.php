@@ -442,6 +442,55 @@ class FeatureContext extends BehatContext
         $this->pageIsLoaded($redirUrl);
     }
 
+    /**
+     * @When /^user deletes counter "([^"]*)" by "([^"]*)"$/
+     */
+    public function userDeletesCounter($counter, $owner)
+    {
+        $url = sprintf("/delete/%s/%s", $counter, $owner);
+        $this->response = $this->handlePostRequest($url, array());
+    }
+
+    /**
+     * @Then /^counter "([^"]*)" by "([^"]*)" doesn\'t exist$/
+     * @Then /^counter "([^"]*)" doesn\'t exist$/
+     */
+    public function counterByDoesNotExist($counter, $owner = null)
+    {
+        Assert::false(
+            $this->counterStorage->exists($counter, $owner),
+            "Counter '$counter' does exist"
+        );
+    }
+
+    /**
+     * @Then /^counter "([^"]*)" by "([^"]*)" exists$/
+     * @Then /^counter "([^"]*)" exists$/
+     */
+    public function counterDoesExist($counter, $owner = null)
+    {
+        Assert::true(
+            $this->counterStorage->exists($counter, $owner),
+            "Counter '$counter' does not exist"
+        );
+    }
+
+    /**
+     * @Then /^json response has message "([^"]*)"$/
+     */
+    public function jsonResponseHasMessage($expectedMessage)
+    {
+        $response = json_decode($this->response->getContent(), true);
+        if ( ! isset($response['message']))
+        {
+            throw new Exception('No message in response: ' . $this->response->getContent());
+        }
+        Assert::equals(
+            $expectedMessage,
+            $response['message']
+        );
+    }
+
     private function pageMatchesRegexp($regexp, $messageIfNot = null)
     {
         Assert::regexp($regexp, $this->response->getContent(), $this->response->getContent());

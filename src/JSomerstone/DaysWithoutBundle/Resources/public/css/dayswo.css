@@ -35,6 +35,9 @@ body {
     padding-bottom: 50px;
 }
 
+.dropdown-menu hr {
+    margin: 0px 10px;
+}
 table.counter-list td {
     padding: 5px;
 

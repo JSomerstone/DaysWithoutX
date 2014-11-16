@@ -1,11 +1,10 @@
-Feature: User can create & reset password protected counters
+Feature: User can create, reset and delete private/protected/public counters
     In order to create password protected counters
     User must provide nick & password
     So that created counter can be protected
 
 Background:
-  Given "/" page is loaded
-    And user "Mee" with password "fuubar123"
+  Given user "Mee" with password "fuubar123"
 
 Scenario: Front page for not logged in doesn't show button for Private counter
   When "/" page is loaded
@@ -67,26 +66,26 @@ Scenario: Only public/protected counters shown for others
     And user "Mee" is logged in
     And system has counters:
     | Owner     | Counter   | Days | Visibility |
-    | Alpha     | Public    | 2    | public    |
-    | Alpha     | Protected | 3    | protected |
-    | Alpha     | Private   | 4    | private   |
+    | Alpha     | PublicOne    | 2    | public    |
+    | Alpha     | ProtectedOne | 3    | protected |
+    | Alpha     | PrivateOne   | 4    | private   |
   When "/user/Alpha/counters" page is loaded
-  Then page has "Public"
-    And page has "Protected"
-    But page doesn't have "Private"
+  Then page has "PublicOne"
+    And page has "ProtectedOne"
+    But page doesn't have "PrivateOne"
 
 Scenario: All counters are shown to owner
   Given user "Alpha" with password "fuubar123"
     And user "Alpha" is logged in
     And system has counters:
     | Owner     | Counter   | Days | Visibility |
-    | Alpha     | Public    | 2    | public     |
-    | Alpha     | Protected | 3    | protected  |
-    | Alpha     | Private   | 4    | private    |
+    | Alpha     | PublicOne    | 2    | public     |
+    | Alpha     | ProtectedOne | 3    | protected  |
+    | Alpha     | PrivateOne   | 4    | private    |
   When "/user/Alpha/counters" page is loaded
-  Then page has "Public"
-    And page has "Protected"
-    And page has "Private"
+  Then page has "PublicOne"
+    And page has "ProtectedOne"
+    And page has "PrivateOne"
 
 Scenario: Protected counter has link to its owner
   Given user "Mee" has protected counter "Foobar" with "19" days
@@ -107,3 +106,51 @@ Scenario: Other people cannot see private counters
   When "/my-own/Someone" page is loaded
   Then user is redirected to "/"
     And page has "Counter did not exist"
+
+Scenario: Counter has link to delete counter
+  Given user "Mee" has private counter "removable" with "7" days
+    And user "Mee" is logged in
+  When "/removable/Mee" page is loaded
+  Then page has "Delete"
+
+Scenario: Counter has link to delete counter - only for the owner
+  Given user "Yuu" with password "irrelevant"
+    And user "Yuu" has private counter "removable" with "7" days
+    And user "Mee" is logged in
+  When "/removable/Yuu" page is loaded
+  Then page doesn't have "Delete"
+
+Scenario: Counter-list has link to delete counter
+  Given user "Mee" has private counter "removable" with "7" days
+  And user "Mee" is logged in
+  When "/user/Mee/counters" page is loaded
+  Then page has "Delete"
+
+Scenario: Counter-list has link to delete counter - only for the owner
+  Given user "Yuu" with password "irrelevant"
+  And user "Yuu" has private counter "removable" with "7" days
+  And user "Mee" is logged in
+  When "/user/Yuu/counters" page is loaded
+  Then page doesn't have "Delete"
+
+Scenario: Counter can be removed
+  Given user "Mee" has private counter "removable" with "7" days
+    And user "Mee" is logged in
+  When user deletes counter "removable" by "Mee"
+    Then json response has message "Counter removed"
+    And  counter "removable" by "Mee" doesn't exist
+
+Scenario: 0-Counter can be removed
+  Given user "Mee" has private counter "new" with "0" days
+    And user "Mee" is logged in
+  When user deletes counter "new" by "Mee"
+    Then json response has message "Counter removed"
+    And  counter "new" by "Mee" doesn't exist
+
+Scenario: User cannot remove other users counters
+  Given user "Bertha" with password "irrelevant"
+    And user "Bertha" has private counter "removable" with "47" days
+    And user "Mee" is logged in
+  When user deletes counter "removable" by "Bertha"
+    Then json response has message "Unauthorized action"
+    And counter "removable" by "Bertha" exists

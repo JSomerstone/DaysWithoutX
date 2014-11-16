@@ -1,4 +1,5 @@
-2.3.1
+2.4.2
+- Possibility to remove your own counters
 - Added "Private" counters (hidden from others than owner)
 - Added few icons
 

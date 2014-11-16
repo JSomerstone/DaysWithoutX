@@ -9,6 +9,11 @@
     <div class="col-lg-6 col-sm-6 col-sm-offset-3 col-xs-12">
         <h2>Days without {{ counter.headline }}:</h2>
         <div class="row counter-postit">
+            {% if counter.owner and counter.owner.nick == user %}
+                <div class="navbar navbar-right">
+                {% include 'JSomerstoneDaysWithoutBundle:Counter:context-menu.html.twig' %}
+                </div>
+            {% endif %}
             <div class="counter-days">{{ counter.days }}</div>
             <div class="visibility-icon">
                 {% include 'JSomerstoneDaysWithoutBundle:Counter:visibilityIcon.html.twig'
@@ -16,6 +21,7 @@
                         size: 2
                     }
                 %}
+
             </div>
         </div>
         <div class="row">
@@ -52,7 +58,7 @@
             </div>
         </div>
         <div class="row">
-            {% if counter.days > 0 %}
+            {% if counter.resettable %}
                 <div class="row col-sm-10 col-sm-offset-1">
                     {{ form_start(form) }}
                     {% if loggedIn or counter.public %}

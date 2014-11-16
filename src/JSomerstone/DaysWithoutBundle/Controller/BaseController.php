@@ -68,7 +68,7 @@ abstract class BaseController extends Controller
 
     /**
      * @param string $variable Index of the response-parameter to set
-     * @param $value misc Value of response-parameter
+     * @param mixed $value Value of response-parameter
      */
     protected function setToResponse($variable, $value)
     {
@@ -251,5 +251,22 @@ abstract class BaseController extends Controller
             $this->counterStorage = $this->get('dayswithout.storage.counter');
         }
         return $this->counterStorage;
+    }
+
+    /**
+     * @param $success
+     * @param null $message
+     * @param null $redirUrl
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    protected function jsonResponse($success, $message = null, $redirUrl = null)
+    {
+        $jsonResponse = new Response();
+        $jsonResponse->setContent(json_encode([
+            'success' => $success,
+            'message' => $message,
+            'redirection' => $redirUrl
+        ]));
+        return $jsonResponse;
     }
 }

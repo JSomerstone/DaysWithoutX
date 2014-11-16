@@ -75,6 +75,24 @@ class CounterStorage extends BaseStorage
     }
 
     /**
+     * @param CounterModel $counter
+     * @return $this
+     * @throws StorageException
+     */
+    public function remove(CounterModel $counter)
+    {
+        $result = $this->getCollection()->remove(array(
+            'name' => $counter->getName(),
+            'owner' => $counter->getOwnerId()
+        ));
+        if ($result['err'])
+        {
+            throw new StorageException('Removing counter failed');
+        }
+        return $this;
+    }
+
+    /**
      * @return \MongoCollection
      */
     protected function getCollection()

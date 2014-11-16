@@ -2,6 +2,7 @@
 namespace JSomerstone\DaysWithoutBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request,
+    Symfony\Component\HttpFoundation\Response,
     Symfony\Component\DependencyInjection\ContainerInterface as Container,
     Symfony\Component\Form\Form as Form;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -198,6 +199,38 @@ class CounterController extends BaseController
                     'owner' => $owner
                 )
             )
+        );
+    }
+
+    /**
+     * @param string $name
+     * @param string|null $owner
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function deleteAction($name, $owner = null)
+    {
+        $counter = $this->getCounterStorage()->load($name, $owner);
+
+        if ( ! $counter)
+        {
+            return $this->jsonResponse( false, "Counter not found" );
+        }
+        else if ( ! $this->isLoggedIn() || ! $counter->isOwnedBy($this->getLoggedInUser()))
+        {
+            return $this->jsonResponse( false, "Unauthorized action" );
+        }
+
+        $this->getCounterStorage()->remove($counter);
+        $this->addNotice('Counter Removed');
+
+        $redirUrl = isset($owner)
+            ? $this->generateUrl('dwo_list_user_counters', array('user' => $owner))
+            : $this->generateUrl('dwo_frontpage');
+
+        return $this->jsonResponse(
+            true,
+            "Counter removed",
+            $redirUrl
         );
     }
 }

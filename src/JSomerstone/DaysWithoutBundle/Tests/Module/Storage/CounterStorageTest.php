@@ -172,4 +172,17 @@ class CounterStorageTest  extends WebTestCase
         $list = $this->counterStorage->getUsersCounters($owner->getNick(), $getPrivateCounters);
         $this->assertCount(3, $list);
     }
-} 
+
+    /**
+     * @test
+     */
+    public function removingCounterSucceeds()
+    {
+        $counter = new CounterModel('removable');
+        $this->counterStorage->store($counter);
+        $this->assertTrue($this->counterStorage->exists('removable'));
+
+        $this->counterStorage->remove($counter);
+        $this->assertFalse($this->counterStorage->exists('removable'));
+    }
+}
