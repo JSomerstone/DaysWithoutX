@@ -59,6 +59,7 @@
         </div>
         <div class="row">
             {% if counter.resettable %}
+                <!-- TODO: redo resetting & commenting -->
                 <div class="row col-sm-10 col-sm-offset-1">
                     {{ form_start(form) }}
                     {% if loggedIn or counter.public %}
@@ -79,6 +80,31 @@
                 </div>
             {% endif %}
         </div>
+        {% if counter.history %}
+            <div class="row">
+                <h3>Reset history</h3>
+                <table class="counter-list">
+                    <tbody>
+                        {% for reset in counter.history %}
+                            <tr>
+                                <td>
+                                    <!-- TODO: today/yesterday/a month/week/year ago !-->
+                                    <i class="small">{{ reset.timestamp }} </i>
+                                    after <span class="lead">{{ reset.days }} days</span>
+                                </td>
+                                <td>
+                                        <i class="fa fa-quote-left"></i>
+                                        {{ reset.comment }}
+                                        TODO: comment
+                                        <i class="fa fa-quote-right"></i>
+                                </td>
+
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

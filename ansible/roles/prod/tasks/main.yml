@@ -11,7 +11,7 @@
   tags: app
   notify: compose project
 
-- name: Clone app
+- name: Switch to version {{version}}
   git: repo=https://github.com/JSomerstone/DaysWithoutX.git
        dest={{application_path}}
        version=v{{version}}

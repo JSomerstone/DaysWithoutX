@@ -43,12 +43,12 @@ class CounterModelTest extends WebTestCase
         foreach ($pool as $daysSince)
         {
             $then = time() - $daysSince * (60*60*24);
-            $reseted = date('Y-m-d', $then);
-            $counter = new CounterModel(null, $reseted);
+            $reset = date('Y-m-d', $then);
+            $counter = new CounterModel(null, $reset);
             $this->assertEquals(
                 $daysSince,
                 $counter->getDays(),
-                "Counter did not return expected day-count when given date '$reseted'"
+                "Counter did not return expected day-count when given date '$reset'"
             );
         }
     }
@@ -198,5 +198,82 @@ class CounterModelTest extends WebTestCase
         $counterUnderTest->setOwner($alfred);
 
         $this->assertFalse($counterUnderTest->isOwnedBy($bertha));
+    }
+
+    /**
+     * @test
+     */
+    public function newCounterDoesntHaveHistory()
+    {
+        $counter = new CounterModel('Without history', $this->yesterday);
+
+        $this->assertEmpty($counter->getHistory());
+    }
+
+    /**
+     * @test
+     */
+    public function resetedCounterHasHistory()
+    {
+        $counter = new CounterModel('Without history', $this->yesterday);
+        $counter->reset();
+
+        $expectedHistory = array(
+            [
+                'timestamp' => date('Y-m-d H:i:s'),
+                'days' => 1,
+                'comment' => null
+            ]
+        );
+
+        $actualHistory = $counter->getHistory();
+        $this->assertEquals($expectedHistory, $actualHistory);
+    }
+
+    /**
+     * @test
+     */
+    public function resetedCommentIsStored()
+    {
+        $counter = new CounterModel('Without history', $this->yesterday);
+        $counter->reset('Flesh is weak');
+
+        $expectedHistory = array(
+            [
+                'timestamp' => date('Y-m-d H:i:s'),
+                'days' => 1,
+                'comment' => 'Flesh is weak'
+            ]
+        );
+
+        $actualHistory = $counter->getHistory();
+        $this->assertEquals($expectedHistory, $actualHistory);
+    }
+
+    /**
+     * @test
+     */
+    public function toArrayHasHistory()
+    {
+        $counter = new CounterModel('Without history', $this->yesterday);
+        $counter->reset('TEst');
+        $asArray = $counter->toArray();
+
+        $this->assertTrue(isset($asArray['history']), 'No history from CounterModel::toArray()');
+    }
+
+    /**
+     * @test
+     */
+    public function fromArrayAcceptsHistory()
+    {
+        $counter = new CounterModel('Without history', $this->yesterday);
+        $counter->reset('First and last reset of this counter');
+
+        $clone = CounterModel::fromArray($counter->toArray());
+        $this->assertEquals(
+            $counter->toArray(),
+            $clone->toArray()
+        );
     }
 }

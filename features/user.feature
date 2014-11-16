@@ -18,8 +18,7 @@ Scenario: Front page for not logged in doesn't show button for Private counter
     And page has button "Protected"
 
 Scenario: User opens protected counter
-  Given user "Mee" with password "fuubar123"
-    And user "Mee" has protected counter "Foobar" with "19" days
+  Given user "Mee" has protected counter "Foobar" with "19" days
   When "/foobar/Mee" page is loaded
     And the counter is "19"
     And page has "Days without Foobar"

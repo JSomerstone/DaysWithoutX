@@ -185,4 +185,42 @@ class CounterStorageTest  extends WebTestCase
         $this->counterStorage->remove($counter);
         $this->assertFalse($this->counterStorage->exists('removable'));
     }
+
+    /**
+     * @test
+     */
+    public function counterResetHistoryIsPreserved()
+    {
+        $counter = new CounterModel('withHistory', date('Y-m-d', strtotime('-13 days')));
+        $counter->reset('This comment should be preserved');
+        $historyBefore = $counter->getHistory();
+        $this->counterStorage->store($counter);
+
+        $loadedCounter = $this->counterStorage->load($counter->getName(), $counter->getOwnerId());
+        $historyAfter = $loadedCounter->getHistory();
+
+        $this->assertEquals(
+            $historyBefore,
+            $historyAfter
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function changeToHistoryIsPreserved()
+    {
+        $counter = new CounterModel('withHistory', date('Y-m-d', strtotime('-13 days')));
+        $this->counterStorage->store($counter);
+
+        $counter->reset('This comment should be preserved');
+        $this->counterStorage->store($counter);
+
+        $historyAfter = $this->counterStorage->load($counter->getName(), $counter->getOwnerId())->getHistory();
+
+        $this->assertEquals(
+            $counter->getHistory(),
+            $historyAfter
+        );
+    }
 }

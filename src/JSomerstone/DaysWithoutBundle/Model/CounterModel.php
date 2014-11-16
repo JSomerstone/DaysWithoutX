@@ -27,19 +27,26 @@ class CounterModel implements ModelInterface
     private $owner;
 
     /**
+     * @var array
+     */
+    private $history = array();
+
+    /**
      *
      * @param string $headline The headline of the counter
      * @param string $resetDate Optional, date in format YYYY-mm-dd
      * @param \JSomerstone\DaysWithoutBundle\Model\UserModel $owner, Optional
      * @param \DateTime|null $created optional
-     * @param string $visibility, optional a self::VISIBILITY_ constant, default PUBLIC
+     * @param string $visibility, optional a self::VISIBILITY_* constant, default VISIBILITY_PUBLIC
+     * @param array $history, optional
      */
     public function __construct(
         $headline,
         $resetDate = null,
         UserModel $owner = null,
         \DateTime $created = null,
-        $visibility = self::VISIBILITY_PUBLIC
+        $visibility = self::VISIBILITY_PUBLIC,
+        $history = array()
     )
     {
         $this->headline = $headline;
@@ -49,6 +56,7 @@ class CounterModel implements ModelInterface
         $this->setVisibility($visibility);
 
         $this->created = $created ?: new \DateTime();
+        $this->history = $history;
     }
 
     /**
@@ -63,16 +71,22 @@ class CounterModel implements ModelInterface
             isset($properties['reseted']) ? $properties['reseted'] : null,
             isset($properties['owner']) ? new UserModel($properties['owner']) : null,
             isset($properties['created']) ? new \DateTime($properties['created']) : null,
-            isset($properties['visibility']) ? $properties['visibility'] : self::VISIBILITY_PUBLIC
+            isset($properties['visibility']) ? $properties['visibility'] : self::VISIBILITY_PUBLIC,
+            isset($properties['history']) ? $properties['history'] : array()
         );
     }
 
     /**
-     *
+     * @param string|null $comment optional, comment about reset
      * @return \JSomerstone\DaysWithoutBundle\Model\CounterModel
      */
-    public function reset()
+    public function reset($comment = null)
     {
+        $this->history[] = [
+            'timestamp' => date('Y-m-d H:i:s'),
+            'days' => $this->getDays(),
+            'comment' => $comment
+        ];
         $this->reseted = date('Y-m-d');
         return $this;
     }
@@ -90,7 +104,8 @@ class CounterModel implements ModelInterface
             'days' => $this->getDays(),
             'owner' => $this->getOwnerId(),
             'visibility' => $this->visiblity,
-            'created' => $this->created->format('Y-m-d H:i:s')
+            'created' => $this->created->format('Y-m-d H:i:s'),
+            'history' => $this->history
         );
     }
 
@@ -164,6 +179,14 @@ class CounterModel implements ModelInterface
         $now = time();
         $reseted = strtotime($this->reseted);
         return (int)floor(($now - $reseted)/(60*60*24));
+    }
+
+    /**
+     * @return array list of reset-entries ['timestamp' => 'yyyy-mm-dd HH:MM:ss', 'days' => #, 'comment' => '']
+     */
+    public function getHistory()
+    {
+        return $this->history;
     }
 
     /**
