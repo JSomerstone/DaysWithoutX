@@ -2,6 +2,15 @@
 # prod/tasks/main
 #########################
 
+- name: Create dir
+  file: path={{application_path}} state=directory owner=root group={{apache_user}}
+
+- name: Checkout project
+  git: repo=https://github.com/JSomerstone/DaysWithoutX.git
+       dest={{application_path}}
+  tags: app
+  notify: compose project
+
 - name: Clone app
   git: repo=https://github.com/JSomerstone/DaysWithoutX.git
        dest={{application_path}}
