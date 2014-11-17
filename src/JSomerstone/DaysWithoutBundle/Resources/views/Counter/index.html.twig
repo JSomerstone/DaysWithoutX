@@ -81,29 +81,31 @@
             {% endif %}
         </div>
         {% if counter.history %}
-            <div class="row">
-                <h3>Reset history</h3>
-                <table class="counter-list">
-                    <tbody>
-                        {% for reset in counter.history %}
-                            <tr>
-                                <td>
-                                    <!-- TODO: today/yesterday/a month/week/year ago !-->
-                                    <i class="small">{{ reset.timestamp }} </i>
-                                    after <span class="lead">{{ reset.days }} days</span>
-                                </td>
-                                <td>
-                                        <i class="fa fa-quote-left"></i>
-                                        {{ reset.comment }}
-                                        TODO: comment
-                                        <i class="fa fa-quote-right"></i>
-                                </td>
-
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+            <h3>Reset history</h3>
+            {% for reset in counter.history %}
+                <div class="row">
+                    <div class="col-xs-12">
+                        <span class="lead">
+                            {{ reset.days }}
+                        </span>
+                         {% if reset.days == 1 %}
+                             day
+                         {% else %}
+                             days
+                         {% endif %}
+                        count broke <span class="timestamp">{{ reset.timestamp }}</span>
+                    </div>
+                    <div class="col-xs-offset-1 col-xs-11 col-lg-10">
+                        {% if reset.comment %}
+                            <i class="fa fa-quote-left"></i>
+                            <span class="lead">
+                                {{ reset.comment }}
+                            </span>
+                            <i class="fa fa-quote-right"></i>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
         {% endif %}
     </div>
 </div>

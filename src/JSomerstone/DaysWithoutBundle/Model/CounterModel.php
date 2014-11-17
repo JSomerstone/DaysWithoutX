@@ -82,11 +82,11 @@ class CounterModel implements ModelInterface
      */
     public function reset($comment = null)
     {
-        $this->history[] = [
+        array_unshift($this->history, [
             'timestamp' => date('Y-m-d H:i:s'),
             'days' => $this->getDays(),
             'comment' => $comment
-        ];
+        ]);
         $this->reseted = date('Y-m-d');
         return $this;
     }
