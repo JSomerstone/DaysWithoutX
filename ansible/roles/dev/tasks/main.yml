@@ -8,6 +8,7 @@
     - php-pear
     - curl
     - git
+    - npm
   tags: dev
 
 - name: Copy motd
@@ -32,6 +33,8 @@
   changed_when: "'installed' not in pear_result.stdout"
 #  failed_when: "'6.2.0.0' not in pear_result.stdout"
   tags: dev
+
+- npm: name=qunitjs path=/vagrant/web/test
 
 - name: create development directories
   file:

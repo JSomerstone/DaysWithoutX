@@ -31,16 +31,18 @@ dwo = {
     {
         var postDate = new Date(dateString),
             now = new Date(),
-            dif = now - postDate + (postDate.getTimezoneOffset() * 1000 * 60), // ms
+            /*dif = now - postDate + (postDate.getTimezoneOffset() * 1000 * 60), // ms*/
+            dif = now - postDate, // ms
             s   = Math.floor(dif/1000),
             m   = Math.floor(s/60),
             h   = Math.floor(m/60),
             d   = Math.floor(h/24),
+            w   = Math.floor(d/7),
             M   = now.getMonth() - postDate.getMonth(),
             y   = new Date(dif).getFullYear() - 1970,
-            t   = ["year","month","day","hour","minute","second"],
-            a   = [y,M,d,h,m,s];
-        console.log(postDate.getTimezoneOffset());
+            t   = ["year","month","week", "day","hour","minute","second"],
+            a   = [y,M,w,d,h,m,s];
+
         for(var i in a)
         {
             if(a[i])
@@ -50,14 +52,21 @@ dwo = {
                 break;
             }
         }
-        console.log(a, t);
+
         if (a == 1 && t == 'day')
         {
             return 'yesterday';
-        }if (a == 1 && t == 'hour')
+        }
+        else if (a == 1 && t == 'hour')
         {
             return 'hour ago';
-        } else {
+        }
+        else if (a == 1 && t == 'minute')
+        {
+            return 'just now';
+        }
+        else
+        {
             return ( a==1 ? "last " + t : a +" "+ t +"s ago") ;
         }
     }

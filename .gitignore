@@ -16,3 +16,4 @@ doc/coverage/
 .DS_Store
 app/config/parameters_dev.yml
 web/.htaccess
+web/test/node_modules/
