@@ -51,3 +51,9 @@ dwo_delete_counter:
     pattern: /delete/{name}/{owner}
     defaults: { _controller: JSomerstoneDaysWithoutBundle:Counter:delete, owner: null }
     methods: [POST]
+
+api_reset_couner:
+  pattern: /api/counter/reset/{counter}/{owner}
+  methods: [POST]
+  defaults: { _controller: JSomerstoneDaysWithoutBundle:Api:reset, owner: null }
+

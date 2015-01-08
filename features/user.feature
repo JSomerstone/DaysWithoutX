@@ -28,13 +28,6 @@ Scenario: User creates protected counter
   When "Mee" posts protected counter "being sober"
   Then user is redirected to "/being-sober/Mee"
 
-  Scenario: User tries to reset protected counter with wrong password
-    Given user "Mee" has protected counter "Foobar" with "19" days
-    When user "Mee" resets the counter "Foobar" with password "Wr0ng!"
-    Then user is redirected to "/foobar/Mee"
-      And page has "Wrong Nick and/or password"
-      And the counter is "19"
-
 Scenario: User page lists users counters
   Given user "Alpha" with password "fuubar123"
     And system has counters:

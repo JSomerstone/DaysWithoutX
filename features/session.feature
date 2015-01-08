@@ -41,11 +41,16 @@ Scenario: Login & Logout
   Then user is redirected to "/"
     And page has "Logged out"
 
-Scenario: Resetting private counter also logs user in
+Scenario: Resetting counter without logging in is unauthorised
   Given "/foobar/mee" page is loaded
-  When "Mee" resets counter "Foobar" with password "fuubar123"
-  Then user is redirected to "/foobar/Mee"
-    And page has link "Logout" to "/logout"
+  When user resets counter "Foobar" by "Mee"
+  Then response says "Unauthorized action"
+
+Scenario: Resetting counter without logging in is unauthorised
+  Given user "Mee" is logged in
+    And "/foobar/mee" page is loaded
+  When user resets counter "Foobar" by "Mee"
+  Then response says "Counter reset"
 
 Scenario: Counters created without signing in are public
   When "Mee" posts private counter "Going to be public"

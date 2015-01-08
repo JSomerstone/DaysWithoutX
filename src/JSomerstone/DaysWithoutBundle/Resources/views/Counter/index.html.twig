@@ -77,6 +77,7 @@
                         'onClick': "return confirm('Do you REALLY want to reset the counter?');",
                         'class': 'btn btn-big btn-danger btn-block' }}) }}
                     {{ form_end(form) }}
+                    <button class="btn btn-big btn-danger" data-toggle="modal" data-target="#resetDialog">Reset?</button>
                 </div>
             {% endif %}
         </div>
@@ -102,6 +103,31 @@
                 </div>
             {% endfor %}
         {% endif %}
+    </div>
+</div>
+<div class="modal fade" id="resetDialog" tabindex="-1" role="dialog" aria-labelledby="resetDialogLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="resetDialogLabel">Confirm</h4>
+            </div>
+            <div class="modal-body">
+                You're about to reset this counter - care to comment?<br/>
+                <div class="form-group">
+                    <input class="input-lg col-xs-12" id="reset-comment">
+                    <input type="hidden" id="counter-name" value="{{ counter.name }}">
+                    <input type="hidden" id="counter-owner"
+                           value="{% if counter.owner %}{{ counter.owner.nick }}{% endif %}">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary reset">Reset</button>
+                <button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

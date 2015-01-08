@@ -200,6 +200,9 @@ abstract class BaseController extends Controller
         return $this->getSession()->set('user', $user);
     }
 
+    /**
+     * @return UserModel
+     */
     protected function getLoggedInUser()
     {
         return $this->getSession()->get('user');

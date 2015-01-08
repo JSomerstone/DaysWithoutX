@@ -5,10 +5,20 @@ Feature: Every counter reset is logged
 
   Background:
     Given user "Alfred" with password "fuubar123"
+    And user "Alfred" is logged in
     And user "Alfred" has protected counter "Resettable" with "66" days
 
   Scenario: Counter history is stored & shown
-    When "Alfred" resets counter "Resettable" with password "fuubar123"
-    Then user is redirected to "/resettable/Alfred"
+    When user resets counter "Resettable" by "Alfred"
+    Then response says "Counter reset"
+      And page "/resettable/Alfred" is loaded
       And page has "66 days"
+      And the counter is "0"
+
+  Scenario: Counter is reset with comment
+    When user resets counter "Resettable" by "Alfred" with comment "Not any more"
+    Then response says "Counter reset"
+      And page "/resettable/Alfred" is loaded
+      And page has "66 days"
+      And page has "Not any more"
       And the counter is "0"

@@ -177,6 +177,7 @@ class FeatureContext extends BehatContext
 
     /**
      * @When /^"([^"]*)" page is loaded$/
+     * @When /^page "([^"]*)" is loaded$/
      */
     public function pageIsLoaded($uri)
     {
@@ -247,32 +248,17 @@ class FeatureContext extends BehatContext
 
     /**
      * @When /^user resets counter "([^"]*)"$/
+     * @When /^user resets counter "([^"]*)" by "([^"]*)"$/
+     * @When /^user resets counter "([^"]*)" by "([^"]*)" with comment "([^"]*)"$/
      */
-    public function userResetsCounter($counterHeadline)
-    {
-        return $this->resetsCounterWithPassword(null, $counterHeadline, null);
-
-    }
-
-    /**
-     * @When /^"([^"]*)" resets counter "([^"]*)" with password "([^"]*)"$/
-     * @When /^user "([^"]*)" resets the counter "([^"]*)" with password "([^"]*)"$/
-     */
-    public function resetsCounterWithPassword($userName, $counterHeadline, $password)
+    public function userResetsCounter($counterHeadline, $owner = null, $comment = null)
     {
         $url = sprintf(
-            "/%s%s",
+            "/api/counter/reset/%s%s",
             self::getCounterName($counterHeadline),
-            $userName ? "/$userName": ''
+            $owner ? "/$owner": ''
         );
-        $post = array(
-            'form' => array(
-                'nick' => $userName,
-                'password' => $password,
-                'reset' => '',
-                '_token' => $this->requestToken
-            )
-        );
+        $post = array();
         $this->response = $this->handlePostRequest($url, $post);
     }
 
@@ -294,13 +280,13 @@ class FeatureContext extends BehatContext
     /**
      * @Then /^page has "([^"]*)"$/
      */
-    public function pageHas($expectedString)
+    public function pageHas($expectedString, $messageIfNot = null)
     {
         Assert::false($this->response->isEmpty(), 'Unexpected empty page');
         Assert::contains(
             $expectedString,
             $this->response->getContent(),
-            " - Did not"
+            $messageIfNot
         );
     }
 
@@ -409,6 +395,7 @@ class FeatureContext extends BehatContext
 
     /**
      * @Then /^the counter is "([^"]*)"$/
+     * @Then /^counter is "([^"]*)"$/
      */
     public function theCounterIs($counter)
     {
@@ -477,6 +464,7 @@ class FeatureContext extends BehatContext
 
     /**
      * @Then /^json response has message "([^"]*)"$/
+     * @Then /^response says "([^"]*)"$/
      */
     public function jsonResponseHasMessage($expectedMessage)
     {

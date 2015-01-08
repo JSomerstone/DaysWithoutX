@@ -27,18 +27,44 @@ dwo = {
         }
 
     },
+
+    handleApiResponse : function(data)
+    {
+        var response = jQuery.parseJSON(data);
+        if (response.redirection)
+        {
+            window.location = response.redirection;
+        }
+        else if ( response.success )
+        {
+            dwo.message.info(response.message);
+        }
+        else {
+            dwo.message.error(response.message);
+        }
+    },
+
+    formApiUrl : function(action, counter, owner)
+    {
+        var url = '/api/' + action + '/' + counter;
+        if (owner)
+            url += "/" + owner;
+
+        return url;
+    },
+
     convertTimestamp : function (dateString)
     {
         var postDate = new Date(dateString),
             now = new Date(),
-            /*dif = now - postDate + (postDate.getTimezoneOffset() * 1000 * 60), // ms*/
             dif = now - postDate, // ms
+            justNowLimit = 2 * 60 * 1000,
             s   = Math.floor(dif/1000),
             m   = Math.floor(s/60),
             h   = Math.floor(m/60),
             d   = Math.floor(h/24),
             w   = Math.floor(d/7),
-            M   = now.getMonth() - postDate.getMonth(),
+            M   = Math.floor(d/30),
             y   = new Date(dif).getFullYear() - 1970,
             t   = ["year","month","week", "day","hour","minute","second"],
             a   = [y,M,w,d,h,m,s];
@@ -53,6 +79,10 @@ dwo = {
             }
         }
 
+        if (dif <= justNowLimit)
+        {
+            return 'just now';
+        }
         if (a == 1 && t == 'day')
         {
             return 'yesterday';
@@ -60,10 +90,6 @@ dwo = {
         else if (a == 1 && t == 'hour')
         {
             return 'hour ago';
-        }
-        else if (a == 1 && t == 'minute')
-        {
-            return 'just now';
         }
         else
         {
@@ -86,26 +112,35 @@ $(function() {
 
         if (confirmed)
         {
-            $.post( "/delete/" + counter + "/" + owner, function( data ) {
-                var response = jQuery.parseJSON(data);
-                console.log(response);
-                if (response.redirection)
-                {
-                    window.location = response.redirection;
-                }
-                else if ( response.success )
-                {
-                    dwo.message.info(response.message);
-                }
-                else {
-                    dwo.message.error(response.message);
-                }
-            });
+            $.post(
+                dwo.formApiUrl('counter/delete', counter, owner),
+                {},
+                dwo.handleApiResponse
+            );
         }
     });
 
+    /**
+     * Convert timestamp of reset-history into human readable format
+     */
     $('span.timestamp').html(function()
     {
         return dwo.convertTimestamp(this.innerHTML);
+    });
+
+    /**
+     * Reset-button functionality
+     */
+    $('#resetDialog button.reset').click(function()
+    {
+        var counter = $('#resetDialog #counter-name').val(),
+            owner = $('#resetDialog #counter-owner').val(),
+            comment = $('#resetDialog #reset-comment').val();
+        console.log(counter, owner, comment);
+        $.post(
+            dwo.formApiUrl('counter/reset', counter, owner),
+            {comment: comment},
+            dwo.handleApiResponse
+        );
     });
 });

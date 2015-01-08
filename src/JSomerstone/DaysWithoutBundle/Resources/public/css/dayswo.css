@@ -22,7 +22,9 @@ body {
     background-color: black;
     color: ivory;
 }
-
+div.modal {
+    color: #000000;
+}
 .wo-pad-left {
     padding-left: 0px;
 }
