@@ -251,15 +251,33 @@ class FeatureContext extends BehatContext
      * @When /^user resets counter "([^"]*)" by "([^"]*)"$/
      * @When /^user resets counter "([^"]*)" by "([^"]*)" with comment "([^"]*)"$/
      */
-    public function userResetsCounter($counterHeadline, $owner = null, $comment = null)
+    public function userResetsCounter($counterHeadline, $owner = null, $comment = null, $userName = null, $password = null)
     {
         $url = sprintf(
             "/api/counter/reset/%s%s",
             self::getCounterName($counterHeadline),
             $owner ? "/$owner": ''
         );
-        $post = array();
+        $post = array(
+            'comment' => $comment,
+            'username' => $userName,
+            'password' => $password
+        );
         $this->response = $this->handlePostRequest($url, $post);
+    }
+
+    /**
+     * @When /^"([^"]*)" resets counter "([^"]*)" with password "([^"]*)"$/
+     */
+    public function resetsCounterWithPassword($username, $counterName, $password)
+    {
+        $this->userResetsCounter(
+            $counterName,
+            $username,
+            null,
+            $username,
+            $password
+        );
     }
 
     /**

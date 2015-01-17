@@ -1,1 +1,7 @@
+#########################
+# common/tasks/main
+#########################
+
+- name: Update packages
+  apt: upgrade=dist
 

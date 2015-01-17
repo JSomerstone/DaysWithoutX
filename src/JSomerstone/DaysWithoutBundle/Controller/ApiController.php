@@ -25,7 +25,7 @@ class ApiController extends BaseController
     public function resetAction($counter, $owner = null)
     {
         $storage = $this->getCounterStorage();
-
+        $comment = $this->getRequest()->get('comment') ?: null;
 
         if ( ! $storage->exists($counter, $owner))
         {
@@ -44,7 +44,7 @@ class ApiController extends BaseController
         {
             if ( $counterObj->isResettable() )
             {
-                $counterObj->reset();
+                $counterObj->reset($comment);
                 $storage->store($counterObj);
             }
             return $this->jsonResponse(true, 'Counter reset');
