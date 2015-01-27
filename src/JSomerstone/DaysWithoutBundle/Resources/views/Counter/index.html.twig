@@ -61,23 +61,23 @@
             {% if counter.resettable %}
                 <!-- TODO: redo resetting & commenting -->
                 <div class="row col-sm-10 col-sm-offset-1">
-                    {{ form_start(form) }}
                     {% if loggedIn or counter.public %}
+                        <button class="btn btn-big btn-danger" data-toggle="modal" data-target="#resetDialog">
+                            Reset
+                        </button>
                     {% else %}
-                    <div>
-                        <div class="col-xs-6 wo-pad-right">
-                            {{ form_widget(form.nick, {'attr': {'class': 'form-control', 'placeholder': 'Nick'}}) }}
+                        <div>
+                            <div class="col-xs-6 wo-pad-right">
+                                <input type="text" class="form-control" name="username" id="reset-username" placeholder="Nick">
+                            </div>
+                            <div class="col-xs-6 wo-pad-left">
+                                <input type="password" class="form-control" name="password" id="reset-password" placeholder="Password">
+                            </div>
                         </div>
-                        <div class="col-xs-6 wo-pad-left">
-                            {{ form_widget(form.password, {'attr': {'class': 'form-control', 'placeholder': 'Password' }}) }}
-                        </div>
-                    </div>
+                        <button class="btn btn-big btn-danger btn-block" data-toggle="modal" data-target="#resetDialog">
+                            Reset & login
+                        </button>
                     {% endif %}
-                    {{ form_widget(form.reset, {'attr': {
-                        'onClick': "return confirm('Do you REALLY want to reset the counter?');",
-                        'class': 'btn btn-big btn-danger btn-block' }}) }}
-                    {{ form_end(form) }}
-                    <button class="btn btn-big btn-danger" data-toggle="modal" data-target="#resetDialog">Reset?</button>
                 </div>
             {% endif %}
         </div>
@@ -91,7 +91,7 @@
                         </span>
                         count broke <span class="timestamp">{{ reset.timestamp }}</span>
                     </div>
-                    <div class="col-xs-offset-1 col-xs-11 col-lg-10">
+                    <div class="col-xs-offset-1 col-xs-11">
                         {% if reset.comment %}
                             <i class="fa fa-quote-left"></i>
                             <span class="lead">

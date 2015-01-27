@@ -14,6 +14,8 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class CounterController extends BaseController
 {
+    use SessionTrait;
+
     public function createAction(Request $request)
     {
         $headline = $request->get('headline');

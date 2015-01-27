@@ -135,11 +135,16 @@ $(function() {
     {
         var counter = $('#resetDialog #counter-name').val(),
             owner = $('#resetDialog #counter-owner').val(),
-            comment = $('#resetDialog #reset-comment').val();
-        console.log(counter, owner, comment);
+            postParameters = {
+                comment: $('#resetDialog #reset-comment').val(),
+                username: $('#reset-username').val(),
+                password: $('#reset-password').val()
+            };
+
+        console.log(counter, owner, postParameters);
         $.post(
             dwo.formApiUrl('counter/reset', counter, owner),
-            {comment: comment},
+            postParameters,
             dwo.handleApiResponse
         );
     });

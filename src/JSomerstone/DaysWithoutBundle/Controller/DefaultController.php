@@ -3,6 +3,8 @@ namespace JSomerstone\DaysWithoutBundle\Controller;
 
 class DefaultController extends BaseController
 {
+    use SessionTrait;
+
     public function indexAction()
     {
         $this->applyToResponse(

@@ -9,7 +9,7 @@ use JSomerstone\DaysWithoutBundle\Exception\PublicException;
 
 class SessionController extends BaseController
 {
-    //use SessionTrait;
+    use SessionTrait;
 
     public function loginPageAction()
     {
@@ -105,7 +105,7 @@ class SessionController extends BaseController
 
         $user = $form->getData();
 
-        if ( ! $this->authenticateUser($user, $this->getUserStorage()))
+        if ( ! $this->authenticateUser($user))
         {
             $this->addError('Wrong Nick and/or password');
             return $this->redirect($this->generateUrl('dwo_loginpage'));

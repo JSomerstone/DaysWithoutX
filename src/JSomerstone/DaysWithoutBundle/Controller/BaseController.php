@@ -166,7 +166,7 @@ abstract class BaseController extends Controller
     }
 
     /**
-     * @return JSomerstone\DaysWithoutBundle\Storage\UserStorage
+     * @return \JSomerstone\DaysWithoutBundle\Storage\UserStorage
      */
     protected function getUserStorage()
     {
@@ -183,34 +183,6 @@ abstract class BaseController extends Controller
             ->add('password', 'password')
             ->add('login', 'submit')
             ->getForm();
-    }
-
-    /**
-     * @param UserModel $user
-     * @return bool
-     */
-    protected  function authenticateUser(UserModel $user)
-    {
-        return $this->get('dayswithout.service.authentication')
-            ->authenticateUser($user);
-    }
-
-    protected function setLoggedInUser(UserModel $user = null)
-    {
-        return $this->getSession()->set('user', $user);
-    }
-
-    /**
-     * @return UserModel
-     */
-    protected function getLoggedInUser()
-    {
-        return $this->getSession()->get('user');
-    }
-
-    protected function isLoggedIn()
-    {
-        return \is_a($this->getLoggedInUser(), 'JSomerstone\DaysWithoutBundle\Model\UserModel');
     }
 
     /**
@@ -271,5 +243,41 @@ abstract class BaseController extends Controller
             'redirection' => $redirUrl
         ]));
         return $jsonResponse;
+    }
+
+    /**
+     * @param $message
+     * @param null $redirect
+     * @return Response
+     */
+    protected function jsonSuccessResponse($message, $redirect = null)
+    {
+        $this->addMessage($message);
+        return $this->jsonResponse(true, $message, $redirect);
+    }
+    /**
+     * @param $message
+     * @param null $redirect
+     * @return Response
+     */
+    protected function jsonErrorResponse($message, $redirect = null)
+    {
+        $this->addError($message);
+        return $this->jsonResponse(false, $message, $redirect);
+    }
+
+    /**
+     * @param CounterModel $counterModel
+     * @return string
+     */
+    protected function getUrlForCounter(CounterModel $counterModel)
+    {
+        return $this->generateUrl(
+            'dwo_show_counter',
+            array(
+                'name' => $counterModel->getName(),
+                'owner' => $counterModel->isPublic() ? null : $counterModel->getOwnerId()
+            )
+        );
     }
 }

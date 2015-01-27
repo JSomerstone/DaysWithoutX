@@ -1,6 +1,8 @@
 <?php
 namespace JSomerstone\DaysWithoutBundle\Controller;
 
+use JSomerstone\DaysWithoutBundle\Exception\PublicException,
+    JSomerstone\DaysWithoutBundle\Exception\SessionException;
 use JSomerstone\DaysWithoutBundle\Storage\StorageException;
 use Symfony\Component\HttpFoundation\Request,
     Symfony\Component\HttpFoundation\Response,
@@ -15,7 +17,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class ApiController extends BaseController
 {
-
+    use SessionTrait;
 
     /**
      * @param string $counter
@@ -26,34 +28,50 @@ class ApiController extends BaseController
     {
         $storage = $this->getCounterStorage();
         $comment = $this->getRequest()->get('comment') ?: null;
-
-        if ( ! $storage->exists($counter, $owner))
+        try
         {
-            $this->addError('Counter not found');
-            return $this->jsonResponse(false, 'Counter not found');
-        }
-        $counterObj = $storage->load($counter, $owner);
+            $this->assertCounterExists($counter, $owner);
+            $counterObj = $this->getCounterStorage()->load($counter, $owner);
+            $userObj = $this->getRequestingUser();
 
-        if ( ! $this->isLoggedIn() && ! $counterObj->isPublic())
-        {
-            $this->addError('Unauthorized action');
-            return $this->jsonResponse(false, 'Unauthorized action');
-        }
+            $this->assertAuthorized($counterObj, $userObj);
 
-        if ($counterObj->isPublic() || $counterObj->isOwnedBy($this->getLoggedInUser()))
-        {
             if ( $counterObj->isResettable() )
             {
                 $counterObj->reset($comment);
                 $storage->store($counterObj);
             }
-            return $this->jsonResponse(true, 'Counter reset');
+            return $this->jsonSuccessResponse('Counter reset', $this->getUrlForCounter($counterObj));
         }
-        else
+        catch (PublicException $e)
         {
-            //If unauthorized, do not reveal if exists or not
-            $this->addError('Counter not found');
-            return $this->jsonResponse(false, 'Noooo, nope');
+            return $this->jsonErrorResponse($e->getMessage());
+        }
+        catch (SessionException $e)
+        {
+            return $this->jsonErrorResponse($e->getMessage());
+            #return $this->jsonErrorResponse('Unauthorized action');
+        }
+        catch (\Exception $e)
+        {
+            return $this->jsonErrorResponse($e->getMessage());
+            #return $this->jsonErrorResponse('System error');
+        }
+    }
+
+    private function assertCounterExists($counter, $owner)
+    {
+        if ( ! $this->getCounterStorage()->exists($counter, $owner))
+        {
+            throw new PublicException('Counter not found');
+        }
+    }
+
+    private function assertAuthorized(CounterModel $counter, UserModel $user)
+    {
+        if ( ! $this->authenticateUserForCounter($user, $counter))
+        {
+            throw new PublicException('Unauthorized action');
         }
     }
 }

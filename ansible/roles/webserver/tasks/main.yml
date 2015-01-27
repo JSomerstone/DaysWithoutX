@@ -32,5 +32,11 @@
   notify:
     - restart apache
 
+- name: Log php-errors to syslog
+  lineinfile: dest={{item}} regexp='^;?error_log = syslog' line='error_log = syslog' state=present
+  with_items:
+    - /etc/php5/apache2/php.ini
+    - /etc/php5/cli/php.ini
+
 - name: Ensure apache2 running
   service: name=apache2 state=started
