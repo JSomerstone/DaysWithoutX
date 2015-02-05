@@ -37,6 +37,11 @@ abstract class BaseController extends Controller
      */
     protected $counterStorage;
 
+    /**
+     * @var \Symfony\Bridge\Monolog\Logger
+     */
+    protected $logger;
+
     public function render($view, array $parameters = array(), Response $response = null)
     {
         $loggedInUser = $this->getSession()->get('user');
@@ -89,6 +94,18 @@ abstract class BaseController extends Controller
     protected function getSession()
     {
         return $this->get('session');
+    }
+
+    /**
+     * @return \Symfony\Bridge\Monolog\Logger
+     */
+    protected function getLogger()
+    {
+        if ( ! $this->logger)
+        {
+            $this->logger = $this->get('logger');
+        }
+        return $this->logger;
     }
 
     protected function addMessage($msg)

@@ -32,10 +32,11 @@ class ApiController extends BaseController
         {
             $this->assertCounterExists($counter, $owner);
             $counterObj = $this->getCounterStorage()->load($counter, $owner);
-            $userObj = $this->getRequestingUser();
-
-            $this->assertAuthorized($counterObj, $userObj);
-
+            if ( ! $counterObj->isPublic() )
+            {
+                $userObj = $this->getRequestingUser();
+                $this->assertAuthorized($counterObj, $userObj);
+            }
             if ( $counterObj->isResettable() )
             {
                 $counterObj->reset($comment);
@@ -45,17 +46,18 @@ class ApiController extends BaseController
         }
         catch (PublicException $e)
         {
+            $this->getLogger()->notice(get_class($e) . ':' .$e->getMessage());
             return $this->jsonErrorResponse($e->getMessage());
         }
         catch (SessionException $e)
         {
-            return $this->jsonErrorResponse($e->getMessage());
-            #return $this->jsonErrorResponse('Unauthorized action');
+            $this->getLogger()->notice(get_class($e) . ':' .$e->getMessage());
+            return $this->jsonErrorResponse('Unauthorized action');
         }
         catch (\Exception $e)
         {
-            return $this->jsonErrorResponse($e->getMessage());
-            #return $this->jsonErrorResponse('System error');
+            $this->getLogger()->error(get_class($e) . ':' .$e->getMessage());
+            return $this->jsonErrorResponse('System error');
         }
     }
 
