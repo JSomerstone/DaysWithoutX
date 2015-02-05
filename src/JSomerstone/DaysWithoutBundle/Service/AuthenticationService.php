@@ -49,10 +49,12 @@ class AuthenticationService
      * @param CounterModel $counter
      * @return bool
      */
-    public function authenticateUserForCounter(UserModel $user, CounterModel $counter)
+    public function authoriseUserForCounter(UserModel $user, CounterModel $counter)
     {
-        return;
-        $owner = $this->userStorage->load($counter->getOwner()->getNick());
-        return ($user->getPassword() === $owner->getPassword());
+        if ($counter->isPublic() || $counter->getOwner()->getId() === $user->getId())
+        {
+            return true;
+        }
+        return false;
     }
 }

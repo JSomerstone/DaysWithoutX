@@ -174,7 +174,7 @@ abstract class BaseController extends Controller
         }
 
         if ( is_null($loggedInUser)
-            || ! $this->authenticateUserForCounter($loggedInUser, $counter))
+            || ! $this->authoriseUserForCounter($loggedInUser, $counter))
         {
             $builder->add('nick', 'text')
                 ->add('password', 'password');
@@ -207,14 +207,10 @@ abstract class BaseController extends Controller
      * @param CounterModel $counter
      * @return bool
      */
-    protected function authenticateUserForCounter(UserModel $user, CounterModel $counter)
+    protected function authoriseUserForCounter(UserModel $user, CounterModel $counter)
     {
-        if ($counter->isPublic())
-        {
-            return true;
-        }
         return $this->get('dayswithout.service.authentication')
-            ->authenticateUserForCounter($user, $counter);
+            ->authoriseUserForCounter($user, $counter);
     }
 
     /**

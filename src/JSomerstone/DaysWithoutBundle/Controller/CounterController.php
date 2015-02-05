@@ -112,7 +112,7 @@ class CounterController extends BaseController
         {
             $counter->reset();
         }
-        else if ( $this->authenticateUserForCounter($user, $counter))
+        else if ( $this->authoriseUserForCounter($user, $counter))
         {
             $counter->reset();
             $this->setLoggedInUser($user);

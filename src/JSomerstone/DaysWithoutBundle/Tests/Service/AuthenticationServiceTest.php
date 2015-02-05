@@ -82,7 +82,7 @@ class AuthenticationServiceTest extends WebTestCase
         $service = new AuthenticationService($this->getUserStorageMock($user));
 
         $this->assertTrue(
-            $service->authenticateUserForCounter($user, $counter),
+            $service->authoriseUserForCounter($user, $counter),
             'Authentication for counter failed'
         );
     }
@@ -103,7 +103,7 @@ class AuthenticationServiceTest extends WebTestCase
         $service = new AuthenticationService($this->getUserStorageMock());
 
         $this->assertFalse(
-            $service->authenticateUserForCounter($user, $counter),
+            $service->authoriseUserForCounter($user, $counter),
             'Authentication for counter succeeded when it was not supposed to'
         );
     }

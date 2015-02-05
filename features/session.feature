@@ -48,7 +48,6 @@ Scenario: Resetting counter without logging in is unauthorised
 
 Scenario: Resetting counter while logged in is allowed
   Given user "Mee" is logged in
-    And "/foobar/mee" page is loaded
   When user resets counter "Foobar" by "Mee"
   Then response says "Counter reset"
 
