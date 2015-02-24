@@ -54,3 +54,7 @@ table.counter-list td.counter-list-daycount {
     text-decoration: none;
     color: inherit;
 }
+
+.counter-postit .navbar {
+    margin-bottom: -50px;
+}

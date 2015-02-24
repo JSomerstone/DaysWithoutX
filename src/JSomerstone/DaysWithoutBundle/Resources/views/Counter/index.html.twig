@@ -61,11 +61,12 @@
             {% if counter.resettable %}
                 <!-- TODO: redo resetting & commenting -->
                 <div class="row col-sm-10 col-sm-offset-1">
-                    {% if loggedIn or counter.public %}
-                        <button class="btn btn-big btn-danger" data-toggle="modal" data-target="#resetDialog">
+
+                    {% if (user == counter.owner) or counter.public %}
+                        <button class="btn btn-big btn-danger btn-block" data-toggle="modal" data-target="#resetDialog">
                             Reset
                         </button>
-                    {% else %}
+                    {% elseif not loggedIn %}
                         <div>
                             <div class="col-xs-6 wo-pad-right">
                                 <input type="text" class="form-control" name="username" id="reset-username" placeholder="Nick">

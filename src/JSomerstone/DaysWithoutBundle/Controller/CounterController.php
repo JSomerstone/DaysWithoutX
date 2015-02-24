@@ -83,10 +83,7 @@ class CounterController extends BaseController
         }
 
         $this->setCounter($counterModel);
-        $this->setForm($this->getResetForm(
-            $counterModel,
-            $this->getLoggedInUser()
-        ));
+
         return $this->render(
             'JSomerstoneDaysWithoutBundle:Counter:index.html.twig',
             $this->response
