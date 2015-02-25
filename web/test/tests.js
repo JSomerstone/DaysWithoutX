@@ -10,7 +10,7 @@ QUnit.test( "Date conversion - minutes", function( assert )
     jQuery.each(testCases, function(i)
     {
         var testCase = testCases[i],
-            dateString = new Date().addMinutes(testCase.diff).toString('yyyy-M-d HH:mm:ss');
+            dateString = new Date().addMinutes(testCase.diff).toISOString();
 
         assert.equal(
             dwo.convertTimestamp(dateString),
@@ -33,7 +33,7 @@ QUnit.test( "Date conversion - seconds", function( assert )
     jQuery.each(testCases, function(i)
     {
         var testCase = testCases[i],
-            dateString = new Date().addSeconds(testCase.diff).toString('yyyy-M-d HH:mm:ss');
+            dateString = new Date().addSeconds(testCase.diff).toISOString();
 
         assert.equal(
             dwo.convertTimestamp(dateString),
@@ -55,7 +55,7 @@ QUnit.test( "Date conversion - hours", function( assert )
     jQuery.each(testCases, function(i)
     {
         var testCase = testCases[i],
-            dateString = new Date().addHours(testCase.diff).toString('yyyy-M-d HH:mm:ss');
+            dateString = new Date().addHours(testCase.diff).toISOString();
 
         assert.equal(
             dwo.convertTimestamp(dateString),
@@ -80,7 +80,7 @@ QUnit.test( "Date conversion - days", function( assert )
     jQuery.each(testCases, function(i)
     {
         var testCase = testCases[i],
-            dateString = new Date().addDays(testCase.diff).toString('yyyy-M-d HH:mm:ss');
+            dateString = new Date().addDays(testCase.diff).toISOString();
 
         assert.equal(
             dwo.convertTimestamp(dateString),

@@ -56,8 +56,9 @@ dwo = {
     convertTimestamp : function (dateString)
     {
         var postDate = new Date(dateString),
-            now = new Date(),
-            dif = now - postDate, // ms
+            now = new Date();
+        now.addHours(now.getTimezoneOffset() - postDate.getTimezoneOffset());
+        var dif = now - postDate, // ms
             justNowLimit = 2 * 60 * 1000,
             s   = Math.floor(dif/1000),
             m   = Math.floor(s/60),
@@ -68,7 +69,6 @@ dwo = {
             y   = new Date(dif).getFullYear() - 1970,
             t   = ["year","month","week", "day","hour","minute","second"],
             a   = [y,M,w,d,h,m,s];
-
         for(var i in a)
         {
             if(a[i])
@@ -79,7 +79,7 @@ dwo = {
             }
         }
 
-        if (dif <= justNowLimit)
+        if (dif < justNowLimit)
         {
             return 'just now';
         }

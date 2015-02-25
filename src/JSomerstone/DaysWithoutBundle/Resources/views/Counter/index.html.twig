@@ -90,7 +90,7 @@
                         <span class="lead">
                             {{ reset.days }} day{% if reset.days > 1 %}s{% endif %}
                         </span>
-                        count broke <span class="timestamp">{{ reset.timestamp }}</span>
+                        count broke <span class="timestamp">{{ reset.timestamp |date("D, d M Y H:i:s \G\M\T", "Europe/Helsinki") }}</span>
                     </div>
                     <div class="col-xs-offset-1 col-xs-11">
                         {% if reset.comment %}
