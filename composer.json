@@ -1,60 +1,10 @@
 {
-    "name": "symfony/framework-standard-edition",
-    "license": "MIT",
-    "type": "project",
-    "description": "The \"Symfony Standard Edition\" distribution",
-    "autoload": {
-        "psr-0": { "": "src/" }
-    },
-    "repositories": {
-        "bootstrap": {
-            "type": "package",
-            "package": {
-                "version": "dev-master",
-                "name": "twitter/bootstrap",
-                "source": {
-                    "url": "https://github.com/twitter/bootstrap.git",
-                    "type": "git",
-                    "reference": "master"
-                },
-                "dist": {
-                    "url": "https://github.com/twitter/bootstrap/zipball/master",
-                    "type": "zip"
-                }
-            }
-        }
-    },
     "require": {
         "php": ">=5.3.3",
-        "symfony/symfony": "2.3.*",
-        "twig/extensions": "1.0.*",
-        "symfony/assetic-bundle": "2.3.*",
-        "symfony/monolog-bundle": "2.3.*",
-        "braincrafted/bootstrap-bundle": "dev-master",
+        "silex/silex": "~1.1",
+        "twig/twig": "~1.0",
+        "deralex/yaml-config-service-provider": "1.0.x-dev",
         "twitter/bootstrap": "dev-master",
-        "sensio/distribution-bundle": "2.3.*",
-        "sensio/framework-extra-bundle": "2.3.*",
-        "incenteev/composer-parameter-handler": "~2.0",
-        "behat/behat": "2.4.*@stable",
-        "behat/symfony2-extension": "*"
-
-    },
-    "scripts": {
-        "post-install-cmd": [
-         ],
-        "post-update-cmd": [
-        ]
-    },
-    "config": {
-        "bin-dir": "bin"
-    },
-    "minimum-stability": "stable",
-    "extra": {
-        "symfony-app-dir": "app",
-        "symfony-web-dir": "web",
-        "symfony-assets-install": "symlink",
-        "incenteev-parameters": {
-            "file": "app/config/parameters.yml"
-        }
+        "behat/behat": "2.4.*@stable"
     }
 }

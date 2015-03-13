@@ -15,13 +15,12 @@ $twig = new Twig_Environment($twigLoader);
 /**
  * FRONT-PAGE
  */
-$app->get('/', function() use ($app, $twig, $pickStore)
+$app->get('/', function() use ($app, $twig)
 {
     return $twig->render(
-        'gallery.html.twig',
+        'default/index.html.twig',
         array(
             'title' => 'Pohjakuvat',
-            'pictures' => $pickStore->getPictures(),
             'image_path' => '/img',
             'view_path' => ''
         )

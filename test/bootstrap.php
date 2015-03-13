@@ -1,6 +1,5 @@
 <?php
 date_default_timezone_set('Europe/Helsinki');
-include_once __DIR__ . '/../app/bootstrap.php.cache';
 
 function D()
 {

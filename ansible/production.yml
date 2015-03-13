@@ -4,7 +4,7 @@
 - name: Setup PRODUCTION environment
   hosts: production
   vars:
-      directory_index: app.php
+      directory_index: index.php
       document_root: /var/www/html/dayswithout/
       version: 2.5.0
       application_path: "/opt/jsomerstone/dayswithout-{{version}}"

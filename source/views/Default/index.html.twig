@@ -5,13 +5,13 @@
 {% block content %}
     <div class="row">
         <div class="{{ content_classes }}">
-            {% include 'JSomerstoneDaysWithout:Counter:newCounter.html.twig' %}
+            {% include 'counter/newCounter.html.twig' %}
         </div>
     </div>
     <div class="row">
         <div class="{{ content_classes }}">
             <div class="col-xl-6">
-                {% include 'JSomerstoneDaysWithout:Counter:counterList.html.twig'
+                {% include 'counter/counterList.html.twig'
                     with {
                         list_headline: 'Latest counters',
                         counters: latest,
@@ -21,7 +21,7 @@
                 %}
             </div>
             <div class="col-xl-6">
-                {% include 'JSomerstoneDaysWithout:Counter:counterList.html.twig'
+                {% include 'counter/counterList.html.twig'
                     with {
                         list_headline: 'Resent resets',
                         counters: resentResets,

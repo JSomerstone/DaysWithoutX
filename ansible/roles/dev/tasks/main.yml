@@ -34,7 +34,7 @@
 #  failed_when: "'6.2.0.0' not in pear_result.stdout"
   tags: dev
 
-- npm: name=qunitjs path=/vagrant/web/test
+#- npm: name=qunitjs path=/vagrant/web/test
 
 - name: create development directories
   file:
@@ -44,26 +44,8 @@
     group={{apache_user}}
     mode=775
   with_items:
-    - /tmp/dwo/dev/
-    - /tmp/dwo/dev/cache/
     - /tmp/dwo/dev/logs/
-    - /tmp/dwo/test/
-    - /tmp/dwo/test/cache/
     - /tmp/dwo/test/logs/
-
-- name: Warmup cache
-  shell: "{{application_path}}/app/console cache:clear --env={{env}} --no-debug"
-  tags: dev
-
-- name: enable cache
-  file:
-    path=/tmp/dwo/dev/cache/
-    state=directory
-    recurse=yes
-    owner={{owner}}
-    group={{apache_user}}
-    mode=775
-  tags: dev
 
 - name: Symlink sources to production path
   file:
