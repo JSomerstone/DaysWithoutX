@@ -1,4 +1,4 @@
-{% extends 'JSomerstoneDaysWithoutBundle::base.html.twig' %}
+{% extends 'JSomerstoneDaysWithout::base.html.twig' %}
 {% block head %}
 
     <link rel="stylesheet" href="{{ asset('bundles/jsomerstonedayswithout/css/dayswo.css') }}" type="text/css" media="all">
@@ -8,10 +8,10 @@
 {% block title %}Days w/o {{ title }}{% endblock %}
 {% block content_header '' %}
 {% block body %}
-    {% include 'JSomerstoneDaysWithoutBundle::navi.html.twig' %}
+    {% include 'JSomerstoneDaysWithout::navi.html.twig' %}
 
     <div class="container-fluid">
-        {% include 'JSomerstoneDaysWithoutBundle::notifications.html.twig' %}
+        {% include 'JSomerstoneDaysWithout::notifications.html.twig' %}
         {% block content '' %}
     </div>
 {% endblock %}

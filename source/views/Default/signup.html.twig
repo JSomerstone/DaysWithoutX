@@ -1,4 +1,4 @@
-{% extends 'JSomerstoneDaysWithoutBundle::layout.html.twig' %}
+{% extends 'JSomerstoneDaysWithout::layout.html.twig' %}
 
 {% block title %}Days w/o {{ title }}{% endblock %}
 
@@ -71,10 +71,10 @@
 {% endblock %}
 
 {% block bodyscripts %}
-    {% include 'JSomerstoneDaysWithoutBundle:js:mandatoryCheck.js.twig'
+    {% include 'JSomerstoneDaysWithout:js:mandatoryCheck.js.twig'
         with { button: 'submitButton' }
     %}
-    {% include 'JSomerstoneDaysWithoutBundle:js:passwordCheck.js.twig'
+    {% include 'JSomerstoneDaysWithout:js:passwordCheck.js.twig'
         with { passwordA : 'passwordField', passwordB : 'passwordConfirmField', button: 'submitButton' }
     %}
 {% endblock %}

@@ -1,4 +1,4 @@
-{% extends 'JSomerstoneDaysWithoutBundle::layout.html.twig' %}
+{% extends 'JSomerstoneDaysWithout::layout.html.twig' %}
 
 {% block title %} {{ counter.days }} Days w/o {{ counter.headline }}{% endblock %}
 
@@ -11,12 +11,12 @@
         <div class="row counter-postit">
             {% if counter.owner and counter.owner.nick == user %}
                 <div class="navbar navbar-right">
-                {% include 'JSomerstoneDaysWithoutBundle:Counter:context-menu.html.twig' %}
+                {% include 'JSomerstoneDaysWithout:Counter:context-menu.html.twig' %}
                 </div>
             {% endif %}
             <div class="counter-days">{{ counter.days }}</div>
             <div class="visibility-icon">
-                {% include 'JSomerstoneDaysWithoutBundle:Counter:visibilityIcon.html.twig'
+                {% include 'JSomerstoneDaysWithout:Counter:visibilityIcon.html.twig'
                     with {
                         size: 2
                     }

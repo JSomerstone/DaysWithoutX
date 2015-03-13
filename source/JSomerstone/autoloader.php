@@ -1,8 +1,8 @@
 <?php
 
-function memeloader($className)
+function jsomerstone_autoloader($className)
 {
-    if ( ! preg_match('/^Meemikone/', $className))
+    if ( ! preg_match('/^JSomerstone/', $className))
     {
         return;
     }
@@ -18,7 +18,7 @@ function memeloader($className)
     }
 }
 
-spl_autoload_register('memeloader');
+spl_autoload_register('jsomerstone_autoloader');
 
 function D()
 {
