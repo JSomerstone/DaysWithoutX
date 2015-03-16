@@ -1,0 +1,45 @@
+
+<div class="dropdown">
+    <button id="dLabel" type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fa fa-reorder"></i>
+    </button>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+        <!--
+        {% if counter.resettable %}
+        <li>
+            <a href="#" ><i class="fa fa-history"></i> Reset</a>
+        </li>
+        <hr>
+        {% endif %}
+        <li>
+            <a href="#">
+                <i class="fa {% if counter.public %}fa-toggle-on{% else %}fa-toggle-off{% endif %}"></i>
+                Public
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <i class="fa {% if counter.protected %}fa-toggle-on{% else %}fa-toggle-off{% endif %}"></i>
+                Protected
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <i class="fa {% if counter.private %}fa-toggle-on{% else %}fa-toggle-off{% endif %}"></i>
+                Private
+            </a>
+        </li>
+        <hr>
+        -->
+        <li>
+            <a href="#"
+               class="delete-link"
+               counter="{{ counter.name }}"
+               owner="{% if counter.owner %}{{ counter.owner.nick }}{% endif %}"
+               title="Delete this counter"
+            >
+                <i class="fa fa-trash"></i> Delete
+            </a>
+        </li>
+    </ul>
+</div>

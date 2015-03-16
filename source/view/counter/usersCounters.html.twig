@@ -1,0 +1,21 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %} {{ owner.nick }} | Days w/o{% endblock %}
+
+{% block page_header '' %}
+
+{% block content %}
+<div class="row">
+    <div class="{{ content_classes }}">
+        <h2>{{ owner.nick }}'s counters</h2>
+        {% include 'JSomerstoneDaysWithout:Counter:counterList.html.twig'
+            with {
+                list_headline: '',
+                counters: counters,
+                showUser: false,
+                showContext: true
+        }
+        %}
+    </div>
+</div>
+{% endblock %}

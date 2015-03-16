@@ -1,0 +1,34 @@
+<h2>{{ list_headline }}</h2>
+<table class="counter-list">
+    <tbody>
+        {% for counter in counters %}
+            <tr>
+
+                <th class="counter-list-daycount">
+                    {{ counter.days }}
+                </th>
+                <td class="counter-list-head">
+                    <a href="/counter/{{ counter.name }}/{{ counter.owner }}">
+                        days without <b>{{ counter.headline }}</b>
+                    </a>
+                </td>
+                <td>
+                    {% include 'JSomerstoneDaysWithout:Counter:visibilityIcon.html.twig' %}
+                </td>
+                {% if counter.owner and showUser %}
+                <td>
+                    <a href="/user/{{ counter.owner }}">
+                        {{ counter.owner }}
+                    </a>
+                </td>
+                {% endif %}
+
+                {% if counter.owner and counter.owner.nick == user and showContext %}
+                    <td>
+                        {% include 'counter/context-menu.html.twig' %}
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

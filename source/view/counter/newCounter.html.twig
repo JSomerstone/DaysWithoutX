@@ -1,0 +1,67 @@
+<h3>New counter - 0 days without</h3>
+<form action="/todo" method="post" class="form-horizontal" role="form">
+    <div class="form-group">
+        <div class="col-xs-12">
+            <input
+                name="headline"
+                type="text"
+                class="form-control mandatory input-lg"
+                placeholder="... {{ succession }}?"
+                required="1"
+                pattern="{{ field.headline.pattern }}"
+                title="{{ field.headline.title }}"
+                value="{{ counter_title }}"
+                >
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-8">
+            <button
+                    name="public"
+                    class="btn-lg btn-success btn-block"
+                    value="Public"
+                    title="Anyone can see & reset the counter"
+                    >
+                <i class="fa fa-group"></i> Public</button>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                Anyone can see & reset
+            </p>
+        </div>
+    </div>
+    {% if loggedIn %}
+        <div class="form-group">
+            <div class="col-sm-8">
+                <button
+                        name="protected"
+                        class="btn-lg btn-warning btn-block"
+                        title="Anyone can see, only You can reset"
+                        ><i class="fa fa-user"></i> Protected</button>
+            </div>
+            <div class="col-sm-4">
+                Anyone can see, only You can reset
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-8">
+                <button
+                        name="private"
+                        class="btn-lg btn-danger btn-block"
+                        title="Anyone can see, only You can reset"
+                        ><i class="fa fa-eye"></i> Private</button>
+            </div>
+            <div class="col-sm-4">
+                Only You can see & reset
+            </div>
+        </div>
+    {% else %}
+        <div class="col-sm-12">
+            <p>
+                To create <b>Protected</b> & <b>Private</b> counters, please
+                <a href="/login">login</a> or
+                <a href="/signup">sign up</a>
+            </p>
+        </div>
+    {% endif %}
+</form>

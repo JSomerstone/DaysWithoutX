@@ -1,0 +1,35 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="{{ content_classes }}">
+            {% include 'counter/newCounter.html.twig' %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="{{ content_classes }}">
+            <div class="col-xl-6">
+                {% include 'counter/counterList.html.twig'
+                    with {
+                        list_headline: 'Latest counters',
+                        counters: latest,
+                        showUser: true,
+                        showContext: false
+                    }
+                %}
+            </div>
+            <div class="col-xl-6">
+                {% include 'counter/counterList.html.twig'
+                    with {
+                        list_headline: 'Resent resets',
+                        counters: resentResets,
+                        showUser: true,
+                        showContext: false
+                    }
+                %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

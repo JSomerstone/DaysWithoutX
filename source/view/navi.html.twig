@@ -1,0 +1,17 @@
+<ul class="nav nav-pills">
+    <li {% if url == '/' %} class="active"{% endif %}>
+        <a href="/"> Home</a>
+    </li>
+    {% if loggedIn %}
+        <li {% if url == '/logout' %} class="active"{% endif %}>
+            <a href="/logout" >Logout</a>
+        </li>
+    {% else %}
+        <li {% if url == '/login' %} class="active"{% endif %}>
+            <a href="/login" >Login</a>
+        </li>
+        <li {% if url == '/signup' %} class="active"{% endif %}>
+            <a href="/signup" >Sign up</a>
+        </li>
+    {% endif %}
+</ul>
