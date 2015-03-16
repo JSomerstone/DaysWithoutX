@@ -4,7 +4,6 @@
         "silex/silex": "~1.1",
         "twig/twig": "~1.0",
         "deralex/yaml-config-service-provider": "1.0.x-dev",
-        "twitter/bootstrap": "dev-master",
-        "behat/behat": "2.4.*@stable"
+        "twitter/bootstrap": "dev-master"
     }
 }

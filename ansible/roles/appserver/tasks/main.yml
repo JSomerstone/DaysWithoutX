@@ -69,7 +69,7 @@
 
 - name: Symlink to document root
   file:
-    src=/opt/jsomerstone/dayswithout/web
+    src=/opt/jsomerstone/dayswithout/source/public
     dest=/var/www/html/dayswithout
     state=link
     owner={{owner}}
