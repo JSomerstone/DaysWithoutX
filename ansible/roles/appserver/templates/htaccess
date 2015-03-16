@@ -10,13 +10,9 @@ DirectoryIndex {{directory_index}}
 
     Options +FollowSymlinks
 
-    # Explicitly disable rewriting for front controllers
-    RewriteRule ^app_dev.php - [L]
-    RewriteRule ^app.php - [L]
-
     RewriteCond %{REQUEST_FILENAME} !-f
 
-    RewriteRule ^(.*)$ {{directory_index}} [QSA,L]
+    RewriteRule ^(.*)$ index.php [QSA,L]
 </IfModule>
 
 <IfModule !mod_rewrite.c>

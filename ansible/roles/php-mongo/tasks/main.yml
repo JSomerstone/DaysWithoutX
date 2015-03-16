@@ -29,11 +29,6 @@
   file: path={{php_extension_dir.stdout_lines[0]}}/mongo.so mode=0755
   tags: mongo-php
 
-  with_items:
-    - /etc/php5/apache2/php.ini
-    - /etc/php5/cli/php.ini
-  tags: mongo-php
-
 - name: add mongo extension to php.ini configuration
   lineinfile: dest={{item}}
               line="extension=mongo.so"

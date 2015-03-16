@@ -15,6 +15,10 @@
   apt: package=php-pear state=present
   tags: pear
 
+- name: Enable pear auto-discover
+  shell: pear config-set auto_discover 1
+  tags: pear
+
 - name: rename composer.phar to composer
   shell: mv /usr/local/bin/composer.phar /usr/local/bin/composer creates=/usr/local/bin/composer
   tags:
@@ -28,8 +32,10 @@
       - app
 
 - name: update pear channels
-  ignore_errors: yes
   shell: pear channel-discover {{ item }}
+  register: channel_result
+  changed_when: "'initialized' not in channel_result.stdout"
+  failed_when: "'already initialized' not in channel_result.stdout"
   with_items:
       - pear.symfony-project.com
       - components.ez.no
@@ -38,27 +44,11 @@
 
 - name: Install pear packages
   shell: yes '' | pear install {{ item }}
+  register: packet_install
+  changed_when: "'installed' not in packet_install.stdout"
+  failed_when: "'already installed' not in packet_install.stdout"
   with_items:
       - pear.netpirates.net/Autoload
-  ignore_errors: yes
-
-- name: Create cache/log dirs
-  file: path="{{application_path}}/{{item}}" state=directory owner={{owner}} group={{apache_user}} mode=774
-  with_items:
-    - app/cache
-    - app/cache/prod
-    - app/cache/dev
-    - app/cache/test
-    - app/logs
-  tags: app
-
-- name: Create cache/log dirs
-  file: path="{{application_path}}/app/logs/{{item}}" state=touch owner={{owner}} group={{apache_user}} mode=664
-  with_items:
-    - prod.log
-    - dev.log
-    - test.log
-  tags: app
 
 - name: compose project
   shell: composer install --working-dir {{application_path}} --optimize-autoloader
@@ -67,42 +57,6 @@
   tags:
     - composer
     - app
-
-- name: Generate symfony cache
-  shell: php "{{application_path}}/vendor/sensio/distribution-bundle/Sensio/Bundle/DistributionBundle/Resources/bin/build_bootstrap.php"
-  args:
-          creates: "{{application_path}}/app/bootstrap.php.cache"
-  tags: app
-
-- name: Configure app parameters
-  template:
-    src=parameters.yml
-    dest="{{application_path}}/app/config/parameters_{{env}}.yml"
-    owner={{owner}}
-    group={{apache_user}}
-    mode=775
-
-  tags: app
-
-- name: Warmup cache
-  shell: "{{application_path}}/app/console cache:clear --env={{env}} --no-debug"
-  args:
-      creates: "{{application_path}}/app/cache/{{env}}/classes.map"
-  tags: app
-  notify:
-    - enable cache
-
-- name: Install assets
-  shell: "{{application_path}}/app/console assets:install {{application_path}}/web --env={{env}} --no-debug"
-  tags: app
-
-- name: Set .htaccess
-  template:
-    src=htaccess
-    dest="{{application_path}}/web/.htaccess"
-    owner={{owner}}
-    group={{apache_user}}
-    mode=440
 
 - name: Symlink to current version
   file:

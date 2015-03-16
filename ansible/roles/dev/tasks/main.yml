@@ -21,31 +21,13 @@
               state=present
   tags: dev
 
-- name: update pear channels
-  shell: pear channel-discover pear.phpunit.de
-  ignore_errors: yes
-  tags: dev
+- name: Download PHPUnit
+  shell: curl -sS https://phar.phpunit.de/phpunit.phar > /usr/local/bin/phpunit creates=/usr/local/bin/phpunit
 
-- name: Install pear packages
-  shell: yes '' | pear install pear.phpunit.de/PHPUnit
-  ignore_errors: yes
-  register: pear_result
-  changed_when: "'installed' not in pear_result.stdout"
-#  failed_when: "'6.2.0.0' not in pear_result.stdout"
-  tags: dev
+- name: Make PHPUnit executable
+  file: path=/usr/local/bin/phpunit owner={{owner}} mode=0755
 
 #- npm: name=qunitjs path=/vagrant/web/test
-
-- name: create development directories
-  file:
-    path={{item}}
-    state=directory
-    owner={{owner}}
-    group={{apache_user}}
-    mode=775
-  with_items:
-    - /tmp/dwo/dev/logs/
-    - /tmp/dwo/test/logs/
 
 - name: Symlink sources to production path
   file:
