@@ -4,12 +4,11 @@ namespace JSomerstone\DaysWithout\Tests\Model;
 
 use JSomerstone\DaysWithout\Model\CounterModel,
     JSomerstone\DaysWithout\Model\UserModel;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
  * @group model
  */
-class UserModelTest extends WebTestCase
+class UserModelTest extends \PHPUnit_Framework_TestCase
 {
 
     /**

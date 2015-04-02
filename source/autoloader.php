@@ -19,13 +19,3 @@ function jsomerstone_autoloader($className)
 }
 
 spl_autoload_register('jsomerstone_autoloader');
-
-function D()
-{
-    $filehandle = fopen('/tmp/aatu.log', 'w');
-    foreach (func_get_args() as $argument)
-    {
-        fwrite($filehandle, var_export($argument, true) . "\n");
-    }
-    fclose($filehandle);
-}

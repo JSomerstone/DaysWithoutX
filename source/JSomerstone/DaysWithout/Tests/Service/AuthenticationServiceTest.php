@@ -1,17 +1,15 @@
 <?php
-
 namespace JSomerstone\DaysWithout\Tests\Service;
 
 use JSomerstone\DaysWithout\Model\CounterModel,
     JSomerstone\DaysWithout\Model\UserModel,
     JSomerstone\DaysWithout\Service\AuthenticationService;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
  * @group service
  * @group authentication
  */
-class AuthenticationServiceTest extends WebTestCase
+class AuthenticationServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Mocks UserStorage's persisted data

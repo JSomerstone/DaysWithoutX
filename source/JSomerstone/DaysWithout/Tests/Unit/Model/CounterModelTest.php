@@ -4,13 +4,11 @@ namespace JSomerstone\DaysWithout\Tests\Model;
 
 use JSomerstone\DaysWithout\Model\CounterModel,
     JSomerstone\DaysWithout\Model\UserModel;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * @group model
  */
-class CounterModelTest extends WebTestCase
+class CounterModelTest extends \PHPUnit_Framework_TestCase
 {
     protected $today;
     protected $yesterday;

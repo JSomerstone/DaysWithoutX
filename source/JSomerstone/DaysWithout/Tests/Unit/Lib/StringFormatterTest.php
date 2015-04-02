@@ -3,12 +3,11 @@
 namespace JSomerstone\DaysWithout\Tests\Lib;
 
 use JSomerstone\DaysWithout\Lib\StringFormatter;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
  * @group lib
  */
-class StringFormatterTest extends WebTestCase
+class StringFormatterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param $input

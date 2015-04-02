@@ -4,12 +4,11 @@ namespace JSomerstone\DaysWithout\Tests\Lib;
 
 use JSomerstone\DaysWithout\Lib\InputValidator;
 use JSomerstone\DaysWithout\Lib\InputValidatorException;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
  * @group lib
  */
-class InputValidatorTest extends WebTestCase
+class InputValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \JSomerstone\DaysWithout\Lib\InputValidator

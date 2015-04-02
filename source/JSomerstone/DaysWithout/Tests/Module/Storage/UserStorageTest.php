@@ -1,12 +1,12 @@
 <?php
-namespace JSomerstone\DaysWithout\Tests\Storage;
+namespace JSomerstone\DaysWithout\Tests\Module\Storage;
 
 use JSomerstone\DaysWithout\Model\CounterModel;
 use JSomerstone\DaysWithout\Model\UserModel;
 use JSomerstone\DaysWithout\Storage\UserStorage;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class UserStorageTest  extends WebTestCase
+
+class UserStorageTest  extends \PHPUnit_Framework_TestCase
 {
 
     /**
