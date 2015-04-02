@@ -2,14 +2,12 @@
 namespace JSomerstone\DaysWithout\Model;
 
 use JSomerstone\DaysWithout\Lib\StringFormatter;
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
-    Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class UserModel
  * @package JSomerstone\DaysWithout\Model
  */
-class UserModel implements ModelInterface, UserInterface
+class UserModel implements ModelInterface
 {
     const ROLE_USER = 'user';
 

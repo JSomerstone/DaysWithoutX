@@ -21,9 +21,9 @@ dwo = {
         render : function(msgClass, msgHeadline, msg)
         {
             return "<div class=\"alert " + msgClass + "\"> \
-                            <button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button> \
-                            <strong>" + msgHeadline + "</strong> " + msg + " \
-                        </div>";
+                    <button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button> \
+                    <strong>" + msgHeadline + "</strong> " + msg + " \
+                </div>";
         }
 
     },
@@ -99,6 +99,26 @@ dwo = {
 }
 
 $(function() {
+
+    /**
+     * Delete-counter-functionality
+     */
+    $('a.login').click(function()
+    {
+        var link = $(this),
+            counter = link.attr('counter'),
+            owner = link.attr('owner'),
+            confirmed = confirm('You´re about to remove a counter - this cannot be undone. Are you sure?');
+
+        if (confirmed)
+        {
+            $.post(
+                dwo.formApiUrl('counter/delete', counter, owner),
+                {},
+                dwo.handleApiResponse
+            );
+        }
+    });
 
     /**
      * Delete-counter-functionality

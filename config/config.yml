@@ -1,6 +1,7 @@
-# JSomerstoneDaysWithoutBundleConfiguration
-j_somerstone_days_without:
+dwo:
     storage:
         server: localhost:27017
         database: dayswithout
+    view:
+        path:
 
