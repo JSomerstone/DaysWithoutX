@@ -6,9 +6,11 @@ use \Symfony\Component\HttpFoundation\Request,
     \DerAlex\Silex\YamlConfigServiceProvider;
 
 $app = new \JSomerstone\DaysWithout\Application(
-    __DIR__ . '/../../config/config.yml',
-    __DIR__ . '/../view'
+    new YamlConfigServiceProvider(__DIR__ . '/../../config/config.yml'),
+    $viewPath = __DIR__ . '/../view',
+    $validationRulePath = __DIR__ . '/../JSomerstone/DaysWithout/Resources/validation.yml'
 );
+
 $request = Request::createFromGlobals();
 
 /**
@@ -42,10 +44,20 @@ $api->post('/signup', function() use ($app, $request)
     $nick = $request->get('nick');
     $password = $request->get('password');
     $password2 = $request->get('password-confirm');
-    $errors = array();
-    array_merge($errors, $app->getValidator()->validateValue($nick, new Assert\RegexValidator()));
 
+    $errors = $app->getValidator()->validateFields(array(
+        'nick' => $nick,
+        'password' => $password,
+    ));
 
+    if ( ! empty($errors))
+    {
+        return $app->json(array(
+            'success' => false,
+            'message' => '',
+            'data' => $errors
+        ));
+    }
 });
 
 
@@ -55,12 +67,14 @@ $api->get('/list/newest/{page}', function ($page) use ($app) {
     {
         return $app->abort(400);
     }
-    return json_encode(
-        $app->getStorageService()
-            ->getCounterStorage()
-            ->getLatestCounters(10, 10*(int)$page)
-    );
+    $result = $app->getStorageService()
+        ->getCounterStorage()
+        ->getLatestCounters(10, 10*(int)$page);
 
+    return $app->json(array(
+        'success' => true,
+        'data' => $result
+    ));
 })
 ->value('page', 1);
 

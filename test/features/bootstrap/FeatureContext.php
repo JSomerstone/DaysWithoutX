@@ -290,9 +290,8 @@ class FeatureContext extends BehatContext
             'password' => $password1,
             'password-confirm' => $password2,
             'send' => '',
-            '_token' => $this->requestToken
         );
-        $this->response = $this->handlePostRequest('/signup', $post);
+        $this->response = $this->handlePostRequest('/api/signup', $post);
     }
 
     /**

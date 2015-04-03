@@ -1,5 +1,5 @@
 <?php
-namespace JSomerstone\DaysWithout\Tests\Module\Storage;
+namespace Module\Storage;
 
 use JSomerstone\DaysWithout\Model\CounterModel;
 use JSomerstone\DaysWithout\Model\UserModel;

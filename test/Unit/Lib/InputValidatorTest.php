@@ -1,6 +1,6 @@
 <?php
 
-namespace JSomerstone\DaysWithout\Tests\Lib;
+namespace Lib;
 
 use JSomerstone\DaysWithout\Lib\InputValidator;
 use JSomerstone\DaysWithout\Lib\InputValidatorException;

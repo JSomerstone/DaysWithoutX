@@ -4,3 +4,4 @@
 .vagrant/
 .DS_Store
 web/test/node_modules/
+doc/coverage/

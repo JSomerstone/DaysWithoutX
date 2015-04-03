@@ -1,6 +1,6 @@
 <?php
 
-namespace JSomerstone\DaysWithout\Tests\Model;
+namespace Model;
 
 use JSomerstone\DaysWithout\Model\CounterModel,
     JSomerstone\DaysWithout\Model\UserModel;

@@ -1,0 +1,12 @@
+nick:
+  regexp: '/^[a-zA-Z]{3,48}$/'
+  message: 'Nick must have 3-48 characters between A-z'
+
+password:
+  regexp: '/.{8,128}/'
+  message: 'Password must be at least 8 characters long'
+
+headline:
+  regexp: '/^.{1,100}$/'
+  message: 'Max 100 chars with one or more of a-z'
+  custom: 'validateHeadline'

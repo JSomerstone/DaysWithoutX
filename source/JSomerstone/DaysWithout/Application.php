@@ -4,28 +4,37 @@ namespace JSomerstone\DaysWithout;
 use \DerAlex\Silex\YamlConfigServiceProvider,
     \Silex\Provider\TwigServiceProvider,
     \Silex\Provider\SessionServiceProvider,
-    \JSomerstone\DaysWithout\Service\StorageServiceProvider;
+    \JSomerstone\DaysWithout\Service\StorageServiceProvider,
+    \JSomerstone\DaysWithout\Service\ValidationServiceProvider;
+use JSomerstone\DaysWithout\Lib\InputValidator;
 
 class Application extends \Silex\Application
 {
 
     /**
-     * @param string $configPath
+     * @param YamlConfigServiceProvider $configService
      * @param string $viewPath
+     * @param string $validationRulePath
      * @param array $values
      */
-    public function __construct($configPath, $viewPath, array $values = array())
+    public function __construct(
+        YamlConfigServiceProvider $configService,
+        $viewPath,
+        $validationRulePath,
+        array $values = array())
     {
         parent::__construct($values);
 
-        $this->register(new YamlConfigServiceProvider($configPath));
+        $this->register($configService);
         $this->register(new TwigServiceProvider(), array('twig.path' => $viewPath));
         $this->register(new SessionServiceProvider());
 
         $mongoClient = new \MongoClient($this->getConfigOrFail('dwo:storage:server'));
         $databaseName = $this->getConfigOrFail('dwo:storage:database');
-
         $this->register(new StorageServiceProvider($mongoClient, $databaseName));
+
+        $inputValidator = new InputValidator();
+        $this->register(new ValidationServiceProvider($inputValidator, $validationRulePath));
     }
 
     /**
@@ -42,6 +51,14 @@ class Application extends \Silex\Application
     public function getTwig()
     {
         return $this['twig'];
+    }
+
+    /**
+     * @return ValidationServiceProvider
+     */
+    public function getValidator()
+    {
+        return $this['validator'];
     }
 
     /**

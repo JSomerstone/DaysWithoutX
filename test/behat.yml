@@ -1,0 +1,7 @@
+## Behat configuration.
+default:
+    formatter:
+        name: pretty
+        parameters:
+            output_styles:
+                comment: [ cyan, black, [conceal]]

@@ -1,33 +1,37 @@
 <?php
 namespace JSomerstone\DaysWithout\Service;
+
 use Silex\Application;
 use Silex\ServiceProviderInterface;
-use JSomerstone\DaysWithout\Storage\CounterStorage,
-    JSomerstone\DaysWithout\Storage\UserStorage;
+use Symfony\Component\Yaml\Yaml;
+use JSomerstone\DaysWithout\Lib\InputValidator;
+use JSomerstone\DaysWithout\Lib\InputValidatorValueException;
 
-class StorageServiceProvider implements ServiceProviderInterface
+class ValidationServiceProvider implements ServiceProviderInterface
 {
-    private $mongoClient;
-    private $database;
+    /**
+     * @var InputValidator
+     */
+    private $inputValidator;
 
     /**
-     * @var CounterStorage
+     * @var string
      */
-    private $counterStorage;
+    private $rulePath;
 
     /**
-     * @var UserStorage
+     * @param InputValidator $validator
+     * @param string $rulePath
+     * @throws \Exception
      */
-    private $userStorage;
-
-    /**
-     * @param \MongoClient $mongoClient
-     * @param string $databaseName
-     */
-    public function __construct(\MongoClient $mongoClient, $databaseName)
+    public function __construct(InputValidator $validator, $rulePath)
     {
-        $this->mongoClient = $mongoClient;
-        $this->database = $databaseName;
+        $this->inputValidator = $validator;
+        $this->rulePath = $rulePath;
+        if ( ! is_readable($rulePath))
+        {
+            throw new \Exception("Unreadable input validation rule path: '$rulePath'");
+        }
     }
 
     /**
@@ -35,7 +39,8 @@ class StorageServiceProvider implements ServiceProviderInterface
      */
     public function register(Application $app)
     {
-        $app['storage'] = $this;
+        $app['validator'] = $this;
+        $app['validator.rules'] = Yaml::parse(file_get_contents($this->rulePath));
     }
 
     /**
@@ -43,23 +48,34 @@ class StorageServiceProvider implements ServiceProviderInterface
      */
     public function boot(Application $app)
     {
-        $this->userStorage = new UserStorage($this->mongoClient, $this->database);
-        $this->counterStorage = new CounterStorage($this->mongoClient, $this->database);
+        foreach($app['validator.rules'] as $field => $ruleSet)
+        {
+            $this->inputValidator->setValidationRule($field, $ruleSet);
+        }
     }
 
     /**
-     * @return UserStorage
+     * @param array $fieldValuePairs
+     * @return array $errors
      */
-    public function getUserStorage()
+    public function validateFields(array $fieldValuePairs)
     {
-        return $this->userStorage;
-    }
-
-    /**
-     * @return CounterStorage
-     */
-    public function getCounterStorage()
-    {
-        return $this->counterStorage;
+        $errors = array();
+        foreach ($fieldValuePairs as $field => $value)
+        {
+            try
+            {
+                $this->inputValidator->validateField($field, $value);
+            }
+            catch (InputValidatorValueException $e)
+            {
+                $errors[] = array(
+                    'field' => $e->getField(),
+                    'message' => $e->getMessage(),
+                    'rules' => $e->getRu
+                );
+            }
+        }
+        return $errors;
     }
 } 
