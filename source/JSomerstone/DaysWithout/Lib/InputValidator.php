@@ -5,31 +5,75 @@ namespace JSomerstone\DaysWithout\Lib;
 
 class InputValidator
 {
-    private $validationRules = array(
-        'nick' => array(
-            'pattern' => '[a-zA-Z]{3,48}',
-            'regexp' => '/^[a-zA-Z]{3,48}$/',
-            'message' => 'Nick must have 3-48 characters between A-z'
-        ),
-        'password' => array(
-            'pattern' => '.{8,128}',
-            'regexp' => '/.{8,128}/',
-            'message' => 'Password must be at least 8 characters long'
-        ),
-        'headline' => array(
-            'pattern' => '.{1,100}',
-            'regexp' => '/^.{1,100}$/',
-            'message' => 'Max 100 chars with one or more of a-z',
-            'custom' => 'validateHeadline'
-        ),
+    /**
+     * @var array collection of validation rules
+     *            array('field' => array('rule-type' => value, ... ), ... )
+     */
+    private $validationRules = array();
+
+    /**
+     * @var array
+     */
+    private $supportedValidationRules = array(
+        'type',
+        'patter',
+        'regexp',
+        'message',
+        'custom',
+        'min',
+        'min-length',
+        'max',
+        'max-length',
+        'non-empty',
+        'white-list'
     );
 
     /**
-     * @return array
+     * @param array $validationRuleArray
      */
-    public function getValidationRules()
+    public function __construct(array $validationRuleArray = array())
     {
-        return $this->validationRules;
+        foreach ($validationRuleArray as $field => $ruleSet)
+        {
+            $this->setValidationRule($field, $ruleSet);
+        }
+    }
+
+    /**
+     * @param string $field
+     * @param array $ruleSet Array of rules to validate given field by,
+     *              supported:'patter', 'regexp', 'message', 'custom', 'min', 'max', 'non-empty'
+     */
+    public function setValidationRule($field, array $ruleSet)
+    {
+        $this->assertOnlySupportedRules($field, $ruleSet);
+        $this->validationRules[$field] = $ruleSet;
+    }
+
+    private function assertOnlySupportedRules($field, array $ruleSet)
+    {
+        $ruleNames = array_keys($ruleSet);
+        foreach ($ruleNames as $given)
+        {
+            if ( ! in_array($given, $this->supportedValidationRules))
+            {
+                throw new InputValidatorException("Unsupported validation rule, field:$field, rule:'$given'");
+            }
+        }
+    }
+
+    /**
+     * @param string $field
+     * @return array
+     * @throws InputValidatorException
+     */
+    public function getValidationRule($field)
+    {
+        if ( ! isset($this->validationRules[$field]))
+        {
+            throw new InputValidatorException("Missing validation rule, field:$field");
+        }
+        return $this->validationRules[$field];
     }
 
     /**
@@ -43,65 +87,127 @@ class InputValidator
 
     /**
      * @param string $fieldName
-     * @param string $string
-     * @throws InputValidatorException
+     * @param mixed $value
+     * @throws InputValidatorValueException
      */
-    public function validateField($fieldName, $string)
+    public function validateField($fieldName, $value)
     {
-        if ($this->hasCustomValidation($fieldName))
+        $validationRules = $this->getValidationRule($fieldName);
+
+        $failedRules = array();
+
+        if (isset($validationRules['type']) && ! $this->validateAgainstType($validationRules['type'], $value))
         {
-            if ( ! $this->customValidation($fieldName, $string))
-            {
-                throw new InputValidatorException(
-                    $fieldName,
-                    $this->getMessageForField($fieldName)
-                );
-            }
+            $failedRules[] = 'type';
         }
-        if ( ! self::validateString($this->getRegexpForField($fieldName), $string))
+        if (isset($validationRules['regexp']) && ! $this->validateAgainstRegexp($validationRules['regexp'], $value))
         {
-            throw new InputValidatorException(
+            $failedRules[] = 'regexp';
+        }
+        if (isset($validationRules['min']) && ! $this->validateAgainstMin($validationRules['min'], $value))
+        {
+            $failedRules[] = 'min';
+        }
+        if (isset($validationRules['max']) && ! $this->validateAgainstMax($validationRules['max'], $value))
+        {
+            $failedRules[] = 'max';
+        }
+        if (isset($validationRules['custom']) && ! $this->validateAgainstCustomMethod($validationRules['custom'], $value))
+        {
+            $failedRules[] = 'max';
+        }
+
+        if (isset($validationRules['white-list']) && ! $this->validateAgainstWhiteList($validationRules['white-list'], $value))
+        {
+            $failedRules[] = 'white-list';
+        }
+
+        if ( ! empty($failedRules))
+        {
+            throw new InputValidatorValueException(
                 $fieldName,
-                $this->getMessageForField($fieldName)
+                $failedRules
             );
         }
     }
 
-    private static function validateString($pattern, $string)
+    /**
+     * @param string $pattern
+     * @param string $actualValue
+     * @return bool
+     */
+    private static function validateAgainstRegexp($pattern, $actualValue)
     {
         return (bool)preg_match(
             $pattern,
-            $string
+            $actualValue
         );
     }
 
     /**
-     * @param string $fieldName
-     * @return string regular expression
+     * @param string $expectedType
+     * @param string $actualValue
+     * @return bool
+     */
+    private static function validateAgainstType($expectedType, $actualValue)
+    {
+        switch($expectedType)
+        {
+            case 'int': return is_int($actualValue);
+            case 'string': return is_string($actualValue);
+            case 'bool': return is_bool($actualValue);
+            case 'array': return is_array($actualValue);
+        }
+    }
+
+    /**
+     * @param string $method Custom method of InputValidator to validate value against
+     * @param mixed $value
+     * @return bool
      * @throws InputValidatorException
      */
-    public function getRegexpForField($fieldName)
+    private function validateAgainstCustomMethod($method, $value)
     {
-        if ( ! isset($this->validationRules[$fieldName])
-            ||  ! isset($this->validationRules[$fieldName]['regexp']))
+        if ( ! method_exists($this, $method))
         {
             throw new InputValidatorException(
-                $fieldName,
-                "Missing pattern for field '$fieldName'"
+                "Non-existing custom validation method:$method"
             );
         }
-        return $this->validationRules[$fieldName]['regexp'];
+
+        return (bool)self::$method($value);
     }
 
-    private function hasCustomValidation($fieldName)
+    private function validateAgainstWhiteList($whiteList, $actualValue)
     {
-        return isset($this->validationRules[$fieldName])
-            && isset($this->validationRules[$fieldName]['custom']);
+        return in_array($actualValue, $whiteList);
     }
 
-    private function getCustomValidationMethod($fieldName)
+    private static function isEmail($value)
     {
-       return $this->validationRules[$fieldName]['custom'];
+        return (bool)preg_match('/.+@[a-z0-9]+([a-z0-9.]+)?/', $value);
+    }
+
+    /**
+     * @param int $minValue
+     * @param int $actualValue
+     * @return bool
+     * @throws \InputValidatorException
+     */
+    private function validateAgainstMin($minValue, $actualValue)
+    {
+        return $minValue >= $actualValue;
+    }
+
+    /**
+     * @param int $maxValue
+     * @param int $actualValue
+     * @return bool
+     * @throws \InputValidatorException
+     */
+    private function validateAgainstMax($maxValue, $actualValue)
+    {
+        return $maxValue <= $actualValue;
     }
 
     /**
@@ -131,23 +237,12 @@ class InputValidator
     {
         if ( $password !== $confirmation)
         {
-            throw new InputValidatorException('password', 'Passwords do not match');
+            throw new InputValidatorValueException('password', 'Passwords do not match');
         }
         return $this->validateField('password', $password);
     }
 
-    private function customValidation($fieldName, $value)
-    {
-        $method = $this->getCustomValidationMethod($fieldName);
-        if ( ! method_exists($this, $method))
-        {
-            throw new \InvalidArgumentException(
-                "Unable to use non-existing custom validation method InputValidator::$method"
-            );
-        }
 
-        return $this->$method($value);
-    }
 
     public function validateHeadline($headline)
     {
@@ -156,16 +251,49 @@ class InputValidator
     }
 }
 
-class InputValidatorException extends \JSomerstone\DaysWithout\Exception\PublicException
+class InputValidatorException extends \Exception
 {
+
+}
+class InputValidatorValueException extends \JSomerstone\DaysWithout\Exception\PublicException
+{
+    /**
+     * @var string
+     */
     private $invalidField;
 
-    public function __construct($fieldName, $message = null)
+    /**
+     * @var array
+     */
+    private $rules;
+
+    public function __construct($fieldName, $rules = array())
     {
         $this->invalidField = $fieldName;
-        $message = is_null($message)
-            ? "Field '$fieldName' is invalid"
-            : $message;
+        $this->rules = $rules;
+
+        $message = sprintf("Input validation failed, field:'%s'", $fieldName);
         parent::__construct($message);
+    }
+
+    public function getField()
+    {
+        return $this->invalidField;
+    }
+
+    public function getRules()
+    {
+        return $this->rules;
+    }
+
+    public function __toString()
+    {
+        return sprintf(
+            '%s:%s, field:%s, rules:%s',
+            __CLASS__,
+            $this->getMessage(),
+            $this->invalidField,
+            implode(',',$this->rules)
+        );
     }
 }

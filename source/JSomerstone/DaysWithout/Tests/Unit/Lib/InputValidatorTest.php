@@ -21,107 +21,52 @@ class InputValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $field
      * @test
-     * @dataProvider provideFieldNames
+     * @dataProvider provideRuleSets
      */
-    public function testGetRegexpForField($field)
+    public function testSettingRule($ruleSet)
     {
-        $result = $this->inputValidator->getRegexpForField($field);
-        $this->assertNotEmpty($result);
+        $this->inputValidator->setValidationRule(uniqid(), $ruleSet);
     }
 
-    public function provideFieldNames()
+    public function provideRuleSets()
     {
         return array(
-            array('nick')
+            array(
+                array( 'type' => 'text')
+            ),
+            array(
+                array( 'min' => 1, 'max' => 100)
+            ),
+            array(
+                array( 'min-length' => 1, 'max-length' => 100)
+            ),
+            array(
+                array(
+                    'type' => 'int',
+                    'patter' => '[0-9]+',
+                    'regexp' => '/^[0-9]+$/',
+                    'message' => '',
+                    'custom' => 'isEmail',
+                    'min' => -PHP_INT_MAX,
+                    'min-length' => 1,
+                    'max' => PHP_INT_MAX,
+                    'max-length' => 3600,
+                    'non-empty' => true
+                )
+            )
         );
     }
 
-    /**
-     * @dataProvider provideValidNick
-     */
-    public function testNickValidation($validNick)
+    public function testWhiteListValidation()
     {
-        $this->assertNull(
-            $this->inputValidator->validateNick($validNick)
+        $ruleSet = array('white-list' => array('one', 'two', 'three'));
+        $this->inputValidator->setValidationRule('number', $ruleSet);
+
+        $this->assertEmpty(
+            $this->inputValidator->validateField('number', 'one')
         );
-    }
-
-    public function provideValidNick()
-    {
-        return array(
-            array('WTF'),
-            array('Jsomerstone'),
-            array('AbBa'),
-        );
-    }
-
-    /**
-     * @dataProvider provideInvalidNick
-     */
-    public function testNickValidationFailures($validNick)
-    {
-        $this->setExpectedException(
-            'JSomerstone\DaysWithout\Lib\InputValidatorException'
-        );
-        $this->inputValidator->validateNick($validNick);
-    }
-
-    public function provideInvalidNick()
-    {
-        return array(
-            array(''),
-            array('      '),
-            array('WT'),
-            array(str_repeat('X', 49)),
-            array('__POST'),
-            array('L4TF'),
-        );
-    }
-
-    public function provideInvalidHeadline()
-    {
-        return [
-            [''],
-            ['      '],
-            ['#'],
-            [str_repeat('X', 101)],
-            ['!"#%!"%"#€!"#€!'],
-            ['?'],
-        ];
-    }
-
-    /**
-     * @param $invalidHeadline
-     * @test
-     * @dataProvider provideInvalidHeadline
-     */
-    public function testHeadlineValidationFails($invalidHeadline)
-    {
-        $this->setExpectedException(
-            'JSomerstone\DaysWithout\Lib\InputValidatorException'
-        );
-        $this->inputValidator->validateField('headline', $invalidHeadline);
-    }
-    public function provideValidHeadline()
-    {
-        return [
-            ['It'],
-            ['Sex'],
-            ['WTF?!'],
-            [str_repeat('X', 100)],
-            ['Lol wut?'],
-            ['Getting this darn thing to work'],
-        ];
-    }
-
-    /**
-     * @test
-     * @dataProvider provideValidHeadline
-     */
-    public function testHeadlineValidationSucceess($validHeadline)
-    {
-        $this->inputValidator->validateField('headline', $validHeadline);
+        $this->setExpectedException('JSomerstone\DaysWithout\Lib\InputValidatorValueException');
+        $this->inputValidator->validateField('number', -13);
     }
 }
