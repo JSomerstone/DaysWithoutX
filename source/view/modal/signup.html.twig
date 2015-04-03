@@ -3,6 +3,10 @@
 {% block modal_title %}Signup{% endblock %}
 
 {% block modal_body %}
+    <p>
+        Fill the form to sing up to DaysWithout.info - this allows you to create <b>private</b> and <b>protected</b>
+        counters.
+    </p>
     <form>
         <div class="form-group">
             <input
@@ -33,7 +37,7 @@
                 placeholder="Confirm"
             >
             <p>
-                <a href="#login" data-toggle="modal" data-target="#login-dialog" data-dismiss="modal">
+                <a href="#login" class="nogo" data-dismiss="modal">
                     Already got an account?
                 </a>
             </p>

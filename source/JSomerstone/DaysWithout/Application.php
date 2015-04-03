@@ -87,6 +87,7 @@ class Application extends \Silex\Application
     {
         $this['debug'] = $bool;
     }
+
     public static function D()
     {
         $params = func_get_args();

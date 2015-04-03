@@ -95,10 +95,31 @@ dwo = {
         {
             return ( a==1 ? "last " + t : a +" "+ t +"s ago") ;
         }
+    },
+
+    openDialog: function(dialog)
+    {
+        switch (dialog)
+        {
+            case 'login':
+                $('#login-dialog').modal();
+                break;
+            case 'signup':
+                $('#signup-dialog').modal();
+                break;
+        }
     }
 }
 
 $(function() {
+
+    dwo.openDialog(window.location.hash.substring(1));
+
+    $("a.nogo").click(function() {
+        var href = $(this).attr("href");
+        history.pushState({}, '', href);
+        dwo.openDialog(href.substring(1));
+    });
 
     /**
      * Delete-counter-functionality

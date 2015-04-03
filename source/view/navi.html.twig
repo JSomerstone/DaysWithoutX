@@ -8,10 +8,10 @@
         </li>
     {% else %}
         <li {% if url == '#login' %} class="active"{% endif %}>
-            <a href="#login" data-toggle="modal" data-target="#login-dialog" >Login</a>
+            <a href="#login" class="nogo" data-toggle="modal" data-target="#login-dialog" >Login</a>
         </li>
         <li {% if url == '#signup' %} class="active"{% endif %}>
-            <a href="#signup" data-toggle="modal" data-target="#signup-dialog" >Sign up</a>
+            <a href="#signup" class="nogo" data-toggle="modal" data-target="#signup-dialog" >Sign up</a>
         </li>
     {% endif %}
 </ul>

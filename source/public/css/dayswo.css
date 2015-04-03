@@ -58,3 +58,7 @@ table.counter-list td.counter-list-daycount {
 .counter-postit .navbar {
     margin-bottom: -50px;
 }
+
+div.jumbotron {
+    background-color: mediumpurple;
+}

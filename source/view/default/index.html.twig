@@ -3,6 +3,20 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
+    <div class="jumbotron row">
+        <div class="container-fluid">
+            <h1>Days without</h1>
+            <p>
+                Days without is a day-counter for anything. Just start new counter from below. You can make three
+                kinds of counters:
+                <ul>
+                    <li><i class="fa fa-eye"></i> <b>Private</b> - only You can see them, requires registration</li>
+                    <li><i class="fa fa-user"></i> <b>Protected</b> - anyone can see, only you can reset, requires registration</li>
+                    <li><i class="fa fa-group"></i> <b>Public</b> - anyone can see & reset</li>
+                </ul>
+            </p>
+        </div>
+    </div>
     <div class="row">
         <div class="{{ content_classes }}">
             {% include 'counter/newCounter.html.twig' %}

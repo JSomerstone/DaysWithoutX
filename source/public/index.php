@@ -9,7 +9,7 @@ $app = new \JSomerstone\DaysWithout\Application(
     __DIR__ . '/../../config/config.yml',
     __DIR__ . '/../view'
 );
-$app->debug(true);
+$request = Request::createFromGlobals();
 
 /**
  * FRONT-PAGE
@@ -37,6 +37,17 @@ $app->get('/', function() use ($app)
 });
 
 $api = $app['controllers_factory'];
+$api->post('/signup', function() use ($app, $request)
+{
+    $nick = $request->get('nick');
+    $password = $request->get('password');
+    $password2 = $request->get('password-confirm');
+    $errors = array();
+    array_merge($errors, $app->getValidator()->validateValue($nick, new Assert\RegexValidator()));
+
+
+});
+
 
 $api->get('/list/newest/{page}', function ($page) use ($app) {
 

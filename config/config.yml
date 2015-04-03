@@ -4,4 +4,4 @@ dwo:
         database: dayswithout
     view:
         path:
-
+    debug: true
