@@ -16,7 +16,6 @@ class InputValidator
      */
     private $supportedValidationRules = array(
         'type',
-        'patter',
         'regexp',
         'message',
         'custom',
@@ -108,18 +107,29 @@ class InputValidator
         {
             $failedRules[] = 'min';
         }
+        if (isset($validationRules['min-length']) && ! $this->validateAgainstMinLength($validationRules['min-length'], $value))
+        {
+            $failedRules[] = 'min-length';
+        }
         if (isset($validationRules['max']) && ! $this->validateAgainstMax($validationRules['max'], $value))
         {
             $failedRules[] = 'max';
+        }
+        if (isset($validationRules['max-length']) && ! $this->validateAgainstMaxLength($validationRules['max-length'], $value))
+        {
+            $failedRules[] = 'max-length';
         }
         if (isset($validationRules['custom']) && ! $this->validateAgainstCustomMethod($validationRules['custom'], $value))
         {
             $failedRules[] = 'max';
         }
-
         if (isset($validationRules['white-list']) && ! $this->validateAgainstWhiteList($validationRules['white-list'], $value))
         {
             $failedRules[] = 'white-list';
+        }
+        if (isset($validationRules['non-empty']) && empty($value))
+        {
+            $failedRules[] = 'non-empty';
         }
 
         if ( ! empty($failedRules))
@@ -192,11 +202,20 @@ class InputValidator
      * @param int $minValue
      * @param int $actualValue
      * @return bool
-     * @throws \InputValidatorException
      */
     private function validateAgainstMin($minValue, $actualValue)
     {
-        return $minValue >= $actualValue;
+        return $actualValue >= $minValue;
+    }
+
+    /**
+     * @param int $minLength
+     * @param string $actualValue
+     * @return bool
+     */
+    private function validateAgainstMinLength($minLength, $actualValue)
+    {
+        return mb_strlen($actualValue) >= $minLength;
     }
 
     /**
@@ -207,7 +226,18 @@ class InputValidator
      */
     private function validateAgainstMax($maxValue, $actualValue)
     {
-        return $maxValue <= $actualValue;
+        return $actualValue <= $maxValue;
+    }
+
+
+    /**
+     * @param int $maxLength
+     * @param string $actualValue
+     * @return bool
+     */
+    private function validateAgainstMaxLength($maxLength, $actualValue)
+    {
+        return mb_strlen($actualValue) <= $maxLength;
     }
 
     /**
@@ -272,7 +302,7 @@ class InputValidatorValueException extends \JSomerstone\DaysWithout\Exception\Pu
         $this->invalidField = $fieldName;
         $this->rules = $rules;
 
-        $message = sprintf("Input validation failed, field:'%s'", $fieldName);
+        $message = "Input validation failed";
         parent::__construct($message);
     }
 

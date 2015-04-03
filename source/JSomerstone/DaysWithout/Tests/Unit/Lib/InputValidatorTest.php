@@ -44,7 +44,6 @@ class InputValidatorTest extends \PHPUnit_Framework_TestCase
             array(
                 array(
                     'type' => 'int',
-                    'patter' => '[0-9]+',
                     'regexp' => '/^[0-9]+$/',
                     'message' => '',
                     'custom' => 'isEmail',
@@ -58,15 +57,79 @@ class InputValidatorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testWhiteListValidation()
+    /**
+     * @param $ruleSet
+     * @param $validValue
+     * @param $invalidValue
+     * @dataProvider provideRulesetsWithValues
+     */
+    public function testValidationAgainstRules($ruleSet, $validValue, $invalidValue)
     {
-        $ruleSet = array('white-list' => array('one', 'two', 'three'));
-        $this->inputValidator->setValidationRule('number', $ruleSet);
-
+        $fieldName = 'irrelevant';
+        $this->inputValidator->setValidationRule($fieldName, $ruleSet);
         $this->assertEmpty(
-            $this->inputValidator->validateField('number', 'one')
+            $this->inputValidator->validateField($fieldName, $validValue)
         );
         $this->setExpectedException('JSomerstone\DaysWithout\Lib\InputValidatorValueException');
-        $this->inputValidator->validateField('number', -13);
+        $this->inputValidator->validateField($fieldName, $invalidValue);
+    }
+
+    public function provideRulesetsWithValues()
+    {
+        return array(
+            'white-list' => array(
+                array('white-list' => array('one', 'two', 'three')),
+                'one',
+                'four'
+            ),
+
+            'regexp' => array(
+                array('regexp' => '/^[a-z]+$/'),
+                'abba',
+                'fuubar123'
+            ),
+
+            'type' => array(
+                array('type' => 'bool'),
+                true,
+                'false'
+            ),
+
+            'min' => array(
+                array('min' => 0),
+                12,
+                -1
+            ),
+
+            'max' => array(
+                array('max' => 100),
+                100,
+                101
+            ),
+
+            'min-length' => array(
+                array('min-length' => 3, 'type' => 'string'),
+                'Abba',
+                'no'
+            ),
+
+            'max-length' => array(
+                array('max-length' => 6, 'type' => 'string'),
+                'seven',
+                'six+one'
+            ),
+
+            'custom' => array(
+                array('custom' => 'isEmail'),
+                'fuu@bar.com',
+                'fuu at bar dot com'
+            ),
+
+            'non-empty' => array(
+                array('non-empty' => 1),
+                'I am not empty',
+                ''
+            ),
+        );
     }
 }
