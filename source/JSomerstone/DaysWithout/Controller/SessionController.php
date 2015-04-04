@@ -28,60 +28,7 @@ class SessionController extends BaseController
         );
     }
 
-    /**
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     */
-    public function signupAction(Request $request)
-    {
-        $nick = $request->get('nick');
-        $password = $request->get('password');
-        $passwordConfirmation = $request->get('password-confirm');
 
-        try
-        {
-            $this->validateSignup($nick, $password, $passwordConfirmation);
-            $user = $this->signUpUser($nick, $password);
-            $this->setLoggedInUser($user);
-        }
-        catch (PublicException $e)
-        {
-            $this->addError($e->getMessage());
-            return $this->redirect($this->generateUrl('dwo_signup_page'));
-        }
-        catch (\Exception $e)
-        {
-            $this->addError('Unexpected exception occurred');
-            return $this->redirect($this->generateUrl('dwo_signup_page'));
-        }
-
-        $this->addMessage("Welcome $nick, time to create your first counter");
-        return $this->getFrontPageRedirection();
-    }
-
-    private function validateSignup($nick, $password, $passwordConfirmation)
-    {
-        $this->getInputValidator()
-            ->validateFields(array(
-                'nick' => $nick,
-                'password' => $password
-            ))
-            ->validatePassword($password, $passwordConfirmation);
-    }
-
-    private function signUpUser($nick, $password)
-    {
-        $userStorage = $this->getUserStorage();
-        if ($userStorage->exists($nick))
-        {
-            throw new PublicException(
-                "Unfortunately nick '$nick' is already taken"
-            );
-        }
-        $user = new UserModel($nick, $password);
-        $userStorage->store($user);
-        return $user;
-    }
 
 
     public function logoutAction()

@@ -454,12 +454,10 @@ class FeatureContext extends BehatContext
      */
     public function jsonResponseHasMessage($expectedMessage)
     {
-        Assert::true($this->curl->isResponseJson());
-
         $response = $this->curl->getJsonResponse();
         if ( ! isset($response['message']))
         {
-            throw new Exception('No message in response: ' . $this->response->getContent());
+            throw new Exception('No message in response: ' . json_encode($response));
         }
         Assert::equals(
             $expectedMessage,
@@ -469,12 +467,12 @@ class FeatureContext extends BehatContext
 
     private function pageMatchesRegexp($regexp, $messageIfNot = null)
     {
-        Assert::regexp($regexp, $this->curl->getBody());
+        Assert::regexp($regexp, $this->curl->getBody(), $messageIfNot);
     }
 
-    private function pageNotMatchesRegexp($regexp)
+    private function pageNotMatchesRegexp($regexp, $messageIfNot = null)
     {
-        Assert::notRegexp($regexp, $this->curl->getBody());
+        Assert::notRegexp($regexp, $this->curl->getBody(), $messageIfNot);
     }
 
     private static function getCounterName($counterHeadline)

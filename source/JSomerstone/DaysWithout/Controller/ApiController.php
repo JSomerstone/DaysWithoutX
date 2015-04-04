@@ -16,6 +16,61 @@ class ApiController extends BaseController
     use SessionTrait;
 
     /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function signupAction(Request $request)
+    {
+        $nick = $request->get('nick');
+        $password = $request->get('password');
+        $passwordConfirmation = $request->get('password-confirm');
+
+        try
+        {
+            $this->validateSignup($nick, $password, $passwordConfirmation);
+            $user = $this->signUpUser($nick, $password);
+            $this->setLoggedInUser($user);
+        }
+        catch (PublicException $e)
+        {
+            $this->getLogger()->addNotice((string)$e, array(__CLASS__, __METHOD__, get_class($e)));
+            return $this->jsonErrorResponse($e->getMessage());
+        }
+        catch (\Exception $e)
+        {
+            $this->getLogger()->addError($e->getMessage(), array(__CLASS__, __METHOD__, get_class($e)));
+            $this->addError('Unexpected exception occurred');
+            return $this->jsonErrorResponse($e->getMessage());
+        }
+
+        return $this->jsonSuccessResponse("Welcome $nick");
+    }
+
+    private function validateSignup($nick, $password, $passwordConfirmation)
+    {
+        $this->getInputValidator()
+            ->validateFields(array(
+                'nick' => $nick,
+                'password' => $password
+            ))
+            ->validatePassword($password, $passwordConfirmation);
+    }
+
+    private function signUpUser($nick, $password)
+    {
+        $userStorage = $this->getUserStorage();
+        if ($userStorage->exists($nick))
+        {
+            throw new PublicException(
+                "Unfortunately nick '$nick' is already taken"
+            );
+        }
+        $user = new UserModel($nick, $password);
+        $userStorage->store($user);
+        return $user;
+    }
+
+    /**
      * @param string $counter
      * @param string $owner
      * @return \Symfony\Component\HttpFoundation\Response

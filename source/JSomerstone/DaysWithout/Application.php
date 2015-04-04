@@ -40,14 +40,17 @@ class Application extends \Silex\Application
 
         $mongoClient = new \MongoClient($this->getConfigOrFail('dwo:storage:server'));
         $databaseName = $this->getConfigOrFail('dwo:storage:database');
-        $logFile = $this->getConfigOrFail('dwo:log:file');
         $inputValidator = new InputValidator();
 
         $this->register(new TwigServiceProvider(), array('twig.path' => $viewPath))
             ->register(new SessionServiceProvider())
             ->register(new StorageServiceProvider($mongoClient, $databaseName))
             ->register(new ValidationServiceProvider($inputValidator, $validationRulePath))
-            ->register(new MonologServiceProvider(), array('monolog.logfile' => $logFile,));
+            ->register(new MonologServiceProvider(), array(
+                'monolog.logfile' => $this->getConfigOrFail('dwo:log:file'),
+                'monolog.level' => $this->getConfig('dwo:log:level', 300),
+                'monolog.name' => $this->getConfig('dwo:log:name', 'dwo')
+            ));
 
         $this->registerAs('controller.api', new ApiController())
             ->registerAs('controller.default', new CounterController())
@@ -98,10 +101,11 @@ class Application extends \Silex\Application
 
     /**
      * @param string|null $key setting path like 'dwo:storage:database'
+     * @param mixed|null $defaultValue Value to return if a setting is not found
      * @return array
      * @throws \Exception
      */
-    public function getConfig($key = null)
+    public function getConfig($key = null, $defaultValue = null)
     {
         if (is_null($key))
         {
@@ -113,7 +117,7 @@ class Application extends \Silex\Application
         {
             if ( ! isset($reference[$settingLevel]))
             {
-                return null;
+                return $defaultValue ?: null;
             }
             $reference = $reference[$settingLevel];
         }

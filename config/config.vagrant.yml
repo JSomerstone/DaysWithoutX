@@ -3,3 +3,5 @@ dwo:
         server: localhost:27017
         database: dayswithout
     debug: true
+    log:
+      file: /tmp/dwo.log

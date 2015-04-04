@@ -7,6 +7,8 @@ use JSomerstone\DaysWithout\Model\UserModel;
 use JSomerstone\DaysWithout\Application,
     JSomerstone\DaysWithout\Lib\InputValidator;
 
+use Symfony\Component\HttpFoundation\Response;
+
 abstract class BaseController
 {
     /**

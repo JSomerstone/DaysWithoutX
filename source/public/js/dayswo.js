@@ -28,6 +28,22 @@ dwo = {
 
     },
 
+    createApiCallback : function(onSuccess, onFailure)
+    {
+        return function(data)
+        {
+            var response = jQuery.parseJSON(data);
+            if ( response.success )
+            {
+                dwo.message.info(response.message);
+                onSuccess(response);
+            }
+            else {
+                dwo.message.error(response.message);
+                onFailure(response);
+            }
+        }
+    },
     handleApiResponse : function(data)
     {
         var response = jQuery.parseJSON(data);
@@ -187,6 +203,24 @@ $(function() {
             dwo.formApiUrl('counter/reset', counter, owner),
             postParameters,
             dwo.handleApiResponse
+        );
+    });
+
+    $('#sign-up-button').click(function(){
+        var post = {
+            nick: $('#signup-dialog #nickField').val(),
+            password: $('#signup-dialog #passwordField').val(),
+            'password-confirm': $('#signup-dialog #passwordConfirmField').val()
+        }
+        $.post(
+            'api/signup',
+            post,
+            dwo.createApiCallback(
+                function(response){
+                    window.location = '/';
+                },
+                function(response){}
+            )
         );
     });
 });
