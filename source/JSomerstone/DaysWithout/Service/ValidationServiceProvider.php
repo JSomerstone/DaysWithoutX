@@ -9,6 +9,8 @@ use JSomerstone\DaysWithout\Lib\InputValidatorValueException;
 
 class ValidationServiceProvider implements ServiceProviderInterface
 {
+    const SERVICE = 'validator';
+
     /**
      * @var InputValidator
      */
@@ -39,7 +41,7 @@ class ValidationServiceProvider implements ServiceProviderInterface
      */
     public function register(Application $app)
     {
-        $app['validator'] = $this;
+        $app[self::SERVICE] = $this;
         $app['validator.rules'] = Yaml::parse(file_get_contents($this->rulePath));
     }
 

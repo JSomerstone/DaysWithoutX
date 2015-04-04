@@ -1,26 +1,25 @@
 <?php
 namespace JSomerstone\DaysWithout\Controller;
 
-use Doctrine\ORM\Query\AST\Functions\ConcatFunction;
-use JSomerstone\DaysWithout\Form\Type\CounterType,
-    JSomerstone\DaysWithout\Form\Type\OwnerType,
-    JSomerstone\DaysWithout\Model\CounterModel;
-use JSomerstone\DaysWithout\Form\Type\ResetType;
-use JSomerstone\DaysWithout\Form\Type\UserType;
+use JSomerstone\DaysWithout\Model\CounterModel;
 use JSomerstone\DaysWithout\Lib\StringFormatter;
 use JSomerstone\DaysWithout\Model\UserModel;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller,
-    Symfony\Component\Security\Core\Exception\AuthenticationException,
-    Symfony\Component\HttpFoundation\Response;
+use JSomerstone\DaysWithout\Service\ContextService,
+    JSomerstone\DaysWithout\Application;
 
-abstract class BaseController extends Controller
+abstract class BaseController
 {
+    /**
+     * @var Application
+     */
+    protected $app;
+
     /**
      *
      * @var array
      */
     protected $response = array(
-        'title' => 'Days Without <X>',
+        'title' => '',
         'messages' => array(),
         'notices' => array(),
         'errors' => array(),
@@ -42,14 +41,27 @@ abstract class BaseController extends Controller
      */
     protected $logger;
 
+    public function register(Application $app)
+    {
+        $this->app = $app;
+    }
+
+    /**
+     * Get an object from context
+     * @param string $name
+     * @return mixed
+     */
+    protected function get($name)
+    {
+        return $this->app[$name];
+    }
+
     public function render($view, array $parameters = array(), Response $response = null)
     {
         $loggedInUser = $this->getSession()->get('user');
         $parameters['user'] = $loggedInUser;
         $parameters['loggedIn'] = $loggedInUser ? true : false;
         $this->setValidationRulesForView($parameters);
-
-        return parent::render($view, $parameters, $response);
     }
 
     private function setValidationRulesForView(&$parameters)

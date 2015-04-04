@@ -6,7 +6,8 @@ use \Symfony\Component\HttpFoundation\Request,
     \DerAlex\Silex\YamlConfigServiceProvider;
 
 $app = new \JSomerstone\DaysWithout\Application(
-    new YamlConfigServiceProvider(__DIR__ . '/../../config/config.yml'),
+    __DIR__ . '/../../config/config.yml',
+
     $viewPath = __DIR__ . '/../view',
     $validationRulePath = __DIR__ . '/../JSomerstone/DaysWithout/Resources/validation.yml'
 );
@@ -39,25 +40,11 @@ $app->get('/', function() use ($app)
 });
 
 $api = $app['controllers_factory'];
-$api->post('/signup', function() use ($app, $request)
+
+$api->post('/signup', function(Request $request) use ($app)
 {
-    $nick = $request->get('nick');
-    $password = $request->get('password');
-    $password2 = $request->get('password-confirm');
-
-    $errors = $app->getValidator()->validateFields(array(
-        'nick' => $nick,
-        'password' => $password,
-    ));
-
-    if ( ! empty($errors))
-    {
-        return $app->json(array(
-            'success' => false,
-            'message' => '',
-            'data' => $errors
-        ));
-    }
+    $signupController = $app->getContext()->get('session');
+    return $signupController->signupAction($request);
 });
 
 
@@ -93,4 +80,4 @@ $api->get('/list/newest/{page}', function ($page) use ($app)
 ->value('page', 1);
 
 $app->mount('/api', $api);
-$app->run();
+$app->run($request);

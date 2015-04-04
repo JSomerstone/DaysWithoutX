@@ -1,5 +1,4 @@
 <?php
-
 function jsomerstone_autoloader($className)
 {
     if ( ! preg_match('/^JSomerstone/', $className))

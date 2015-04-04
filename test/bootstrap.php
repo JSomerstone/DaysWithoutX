@@ -1,6 +1,7 @@
 <?php
 date_default_timezone_set('Europe/Helsinki');
 require_once __DIR__ . '/../source/autoloader.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 function D()
 {

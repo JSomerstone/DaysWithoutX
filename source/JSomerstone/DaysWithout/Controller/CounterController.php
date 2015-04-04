@@ -2,15 +2,11 @@
 namespace JSomerstone\DaysWithout\Controller;
 
 use Symfony\Component\HttpFoundation\Request,
-    Symfony\Component\HttpFoundation\Response,
-    Symfony\Component\DependencyInjection\ContainerInterface as Container,
-    Symfony\Component\Form\Form as Form;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+    Symfony\Component\HttpFoundation\Response;
 use JSomerstone\DaysWithout\Model\CounterModel,
     JSomerstone\DaysWithout\Model\UserModel,
     JSomerstone\DaysWithout\Storage\CounterStorage,
     JSomerstone\DaysWithout\Lib\InputValidatorException;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class CounterController extends BaseController
 {

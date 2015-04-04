@@ -7,6 +7,8 @@ use JSomerstone\DaysWithout\Storage\CounterStorage,
 
 class StorageServiceProvider implements ServiceProviderInterface
 {
+    const SERVICE = 'storage';
+
     private $mongoClient;
     private $database;
 
@@ -28,6 +30,9 @@ class StorageServiceProvider implements ServiceProviderInterface
     {
         $this->mongoClient = $mongoClient;
         $this->database = $databaseName;
+
+        $this->userStorage = new UserStorage($this->mongoClient, $this->database);
+        $this->counterStorage = new CounterStorage($this->mongoClient, $this->database);
     }
 
     /**
@@ -35,7 +40,7 @@ class StorageServiceProvider implements ServiceProviderInterface
      */
     public function register(Application $app)
     {
-        $app['storage'] = $this;
+        $app[self::SERVICE] = $this;
     }
 
     /**
@@ -43,8 +48,6 @@ class StorageServiceProvider implements ServiceProviderInterface
      */
     public function boot(Application $app)
     {
-        $this->userStorage = new UserStorage($this->mongoClient, $this->database);
-        $this->counterStorage = new CounterStorage($this->mongoClient, $this->database);
     }
 
     /**
@@ -62,4 +65,4 @@ class StorageServiceProvider implements ServiceProviderInterface
     {
         return $this->counterStorage;
     }
-} 
+}

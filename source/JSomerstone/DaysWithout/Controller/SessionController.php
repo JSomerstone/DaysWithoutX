@@ -1,7 +1,6 @@
 <?php
 namespace JSomerstone\DaysWithout\Controller;
 
-use Behat\Behat\Exception\Exception;
 use JSomerstone\DaysWithout\Model\UserModel;
 use Symfony\Component\HttpFoundation\Session\Session,
     Symfony\Component\HttpFoundation\Request;

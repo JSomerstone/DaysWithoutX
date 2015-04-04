@@ -11,24 +11,20 @@
     processIsolation = "false"
     stopOnFailure = "false"
     syntaxCheck = "false"
-    bootstrap = "test/bootstrap.php" >
+    bootstrap = "bootstrap.php" >
 
     <testsuites>
         <testsuite name="Unit">
-            <directory>test/Unit</directory>
+            <directory>Unit</directory>
         </testsuite>
         <testsuite name="Module">
-            <directory>test/Module</directory>
+            <directory>Module</directory>
         </testsuite>
     </testsuites>
 
-    <php>
-        <server name="KERNEL_DIR" value="app/" />
-    </php>
-
     <filter>
         <whitelist>
-            <directory>source</directory>
+            <directory>/vagrant/source</directory>
         </whitelist>
     </filter>
 
@@ -38,7 +34,7 @@
 
     <logging>
         <log type="coverage-html"
-            target="doc/coverage/"
+            target="/vagrant/doc/coverage/"
             charset="utf-8"
             highlight="true"
             lowUpperBound="60"

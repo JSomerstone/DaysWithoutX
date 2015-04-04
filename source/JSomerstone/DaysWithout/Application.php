@@ -6,35 +6,67 @@ use \DerAlex\Silex\YamlConfigServiceProvider,
     \Silex\Provider\SessionServiceProvider,
     \JSomerstone\DaysWithout\Service\StorageServiceProvider,
     \JSomerstone\DaysWithout\Service\ValidationServiceProvider;
-use JSomerstone\DaysWithout\Lib\InputValidator;
+use JSomerstone\DaysWithout\Controller\ApiController;
+use JSomerstone\DaysWithout\Controller\CounterController;
+use JSomerstone\DaysWithout\Controller\DefaultController;
+use JSomerstone\DaysWithout\Controller\SessionController;
+use JSomerstone\DaysWithout\Lib\InputValidator,
+    JSomerstone\DaysWithout\Service\ContextService;
 
 class Application extends \Silex\Application
 {
 
     /**
-     * @param YamlConfigServiceProvider $configService
+     * @var ContextService
+     */
+    public $context;
+
+    /**
+     * @param string $configPath
      * @param string $viewPath
      * @param string $validationRulePath
      * @param array $values
      */
     public function __construct(
-        YamlConfigServiceProvider $configService,
+        $configPath,
         $viewPath,
         $validationRulePath,
         array $values = array())
     {
         parent::__construct($values);
 
-        $this->register($configService);
-        $this->register(new TwigServiceProvider(), array('twig.path' => $viewPath));
-        $this->register(new SessionServiceProvider());
+        $this->register(new YamlConfigServiceProvider($configPath));
 
         $mongoClient = new \MongoClient($this->getConfigOrFail('dwo:storage:server'));
         $databaseName = $this->getConfigOrFail('dwo:storage:database');
-        $this->register(new StorageServiceProvider($mongoClient, $databaseName));
-
         $inputValidator = new InputValidator();
-        $this->register(new ValidationServiceProvider($inputValidator, $validationRulePath));
+
+        $this->register(new TwigServiceProvider(), array('twig.path' => $viewPath))
+            ->register(new SessionServiceProvider())
+            ->register(new StorageServiceProvider($mongoClient, $databaseName))
+            ->register(new ValidationServiceProvider($inputValidator, $validationRulePath));
+
+        $this->registerAs('controller.api', new ApiController())
+            ->registerAs('controller.default', new CounterController())
+            ->registerAs('controller.counter', new CounterController())
+            ->registerAs('controller.session', new SessionController());
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $object
+     * @return Application $this
+     */
+    private function registerAs($name, $object)
+    {
+        $this[$name] = $object;
+
+        if( method_exists($object, 'register'))
+        {
+            $object->register($this);
+        }
+
+        return $this;
     }
 
     /**
