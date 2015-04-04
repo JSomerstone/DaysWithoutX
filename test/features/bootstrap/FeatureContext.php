@@ -1,5 +1,5 @@
 <?php
-include_once '/vagrant/test/bootstrap.php';
+include_once '/vagrant/test/bootstrap.behat.php';
 include_once __DIR__ . '/helper/FileHelper.php';
 include_once __DIR__ . '/helper/Curlifier.php';
 
@@ -94,6 +94,25 @@ class FeatureContext extends BehatContext
      */
     public static function prepareForSuite()
     {
+        rename(
+            '/vagrant/config/config.yml',
+            '/vagrant/config/config.yml.backup'
+        );
+        copy(
+            '/vagrant/config/config.behat.yml',
+            '/vagrant/config/config.yml'
+        );
+    }
+
+    /**
+     * @AfterSuite
+     */
+    public static function cleanupAfterTests()
+    {
+        rename(
+            '/vagrant/config/config.yml.backup',
+            '/vagrant/config/config.yml'
+        );
     }
 
     /** @BeforeScenario */

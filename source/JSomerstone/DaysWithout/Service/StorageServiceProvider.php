@@ -41,6 +41,8 @@ class StorageServiceProvider implements ServiceProviderInterface
     public function register(Application $app)
     {
         $app[self::SERVICE] = $this;
+        $app['storage.user'] = $this->userStorage;
+        $app['storage.counter'] = $this->counterStorage;
     }
 
     /**
@@ -48,6 +50,7 @@ class StorageServiceProvider implements ServiceProviderInterface
      */
     public function boot(Application $app)
     {
+
     }
 
     /**

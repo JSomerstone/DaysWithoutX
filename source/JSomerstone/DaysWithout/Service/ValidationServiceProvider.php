@@ -41,7 +41,7 @@ class ValidationServiceProvider implements ServiceProviderInterface
      */
     public function register(Application $app)
     {
-        $app[self::SERVICE] = $this;
+        $app[self::SERVICE] = $this->inputValidator;
         $app['validator.rules'] = Yaml::parse(file_get_contents($this->rulePath));
     }
 
@@ -55,29 +55,4 @@ class ValidationServiceProvider implements ServiceProviderInterface
             $this->inputValidator->setValidationRule($field, $ruleSet);
         }
     }
-
-    /**
-     * @param array $fieldValuePairs
-     * @return array $errors
-     */
-    public function validateFields(array $fieldValuePairs)
-    {
-        $errors = array();
-        foreach ($fieldValuePairs as $field => $value)
-        {
-            try
-            {
-                $this->inputValidator->validateField($field, $value);
-            }
-            catch (InputValidatorValueException $e)
-            {
-                $errors[] = array(
-                    'field' => $e->getField(),
-                    'message' => $e->getMessage(),
-                    'rules' => $e->getRu
-                );
-            }
-        }
-        return $errors;
-    }
-} 
+}

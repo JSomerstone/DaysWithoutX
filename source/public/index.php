@@ -43,8 +43,8 @@ $api = $app['controllers_factory'];
 
 $api->post('/signup', function(Request $request) use ($app)
 {
-    $signupController = $app->getContext()->get('session');
-    return $signupController->signupAction($request);
+    $controller = $app->get('controller.session');
+    return $controller->signupAction($request);
 });
 
 

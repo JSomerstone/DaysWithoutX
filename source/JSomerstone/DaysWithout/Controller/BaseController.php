@@ -4,8 +4,8 @@ namespace JSomerstone\DaysWithout\Controller;
 use JSomerstone\DaysWithout\Model\CounterModel;
 use JSomerstone\DaysWithout\Lib\StringFormatter;
 use JSomerstone\DaysWithout\Model\UserModel;
-use JSomerstone\DaysWithout\Service\ContextService,
-    JSomerstone\DaysWithout\Application;
+use JSomerstone\DaysWithout\Application,
+    JSomerstone\DaysWithout\Lib\InputValidator;
 
 abstract class BaseController
 {
@@ -200,7 +200,7 @@ abstract class BaseController
     protected function getUserStorage()
     {
         if ( ! $this->userStorage) {
-            $this->userStorage = $this->get('dayswithout.storage.user');
+            $this->userStorage = $this->get('storage.user');
         }
         return $this->userStorage;
     }
@@ -234,11 +234,11 @@ abstract class BaseController
     }
 
     /**
-     * @return \JSomerstone\DaysWithout\Lib\InputValidator
+     * @return InputValidator
      */
     protected function getInputValidator()
     {
-        return $this->get('dayswithout.inputvalidator');
+        return $this->get('validator');
     }
 
     /**
@@ -248,7 +248,7 @@ abstract class BaseController
     protected function getCounterStorage()
     {
         if ( ! isset($this->counterStorage)) {
-            $this->counterStorage = $this->get('dayswithout.storage.counter');
+            $this->counterStorage = $this->get('storage.counter');
         }
         return $this->counterStorage;
     }

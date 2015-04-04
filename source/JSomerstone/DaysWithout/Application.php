@@ -4,6 +4,7 @@ namespace JSomerstone\DaysWithout;
 use \DerAlex\Silex\YamlConfigServiceProvider,
     \Silex\Provider\TwigServiceProvider,
     \Silex\Provider\SessionServiceProvider,
+    \Silex\Provider\MonologServiceProvider,
     \JSomerstone\DaysWithout\Service\StorageServiceProvider,
     \JSomerstone\DaysWithout\Service\ValidationServiceProvider;
 use JSomerstone\DaysWithout\Controller\ApiController;
@@ -39,12 +40,14 @@ class Application extends \Silex\Application
 
         $mongoClient = new \MongoClient($this->getConfigOrFail('dwo:storage:server'));
         $databaseName = $this->getConfigOrFail('dwo:storage:database');
+        $logFile = $this->getConfigOrFail('dwo:log:file');
         $inputValidator = new InputValidator();
 
         $this->register(new TwigServiceProvider(), array('twig.path' => $viewPath))
             ->register(new SessionServiceProvider())
             ->register(new StorageServiceProvider($mongoClient, $databaseName))
-            ->register(new ValidationServiceProvider($inputValidator, $validationRulePath));
+            ->register(new ValidationServiceProvider($inputValidator, $validationRulePath))
+            ->register(new MonologServiceProvider(), array('monolog.logfile' => $logFile,));
 
         $this->registerAs('controller.api', new ApiController())
             ->registerAs('controller.default', new CounterController())
@@ -86,7 +89,7 @@ class Application extends \Silex\Application
     }
 
     /**
-     * @return ValidationServiceProvider
+     * @return InputValidator
      */
     public function getValidator()
     {
@@ -130,6 +133,14 @@ class Application extends \Silex\Application
             throw new \Exception("Missing required configuration '$key'");
         }
         return $value;
+    }
+
+    /**
+     * @return \Monolog\Logger
+     */
+    public function getLogger()
+    {
+        return $this['monolog'];
     }
 
     public function debug($bool)

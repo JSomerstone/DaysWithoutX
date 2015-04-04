@@ -76,12 +76,16 @@ class InputValidator
     }
 
     /**
-     * @param $string
-     * @throws InputValidatorException if field is invalid
+     * @param array $fieldValuePairs
+     * @return InputValidator $this
      */
-    public function validateNick($string)
+    public function validateFields(array $fieldValuePairs)
     {
-        return $this->validateField('nick', $string);
+        foreach ($fieldValuePairs as $field => $value)
+        {
+            $this->validateField($field, $value);
+        }
+        return $this;
     }
 
     /**
@@ -241,27 +245,9 @@ class InputValidator
     }
 
     /**
-     * @param string $fieldName
-     * @return string regular expression
-     * @throws InputValidatorException
-     */
-    protected function getMessageForField($fieldName)
-    {
-        if ( ! isset($this->validationRules[$fieldName])
-            ||  ! isset($this->validationRules[$fieldName]['message']))
-        {
-            throw new InputValidatorException(
-                $fieldName,
-                "Missing message for field '$fieldName'"
-            );
-        }
-        return $this->validationRules[$fieldName]['message'];
-    }
-
-    /**
      * @param string $password
      * @param string $confirmation same password again
-     * @throws InputValidatorException
+     * @throws InputValidatorValueException
      */
     public function validatePassword($password, $confirmation)
     {
@@ -271,8 +257,6 @@ class InputValidator
         }
         return $this->validateField('password', $password);
     }
-
-
 
     public function validateHeadline($headline)
     {

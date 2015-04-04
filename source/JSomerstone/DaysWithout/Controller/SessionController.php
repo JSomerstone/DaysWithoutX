@@ -61,9 +61,12 @@ class SessionController extends BaseController
 
     private function validateSignup($nick, $password, $passwordConfirmation)
     {
-        $inputValidator = $this->getInputValidator();
-        $inputValidator->validateNick($nick);
-        $inputValidator->validatePassword($password, $passwordConfirmation);
+        $this->getInputValidator()
+            ->validateFields(array(
+                'nick' => $nick,
+                'password' => $password
+            ))
+            ->validatePassword($password, $passwordConfirmation);
     }
 
     private function signUpUser($nick, $password)

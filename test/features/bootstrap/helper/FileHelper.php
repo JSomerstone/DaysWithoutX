@@ -2,6 +2,10 @@
 
 abstract class FileHelper
 {
+    public static function copyFile($from, $to)
+    {
+
+    }
 
     /**
      * Makes a directory into filesystem

@@ -49,7 +49,10 @@ class ApplicationTest  extends \PHPUnit_Framework_TestCase
      */
     public function testGetValidator(Application $app)
     {
-        $this->assertInstanceOf('JSomerstone\DaysWithout\Service\ValidationServiceProvider', $app->getValidator());
+        $this->assertInstanceOf(
+            'JSomerstone\DaysWithout\Lib\InputValidator',
+            $app->getValidator()
+        );
     }
 
     /**
@@ -90,7 +93,6 @@ class ApplicationTest  extends \PHPUnit_Framework_TestCase
         $app->getConfigOrFail('any:non-existing:setting');
     }
 
-
     /**
      * @param Application $app
      * @test
@@ -102,4 +104,19 @@ class ApplicationTest  extends \PHPUnit_Framework_TestCase
         $app->debug(true);
         $this->assertTrue($app['debug']);
     }
+
+    /**
+     * @param Application $app
+     * @test
+     * @depends testApplicationInit
+     */
+    public function testGetLogger(Application $app)
+    {
+        $this->assertInstanceOf(
+            '\Monolog\Logger',
+            $app->getLogger()
+        );
+    }
+
+
 }

@@ -1,7 +1,5 @@
 dwo:
     storage:
         server: localhost:27017
-        database: dayswithout
+        database: dayswithout-test
     debug: true
-    log:
-      file: /tmp/dwo.log
