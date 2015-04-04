@@ -7,11 +7,7 @@ function jsomerstone_autoloader($className)
         return;
     }
 
-    $fileName = sprintf(
-        "%s/%s.php",
-        __DIR__,
-        str_replace('\\', '/', $className)
-    );
+    $fileName = __DIR__ . '/' . str_replace('\\', '/', $className) . '.php';
     if (file_exists($fileName))
     {
         return require_once($fileName);

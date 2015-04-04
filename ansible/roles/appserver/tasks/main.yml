@@ -42,14 +42,6 @@
       - pear.symfony.com
   tags: pear
 
-- name: Install pear packages
-  shell: yes '' | pear install {{ item }}
-  register: packet_install
-  changed_when: "'installed' not in packet_install.stdout"
-  failed_when: "'already installed' not in packet_install.stdout"
-  with_items:
-      - pear.netpirates.net/Autoload
-
 - name: compose project
   shell: composer install --working-dir {{application_path}} --optimize-autoloader
   args:

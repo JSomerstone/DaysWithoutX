@@ -1,9 +1,8 @@
 <?php
-include_once __DIR__ . '/../../app/AppKernel.php';
+include_once '/vagrant/test/bootstrap.php';
 include_once __DIR__ . '/helper/FileHelper.php';
-include_once __DIR__ . '/helper/debug.php';
+include_once __DIR__ . '/helper/Curlifier.php';
 
-use Behat\Symfony2Extension\Context\KernelAwareInterface;
 use Behat\Behat\Context\ClosuredContextInterface,
     Behat\Behat\Context\TranslatedContextInterface,
     Behat\Behat\Context\BehatContext,
@@ -11,16 +10,11 @@ use Behat\Behat\Context\ClosuredContextInterface,
 use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
 
-use Symfony\Component\HttpFoundation\Request,
-    Symfony\Component\HttpFoundation\Response,
-    Symfony\Component\HttpKernel\KernelInterface,
-    Symfony\Component\DependencyInjection\ContainerInterface;
-
-use JSomerstone\DaysWithoutBundle\Model\CounterModel,
-    JSomerstone\DaysWithoutBundle\Model\UserModel,
-    JSomerstone\DaysWithoutBundle\Storage\CounterStorage,
-    JSomerstone\DaysWithoutBundle\Storage\UserStorage,
-    JSomerstone\DaysWithoutBundle\Lib\StringFormatter;
+use JSomerstone\DaysWithout\Model\CounterModel,
+    JSomerstone\DaysWithout\Model\UserModel,
+    JSomerstone\DaysWithout\Storage\CounterStorage,
+    JSomerstone\DaysWithout\Storage\UserStorage,
+    JSomerstone\DaysWithout\Lib\StringFormatter;
 
 use AssertContext as Assert;
 //
@@ -35,17 +29,14 @@ use AssertContext as Assert;
  */
 class FeatureContext extends BehatContext
 {
+    const BASE_URL = 'http://localhost';
+
     static $DB_HOST = 'mongodb://localhost:27017';
     static $DB_NAME = 'dayswithout-test';
-    /**
-     *
-     * @var Symfony\Component\HttpFoundation\Request
-     */
-    protected $request;
 
     /**
      *
-     * @var Symfony\Component\HttpFoundation\Response
+     * @var string
      */
     protected $response;
 
@@ -62,19 +53,24 @@ class FeatureContext extends BehatContext
     protected $systemUsers = array();
 
     /**
-     * @var JSomerstone\DaysWithoutBundle\Model\UserModel
+     * @var JSomerstone\DaysWithout\Model\UserModel
      */
     protected $user;
 
     /**
-     * @var JSomerstone\DaysWithoutBundle\Storage\CounterStorage
+     * @var JSomerstone\DaysWithout\Storage\CounterStorage
      */
     private $counterStorage;
 
     /**
-     * @var JSomerstone\DaysWithoutBundle\Storage\UserStorage
+     * @var JSomerstone\DaysWithout\Storage\UserStorage
      */
     private $userStorage;
+
+    /**
+     * @var Curlifier
+     */
+    private $curl;
 
     private static $testUserPassword = 'testpassword';
 
@@ -90,9 +86,7 @@ class FeatureContext extends BehatContext
 
         $this->counterStorage = new CounterStorage($this->mongoClient, self::$DB_NAME);
         $this->userStorage = new UserStorage($this->mongoClient, self::$DB_NAME);
-
-        $this->setKernel(new AppKernel('test', false));
-        // Initialize your context here
+        $this->curl = new Curlifier();
     }
 
     /**
@@ -100,10 +94,6 @@ class FeatureContext extends BehatContext
      */
     public static function prepareForSuite()
     {
-        $command = __DIR__ . "/../../app/console cache:clear --env=test";
-        echo "Cleaning up cache ... ";
-        exec($command);
-        echo "Done\n";
     }
 
     /** @BeforeScenario */
@@ -111,36 +101,6 @@ class FeatureContext extends BehatContext
     {
         $client = new MongoClient(self::$DB_HOST);
         $client->dropDB(self::$DB_NAME);
-    }
-
-    /**
-     * Sets Kernel instance.
-     *
-     * @param KernelInterface $kernel HttpKernel instance
-     */
-    public function setKernel(KernelInterface $kernel)
-    {
-        $this->kernel = $kernel;
-    }
-
-    /**
-     * Returns HttpKernel instance.
-     *
-     * @return KernelInterface
-     */
-    public function getKernel()
-    {
-        return $this->kernel;
-    }
-
-    /**
-     * Returns HttpKernel service container.
-     *
-     * @return ContainerInterface
-     */
-    public function getContainer()
-    {
-        return $this->kernel->getContainer();
     }
 
     /**
@@ -181,13 +141,10 @@ class FeatureContext extends BehatContext
      */
     public function pageIsLoaded($uri)
     {
-        $this->request = Request::create($uri, 'GET', $parameters = array());
-        $this->response = $this->getKernel()->handle($this->request);
-        $token = $this->getRequestTokenFromResponse($this->response);
-        if ($token)
-        {
-            $this->requestToken = $token;
-        }
+        $this->curl->setUrl(self::BASE_URL . $uri)
+            ->setGet()->request();
+
+        $this->response = $this->curl->getBody();
     }
 
     /**
@@ -212,12 +169,9 @@ class FeatureContext extends BehatContext
      */
     private function handlePostRequest($url, array $post)
     {
-        $this->request = Request::create(
-            $url,
-            'POST',
-            $post
-        );
-        return $this->getKernel()->handle($this->request);
+        $this->curl->setUrl(self::BASE_URL . $url)
+            ->setPost($post);
+        return $this->curl->request()->getBody();
     }
 
     /**
@@ -299,10 +253,10 @@ class FeatureContext extends BehatContext
      */
     public function pageHas($expectedString, $messageIfNot = null)
     {
-        Assert::false($this->response->isEmpty(), 'Unexpected empty page');
+        Assert::false(empty($this->response), 'Unexpected empty page');
         Assert::contains(
             $expectedString,
-            $this->response->getContent(),
+            $this->response,
             $messageIfNot
         );
     }
@@ -312,10 +266,10 @@ class FeatureContext extends BehatContext
      */
     public function pageDoesntHave($expectedString)
     {
-        Assert::false($this->response->isEmpty(), 'Unexpected empty page');
+        Assert::false(empty($this->response), 'Unexpected empty page');
         Assert::notContains(
             $expectedString,
-            $this->response->getContent(),
+            $this->response,
             " - But did"
         );
     }
@@ -360,7 +314,7 @@ class FeatureContext extends BehatContext
      */
     public function thePageExists()
     {
-        if ($this->response->getStatusCode() === 404) {
+        if ($this->curl->getHttpCode() === 404) {
             throw new \Exception('Response returned with status 404');
         }
     }
@@ -438,11 +392,7 @@ class FeatureContext extends BehatContext
      */
     public function userIsRedirectedTo($redirUrl)
     {
-        Assert::true($this->response->isRedirection(), 'Not a redirection' . $this->response->getContent());
-        Assert::true(
-            $this->response->isRedirect($redirUrl),
-            " - Was not " . $this->response->getContent()
-        );
+        throw new Exception('Unimplemented');
         $this->pageIsLoaded($redirUrl);
     }
 
@@ -485,7 +435,9 @@ class FeatureContext extends BehatContext
      */
     public function jsonResponseHasMessage($expectedMessage)
     {
-        $response = json_decode($this->response->getContent(), true);
+        Assert::true($this->curl->isResponseJson());
+
+        $response = $this->curl->getJsonResponse();
         if ( ! isset($response['message']))
         {
             throw new Exception('No message in response: ' . $this->response->getContent());
@@ -498,12 +450,12 @@ class FeatureContext extends BehatContext
 
     private function pageMatchesRegexp($regexp, $messageIfNot = null)
     {
-        Assert::regexp($regexp, $this->response->getContent(), $this->response->getContent());
+        Assert::regexp($regexp, $this->curl->getBody());
     }
 
     private function pageNotMatchesRegexp($regexp)
     {
-        Assert::notRegexp($regexp, $this->response->getContent(), $this->response->getContent());
+        Assert::notRegexp($regexp, $this->curl->getBody());
     }
 
     private static function getCounterName($counterHeadline)

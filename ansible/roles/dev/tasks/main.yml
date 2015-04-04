@@ -6,6 +6,7 @@
   with_items:
     - php5-dev
     - php-pear
+    - php5-curl
     - curl
     - git
     - npm
@@ -32,6 +33,7 @@
   register: pecl_output
   changed_when: "'Build process completed successfully' in pecl_output.stdout"
   failed_when: "'already installed' not in pecl_output.stdout"
+
 - name: Enable xdebug
   lineinfile: dest=/etc/php5/cli/php.ini
               line=zend_extension=xdebug.so
