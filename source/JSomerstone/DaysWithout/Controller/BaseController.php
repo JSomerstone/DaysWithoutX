@@ -37,7 +37,7 @@ abstract class BaseController
     protected $counterStorage;
 
     /**
-     * @var \Symfony\Bridge\Monolog\Logger
+     * @var \Monolog\Logger
      */
     protected $logger;
 
@@ -109,13 +109,13 @@ abstract class BaseController
     }
 
     /**
-     * @return \Symfony\Bridge\Monolog\Logger
+     * @return \Monolog\Logger
      */
     protected function getLogger()
     {
         if ( ! $this->logger)
         {
-            $this->logger = $this->get('logger');
+            $this->logger = $this->get('monolog');
         }
         return $this->logger;
     }
