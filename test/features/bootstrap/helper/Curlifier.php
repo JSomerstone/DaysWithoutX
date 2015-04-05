@@ -53,7 +53,7 @@ class Curlifier
      *
      * The url-setting is only mandatory parameter to set in order to call request()-method.
      *
-     * @param type $url
+     * @param string $url
      * @return Curlifier
      */
     public function setUrl($url)
@@ -196,22 +196,23 @@ class Curlifier
             http_build_query($get)
         );
 
-        $settings = array(
+        $settings = $this->defaults;
+        $overrides = array(
             CURLOPT_URL       => $url,
             CURLOPT_REFERER   => $referer,
-            CURLOPT_USERAGENT => $userAgent
+            CURLOPT_USERAGENT => $userAgent,
+            CURLOPT_COOKIE    => self::unparseCookies($cookies)
         );
-
         if ( ! empty($post))
         {
-            $settings[CURLOPT_POST] = empty($post);
-            $settings[CURLOPT_POSTFIELDS] = $post;
+            $overrides[CURLOPT_POST] = empty($post);
+            $overrides[CURLOPT_POSTFIELDS] = http_build_query($post);
         }
-
-        $settings[CURLOPT_COOKIE] = self::unparseCookies($cookies);
-
-        curl_setopt_array($this->curlHandler, $settings + $this->defaults);
-
+        foreach ($overrides as $curlOpt => $value)
+        {
+            $settings[$curlOpt] = $value;
+        }
+        curl_setopt_array($this->curlHandler, $settings);
         $response = \curl_exec($this->curlHandler);
         $error = \curl_error($this->curlHandler);
         if ( $error != "" )
