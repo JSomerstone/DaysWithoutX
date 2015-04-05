@@ -19,12 +19,15 @@ class ApiController extends BaseController
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function signupAction(Request $request)
-    {
-        $nick = $request->get('nick');
-        $password = $request->get('password');
-        $passwordConfirmation = $request->get('password-confirm');
 
+    /**
+     * @param string $nick
+     * @param string $password
+     * @param string $passwordConfirmation
+     * @return Response
+     */
+    public function signupAction($nick, $password, $passwordConfirmation)
+    {
         try
         {
             $this->validateSignup($nick, $password, $passwordConfirmation);

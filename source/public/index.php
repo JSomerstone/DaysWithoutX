@@ -28,7 +28,11 @@ $api = $app['controllers_factory'];
 $api->post('/signup', function(Request $request) use ($app)
 {
     $controller = $app['controller.api'];
-    return $controller->signupAction($request);
+    return $controller->signupAction(
+        $request->get('nick'),
+        $request->get('password'),
+        $request->get('password-confirm')
+    );
 });
 
 

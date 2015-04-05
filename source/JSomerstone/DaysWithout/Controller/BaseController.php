@@ -124,11 +124,30 @@ abstract class BaseController
      */
     protected function getLogger()
     {
-        if ( ! $this->logger)
+        return $this->get('monolog');
+    }
+
+    protected function logException(\Exception $e)
+    {
+        $this->getLogger()->addAlert(
+            $e->getMessage(),
+            array(
+                'controller' => __CLASS__,
+                'method' => __METHOD__
+            )
+        );
+
+        if( true === $this->get('debug'))
         {
-            $this->logger = $this->get('monolog');
+            $this->getLogger()->addDebug(
+                $e->getMessage(),
+                array(
+                    'controller' => __CLASS__,
+                    'method' => __METHOD__,
+                    'callstack' => get_call_stack()
+                )
+            );
         }
-        return $this->logger;
     }
 
     protected function addMessage($msg)
@@ -137,6 +156,7 @@ abstract class BaseController
             'message',
             $msg
         );
+        return $this;
     }
 
     protected function addNotice($msg)
@@ -145,6 +165,7 @@ abstract class BaseController
             'notice',
             $msg
         );
+        return $this;
     }
 
     protected function addError($msg)
@@ -153,16 +174,13 @@ abstract class BaseController
             'error',
             $msg
         );
+        return $this;
     }
 
     protected function setTilte($newTitle)
     {
         $this->response['title'] = $newTitle;
-    }
-
-    protected function setForm(\Symfony\Component\Form\Form $form)
-    {
-        $this->response['form'] = $form->createView();
+        return $this;
     }
 
     /**

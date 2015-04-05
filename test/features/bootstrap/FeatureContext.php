@@ -161,7 +161,9 @@ class FeatureContext extends BehatContext
     public function pageIsLoaded($uri)
     {
         $this->curl->setUrl(self::BASE_URL . $uri)
-            ->setGet()->request();
+            ->setGet()
+            ->setPost()
+            ->request();
 
         $this->response = $this->curl->getBody();
     }

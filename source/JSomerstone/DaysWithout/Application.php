@@ -147,23 +147,19 @@ class Application extends \Silex\Application
         return $this['monolog'];
     }
 
+    /**
+     * Set debugging on/off
+     * @param $bool
+     */
     public function debug($bool)
     {
         $this['debug'] = $bool;
-    }
-
-    public static function D()
-    {
-        $params = func_get_args();
-        if ($params)
+        if (true === $bool)
         {
-            @ob_end_flush();
-            foreach ($params as $param)
-            {
-                var_dump($param);
-            }
-            echo "---------------\n";
-            @ob_start();
+            $this['monolog.level'] = 100;
+        } else
+        {
+            $this['monolog.level'] = $this->getConfig('dwo:log:level', 300);
         }
     }
 } 
