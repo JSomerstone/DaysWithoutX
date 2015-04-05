@@ -209,7 +209,7 @@ abstract class BaseController
         }
 
         if ( is_null($loggedInUser)
-            || ! $this->authoriseUserForCounter($loggedInUser, $counter))
+            || ! $this->authoriseUserForCounter($counter, $loggedInUser))
         {
             $builder->add('nick', 'text')
                 ->add('password', 'password');
@@ -233,9 +233,14 @@ abstract class BaseController
      * @param CounterModel $counter
      * @return bool
      */
-    protected function authoriseUserForCounter(UserModel $user, CounterModel $counter)
+    protected function authoriseUserForCounter(CounterModel $counter, UserModel $user = null)
     {
-        return $counter->isPublic() || $counter->isOwnedBy($user);
+        if (is_null($user))
+        {
+            return $counter->isPublic();
+        } else {
+            return ($counter->isPublic() || $counter->isOwnedBy($user));
+        }
     }
 
     /**

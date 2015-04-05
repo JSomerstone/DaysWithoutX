@@ -146,7 +146,6 @@ class CounterController extends BaseController
         {
             $this->getInputValidator()->validateFields([
                 'name' => $name,
-                'nick' => $owner,
                 'comment' => $comment
             ]);
             $storage = $this->getCounterStorage();
@@ -155,7 +154,7 @@ class CounterController extends BaseController
                 return $this->jsonErrorResponse('Counter not found');
             }
             $counter = $storage->load($name, $owner);
-            if ( ! $this->authoriseUserForCounter($this->getLoggedInUser(), $counter))
+            if ( ! $this->authoriseUserForCounter( $counter, $this->getLoggedInUser()))
             {
                 return $this->jsonErrorResponse('Unauthorized');
             }

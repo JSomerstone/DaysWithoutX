@@ -23,13 +23,21 @@ $app->get('/', function() use ($app)
 });
 
 /**
- * SHOW COUNTER
+ * SHOW COUNTER - public
+ */
+$app->get('/{counter}/', function($counter) use ($app)
+{
+    $controller = $app['controller.counter'];
+    return $controller->viewCounter($counter, null);
+});
+/**
+ * SHOW COUNTER - owned
  */
 $app->get('/{counter}/{owner}', function($counter, $owner) use ($app)
 {
     $controller = $app['controller.counter'];
     return $controller->viewCounter($counter, $owner);
-});
+})->value('owner', null);
 
 
 /**
@@ -66,14 +74,33 @@ $app->post('/api/logout', function(Request $request) use ($app)
     return $controller->logoutAction($request);
 });
 
+
 /**
- * GET COUNTER
+ * GET COUNTER - public
+ */
+$app->get('/api/counter/{counter}', function($counter) use ($app)
+{
+    $controller = $app['controller.counter'];
+    return $controller->getCounter($counter, null);
+});
+
+/**
+ * GET COUNTER - owned by someone
  */
 $app->get('/api/counter/{counter}/{owner}', function($counter, $owner) use ($app)
 {
     $controller = $app['controller.counter'];
     return $controller->getCounter($counter, $owner);
-});
+})->value('owner', null);
+
+/**
+ * RESET COUNTER
+ */
+$app->post('/api/counter/{counter}/', function($counter, Request $request) use ($app)
+{
+    $controller = $app['controller.counter'];
+    return $controller->resetAction($counter, null, $request->get('comment'));
+})->value('owner', '');
 
 /**
  * RESET COUNTER

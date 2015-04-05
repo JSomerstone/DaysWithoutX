@@ -110,7 +110,7 @@ class ApiController extends BaseController
 
     private function assertAuthorized(CounterModel $counter, UserModel $user)
     {
-        if ( ! $this->authoriseUserForCounter($user, $counter))
+        if ( ! $this->authoriseUserForCounter($counter, $user))
         {
             throw new PublicException('Unauthorized action');
         }
