@@ -76,6 +76,15 @@ $app->get('/api/counter/{counter}/{owner}', function($counter, $owner) use ($app
 });
 
 /**
+ * GET COUNTER
+ */
+$app->post('/api/counter/{counter}/{owner}', function($counter, $owner) use ($app)
+{
+    $controller = $app['controller.counter'];
+    return $controller->resetAction($counter, $owner);
+});
+
+/**
  * POST COUNTER
  */
 $app->post('/api/counter', function(Request $request) use ($app)
