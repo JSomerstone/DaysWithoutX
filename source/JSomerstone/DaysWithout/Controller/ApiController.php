@@ -16,11 +16,6 @@ class ApiController extends BaseController
     use SessionTrait;
 
     /**
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     */
-
-    /**
      * @param string $nick
      * @param string $password
      * @param string $passwordConfirmation

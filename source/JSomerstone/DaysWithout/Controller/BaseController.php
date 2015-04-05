@@ -358,7 +358,7 @@ abstract class BaseController
      */
     protected function jsonSuccessResponse(
         $message,
-        $data = array(),
+        $data = null,
         $statusCode = JsonResponse::HTTP_OK
     )
     {

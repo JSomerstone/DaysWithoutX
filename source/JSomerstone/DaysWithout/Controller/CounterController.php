@@ -137,36 +137,38 @@ class CounterController extends BaseController
     /**
      * @param string $name
      * @param string $owner optional default null
+     * @param string $comment
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function resetAction($name, $owner = null)
+    public function resetAction($name, $owner = null, $comment = null)
     {
-        $storage = $this->getCounterStorage();
-
-        if ( ! $storage->exists($name, $owner))
+        return $this->invokeMethod(function() use ($name, $owner, $comment)
         {
-            return $this->redirectFromNonExisting($name, $owner);
-        }
-        $counter = $storage->load($name, $owner);
-        $user = $this->getReseter($this->getRequest(), $this->getResetForm($counter));
-        if ($counter->isPublic())
-        {
-            $counter->reset();
-        }
-        else if ( $this->authoriseUserForCounter($user, $counter))
-        {
-            $counter->reset();
-            $this->setLoggedInUser($user);
-        }
-        else
-        {
-            $this->addError('Wrong Nick and/or password');
-            return $this->redirectToCounter($counter);
-        }
-
-        $storage->store($counter);
-
-        return $this->redirectToCounter($counter);
+            $this->getInputValidator()->validateFields([
+                'name' => $name,
+                'nick' => $owner,
+                'comment' => $comment
+            ]);
+            $storage = $this->getCounterStorage();
+            if ( ! $storage->exists($name, $owner))
+            {
+                return $this->jsonErrorResponse('Counter not found');
+            }
+            $counter = $storage->load($name, $owner);
+            if ( ! $this->authoriseUserForCounter($this->getLoggedInUser(), $counter))
+            {
+                return $this->jsonErrorResponse('Unauthorized');
+            }
+            else
+            {
+                $counter->reset($comment);
+                $storage->store($counter);
+                return $this->jsonSuccessResponse(
+                    'Counter reset',
+                    $counter->toArray()
+                );
+            }
+        });
     }
 
     public function showUsersCountersAction($user)
