@@ -5,130 +5,97 @@
 {% block page_header '' %}
 
 {% block content %}
-<div class="row">
-    <div class="col-lg-6 col-sm-6 col-sm-offset-3 col-xs-12">
-        <h2>Days without {{ counter.headline }}:</h2>
-        <div class="row counter-postit">
-            {% if counter.owner and counter.owner.nick == user %}
-                <div class="navbar navbar-right">
-                {% include 'counter/context-menu.html.twig' %}
-                </div>
-            {% endif %}
-            <div class="counter-days">{{ counter.days }}</div>
-            <div class="visibility-icon">
-                {% include 'counter/visibilityIcon.html.twig'
-                    with {
-                        size: 2
-                    }
-                %}
-
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-6">
-                <span class="lead">
-                    by <b>
-                    {% if counter.owner %}
-                            <a href="/user/{{ counter.owner }}">
-                                {{ counter.owner }}
-                            </a>
-                        </b>
-                    {% else %}
-                        Anonymous
-                    {% endif %}
-                </span>
-            </div>
-            <div class="col-xs-6" id="share-buttons">
-                {% if not counter.private %}
-                    <!-- Facebook -->
-                    <a href="http://www.facebook.com/sharer.php?u=/{{ counter.name }}/{{ counter.owner }}" target="_blank" title="Share on Facebook">
-                        <i class="fa fa-3x fa-facebook-square"></i>
-                    </a>
-
-                    <!-- Twitter -->
-                    <a href="http://twitter.com/share?url=/{{ counter.name }}/{{ counter.owner }}&text={{ counter.days }} Days without {{ counter.headline }}&hashtags=#dayswithout" target="_blank" title="Share on Twitter">
-                        <i class="fa fa-3x fa-twitter-square"></i>
-                    </a>
-
-                    <!-- Google+ -->
-                    <a href="https://plus.google.com/share?url=/{{ counter.name }}/{{ counter.owner }}" target="_blank" title="Share on Google+">
-                        <i class="fa fa-3x fa-google-plus-square"></i>
-                    </a>
-                {% endif %}
-            </div>
-        </div>
-        <div class="row">
-            {% if counter.resettable %}
-                <!-- TODO: redo resetting & commenting -->
-                <div class="row col-sm-10 col-sm-offset-1">
-
-                    {% if (user == counter.owner) or counter.public %}
-                        <button class="btn btn-big btn-danger btn-block" data-toggle="modal" data-target="#resetDialog">
-                            Reset
-                        </button>
-                    {% elseif not loggedIn %}
-                        <div>
-                            <div class="col-xs-6 wo-pad-right">
-                                <input type="text" class="form-control" name="username" id="reset-username" placeholder="Nick">
-                            </div>
-                            <div class="col-xs-6 wo-pad-left">
-                                <input type="password" class="form-control" name="password" id="reset-password" placeholder="Password">
-                            </div>
-                        </div>
-                        <button class="btn btn-big btn-danger btn-block" data-toggle="modal" data-target="#resetDialog">
-                            Reset & login
-                        </button>
-                    {% endif %}
-                </div>
-            {% endif %}
-        </div>
-        {% if counter.history %}
-            <h3>Reset history</h3>
-            {% for reset in counter.history %}
-                <div class="row">
-                    <div class="col-xs-12">
-                        <span class="lead">
-                            {{ reset.days }} day{% if reset.days > 1 %}s{% endif %}
-                        </span>
-                        count broke <span class="timestamp">{{ reset.timestamp |date("D, d M Y H:i:s \G\M\T", "Europe/Helsinki") }}</span>
+    <div class="row">
+        <div class="col-lg-6 col-sm-6 col-sm-offset-3 col-xs-12">
+            <h2>Days without {{ counter.headline }}:</h2>
+            <div class="row counter-postit">
+                {% if counter.owner and counter.owner.nick == user %}
+                    <div class="navbar navbar-right">
+                    {% include 'counter/context-menu.html.twig' %}
                     </div>
-                    <div class="col-xs-offset-1 col-xs-11">
-                        {% if reset.comment %}
-                            <i class="fa fa-quote-left"></i>
-                            <span class="lead">
-                                {{ reset.comment }}
-                            </span>
-                            <i class="fa fa-quote-right"></i>
+                {% endif %}
+                <div class="counter-days">{{ counter.days }}</div>
+                <div class="visibility-icon">
+                    {% include 'counter/visibilityIcon.html.twig'
+                        with {
+                            size: 2
+                        }
+                    %}
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">
+                    <span class="lead">
+                        by <b>
+                        {% if counter.owner %}
+                                <a href="/user/{{ counter.owner }}">
+                                    {{ counter.owner }}
+                                </a>
+                            </b>
+                        {% else %}
+                            Anonymous
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="col-xs-6" id="share-buttons">
+                    {% if not counter.private %}
+                        <!-- Facebook -->
+                        <a href="http://www.facebook.com/sharer.php?u=/{{ counter.name }}/{{ counter.owner }}" target="_blank" title="Share on Facebook">
+                            <i class="fa fa-3x fa-facebook-square"></i>
+                        </a>
+
+                        <!-- Twitter -->
+                        <a href="http://twitter.com/share?url=/{{ counter.name }}/{{ counter.owner }}&text={{ counter.days }} Days without {{ counter.headline }}&hashtags=#dayswithout" target="_blank" title="Share on Twitter">
+                            <i class="fa fa-3x fa-twitter-square"></i>
+                        </a>
+
+                        <!-- Google+ -->
+                        <a href="https://plus.google.com/share?url=/{{ counter.name }}/{{ counter.owner }}" target="_blank" title="Share on Google+">
+                            <i class="fa fa-3x fa-google-plus-square"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                {% if counter.resettable %}
+                    <div class="row col-sm-10 col-sm-offset-1">
+                        {% if (user == counter.owner) or counter.public %}
+                            <button class="btn btn-big btn-danger btn-block" data-toggle="modal" data-target="#reset-dialog">
+                                Reset
+                            </button>
+                            {% include 'modal/reset.html.twig' with { counter: counter} %}
+                        {% elseif not loggedIn %}
+                            <button class="btn btn-big btn-primary btn-block" data-toggle="modal" data-target="#login-dialog">
+                                Login
+                            </button>
                         {% endif %}
                     </div>
-                </div>
-            {% endfor %}
-        {% endif %}
-    </div>
-</div>
-<div class="modal fade" id="resetDialog" tabindex="-1" role="dialog" aria-labelledby="resetDialogLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">
-                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
-                </button>
-                <h4 class="modal-title" id="resetDialogLabel">Confirm</h4>
+                {% endif %}
             </div>
-            <div class="modal-body">
-                You're about to reset this counter - care to comment?<br/>
-                <div class="form-group">
-                    <input class="input-lg col-xs-12" id="reset-comment">
-                    <input type="hidden" id="counter-name" value="{{ counter.name }}">
-                    <input type="hidden" id="counter-owner"
-                           value="{% if counter.owner %}{{ counter.owner.nick }}{% endif %}">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary reset">Reset</button>
-                <button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
-            </div>
+            {% if counter.history %}
+                <h3>Reset history</h3>
+                {% for reset in counter.history %}
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <span class="lead">
+                                {{ reset.days }} day{% if reset.days > 1 %}s{% endif %}
+                            </span>
+                            count broke <span class="timestamp">{{ reset.timestamp |date("D, d M Y H:i:s \G\M\T", "Europe/Helsinki") }}</span>
+                        </div>
+                        <div class="col-xs-offset-1 col-xs-11">
+                            {% if reset.comment %}
+                                <i class="fa fa-quote-left"></i>
+                                <span class="lead">
+                                    {{ reset.comment }}
+                                </span>
+                                <i class="fa fa-quote-right"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
         </div>
     </div>
-</div>
 {% endblock %}
+

@@ -242,7 +242,7 @@ $(function() {
             post,
             dwo.createApiCallback({
                 container: '#login-dialog-msg-container',
-                onSuccess: function(){ window.location = '/';}
+                onSuccess: function(){ history.go(0); }
             })
         );
     });
@@ -282,5 +282,20 @@ $(function() {
         $("input[type=submit]", $(this).parents("form")).removeAttr("clicked");
             $(this).attr("clicked", "true");
          */
+    });
+
+
+    $('#reset-button').click(function(){
+        var post = {
+            comment: $('#reset-comment').val()
+        }
+        $.post(
+            '/api/counter/' + $('#counter-name').val() + '/' + $('#counter-owner').val(),
+            post,
+            dwo.createApiCallback({
+                container: '#reset-dialog-msg-container',
+                onSuccess: function(){ history.go(0); }
+            })
+        );
     });
 });

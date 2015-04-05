@@ -16,6 +16,13 @@ headline:
   regexp: '/^.{1,100}$/'
   title: 'Max 100 chars with one or more of a-z'
 
+name:
+  regexp: '/^[a-z\-]{1,100}$/'
+  non-empty: true
+
+comment:
+  regexp: '/^.{0,128}$/'
+
 visibility:
   white-list:
     - 'public'

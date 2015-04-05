@@ -76,12 +76,12 @@ $app->get('/api/counter/{counter}/{owner}', function($counter, $owner) use ($app
 });
 
 /**
- * GET COUNTER
+ * RESET COUNTER
  */
-$app->post('/api/counter/{counter}/{owner}', function($counter, $owner) use ($app)
+$app->post('/api/counter/{counter}/{owner}', function($counter, $owner, Request $request) use ($app)
 {
     $controller = $app['controller.counter'];
-    return $controller->resetAction($counter, $owner);
+    return $controller->resetAction($counter, $owner, $request->get('comment'));
 });
 
 /**

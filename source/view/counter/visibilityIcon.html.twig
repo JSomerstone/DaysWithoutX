@@ -1,6 +1,6 @@
-{% if counter.protected %}
+{% if counter.visibility == 'protected' %}
     <i class="fa fa-user {% if size is defined %} fa-{{ size }}x{% endif %}" title="Protected counter"></i>
-{% elseif counter.private %}
+{% elseif counter.visibility  == 'private' %}
     <i class="fa fa-eye {% if size is defined %} fa-{{ size }}x{% endif %}" title="Private counter"></i>
 {% else %}
     <i class="fa fa-group {% if size is defined %} fa-{{ size }}x{% endif %}" title="Public counter"></i>

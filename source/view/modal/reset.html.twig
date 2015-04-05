@@ -1,0 +1,19 @@
+{% extends 'modal/dialog.html.twig' %}
+{% set modal_id = 'reset-dialog' %}
+{% set modal_title = 'Reset' %}
+
+{% block modal_body %}
+    <p>
+        You're about to reset this counter - care to comment?
+    </p>
+    <div class="form-group">
+        <input class="input-lg col-xs-12" id="reset-comment">
+        <input type="hidden" id="counter-name" value="{{ counter.name }}">
+        <input type="hidden" id="counter-owner" value="{{ counter.owner }}">
+    </div>
+{% endblock %}
+
+{% block modal_footer %}
+    <button id="reset-button" type="button" class="btn btn-danger">Reset</button>
+    <button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
+{% endblock %}

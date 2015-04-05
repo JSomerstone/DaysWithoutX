@@ -228,15 +228,6 @@ abstract class BaseController
         return $this->userStorage;
     }
 
-    protected function getLoginForm($loggedIn = false)
-    {
-        return $this->createFormBuilder(new UserModel())
-            ->add('nick', 'text')
-            ->add('password', 'password')
-            ->add('login', 'submit')
-            ->getForm();
-    }
-
     /**
      * @param UserModel $user
      * @param CounterModel $counter
@@ -244,8 +235,7 @@ abstract class BaseController
      */
     protected function authoriseUserForCounter(UserModel $user, CounterModel $counter)
     {
-        return $this->get('dayswithout.service.authentication')
-            ->authoriseUserForCounter($user, $counter);
+        return $counter->isPublic() || $counter->isOwnedBy($user);
     }
 
     /**
@@ -290,7 +280,7 @@ abstract class BaseController
         }
         catch (InputValidatorValueException $e)
         {
-            $this->logException($e);
+            $this->getLogger()->addInfo('input validation failed', $e->getData());
             return $this->jsonWarningResponse(
                 $e->getMessage(),
                 $e->getData(),
@@ -298,7 +288,6 @@ abstract class BaseController
         }
         catch (PublicException $e)
         {
-            $this->logException($e);
             return $this->jsonWarningResponse(
                 $e->getMessage(),
                 array(),

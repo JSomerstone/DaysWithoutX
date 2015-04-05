@@ -105,7 +105,8 @@ class CounterModel implements ModelInterface
             'owner' => $this->getOwnerId(),
             'visibility' => $this->visiblity,
             'created' => $this->created->format('Y-m-d H:i:s'),
-            'history' => $this->history
+            'history' => $this->history,
+            'resettable' => $this->isResettable()
         );
     }
 

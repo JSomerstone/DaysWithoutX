@@ -87,6 +87,11 @@ class InputValidatorTest extends \PHPUnit_Framework_TestCase
                 'abba',
                 'fuubar123'
             ),
+            'comment' => array(
+                array('regexp' => '/^.{0,28}$/', 'max-length' => 28),
+                'Why am I not being accepted?',
+                'I\'m not accepted because I am too long',
+            ),
 
             'type' => array(
                 array('type' => 'bool'),
