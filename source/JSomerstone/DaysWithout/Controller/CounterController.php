@@ -1,6 +1,7 @@
 <?php
 namespace JSomerstone\DaysWithout\Controller;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request,
     Symfony\Component\HttpFoundation\Response;
 use JSomerstone\DaysWithout\Model\CounterModel,
@@ -62,28 +63,86 @@ class CounterController extends BaseController
         return $this->redirectToCounter($counter);
     }
 
-    public function showAction($name, $owner = null)
+    /**
+     * @param $name
+     * @param null $owner
+     * @return Response
+     */
+    public function viewCounter($name, $owner = null)
+    {
+        return $this->invokeMethod(function() use ($name, $owner)
+        {
+            $counter = $this->loadCounter($name, $owner);
+            if ($counter)
+            {
+                return $this->render(
+                    'counter/index.html.twig',
+                    array( 'counter' => $counter->toArray())
+                );
+            }
+            else
+            {
+
+                return $this->render(
+                    'default/404.html.twig',
+                    [],
+                    Response::HTTP_NOT_FOUND
+                );
+            }
+        });
+        $this->applyToResponse(array(
+            'name' => $name,
+            'owner' => $owner,
+            'found' => $this->getCounterStorage()->exists($name, $owner)
+        ));
+
+    }
+
+    /**
+     * @param $name
+     * @param $owner
+     * @return bool|CounterModel
+     */
+    private function loadCounter($name, $owner)
     {
         $storage = $this->getCounterStorage();
         if ( ! $storage->exists($name, $owner))
         {
-            return $this->redirectFromNonExisting($name, $owner);
+            return false;
         }
         $counterModel = $storage->load($name, $owner);
         if ( $counterModel->isPrivate() )
         {
             if ( ! $this->isLoggedIn() || $this->getLoggedInUser()->getNick() !== $owner)
             {
-                return $this->redirectFromNonExisting($name, $owner);
+                return false;
             }
         }
+        return $counterModel;
+    }
 
-        $this->setCounter($counterModel);
+    /**
+     * @param string $name
+     * @param string $owner
+     * @return JsonResponse
+     */
+    public function getCounter($name, $owner = null)
+    {
+        return $this->invokeMethod(function() use ($name, $owner)
+        {
+            $counter = $this->loadCounter($name, $owner);
+            if ($counter)
+            {
+                return $this->jsonSuccessResponse('',$counter->toArray());
 
-        return $this->render(
-            'JSomerstoneDaysWithout:Counter:index.html.twig',
-            $this->response
-        );
+            } else {
+                return $this->jsonErrorResponse(
+                    'Counter not found',
+                    array(),
+                    JsonResponse::HTTP_NOT_FOUND
+                );
+            }
+        });
     }
 
     /**
@@ -173,10 +232,13 @@ class CounterController extends BaseController
         return $form->getData();
     }
 
-    private function setCounter($counter)
+    /**
+     * @param CounterModel $counter
+     */
+    private function setCounter(CounterModel $counter)
     {
         $this->applyToResponse(array(
-            'counter' => $counter
+            'data' => $counter->toArray()
         ));
     }
 

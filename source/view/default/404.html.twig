@@ -1,0 +1,25 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Page not found{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-6 col-sm-6 col-sm-offset-3 col-xs-12">
+            <h2>Page not found</h2>
+            <div class="row counter-postit">
+
+                <div class="counter-days">404</div>
+
+            </div>
+            <p>
+                The page you were looking for doesn't seem to exist. At least, not anymore.
+            </p>
+        </div>
+    </div>
+    {% if loggedIn %}
+        {% include 'modal/logout.html.twig' %}
+    {% else %}
+        {% include 'modal/login.html.twig' %}
+        {% include 'modal/signup.html.twig' %}
+    {% endif %}
+{% endblock %}

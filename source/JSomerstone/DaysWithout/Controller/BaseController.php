@@ -66,28 +66,29 @@ abstract class BaseController
     /**
      * @param $view
      * @param array $parameters
+     * @param int $httpStatusCode
      * @return mixed
      */
-    public function render($view, array $parameters = array())
+    public function render($view, array $parameters = array(), $httpStatusCode = Response::HTTP_OK)
     {
         $loggedInUser = $this->getSession()->get('user');
-        $parameters['user'] = $loggedInUser;
-        $parameters['loggedIn'] = $loggedInUser ? true : false;
-        $this->setValidationRulesForView($parameters);
-
-        return $this->get('twig')->render(
-            $view,
+        $parameters = array_merge(
+            $this->response,
+            array(
+                'user' => $loggedInUser,
+                'loggedIn' => $loggedInUser ? true : false,
+                'field' => $this->getInputValidator()->getValidationRules()
+            ),
             $parameters
         );
-    }
 
-    private function setValidationRulesForView(&$parameters)
-    {
-        $validationRules = $this->getInputValidator()->getValidationRules();
-        foreach($validationRules as $fieldName => $rules)
-        {
-            $parameters['field'][$fieldName] = $rules;
-        }
+        return new Response(
+            $this->get('twig')->render(
+                $view,
+                $parameters
+            ),
+            $httpStatusCode
+        );
     }
 
     /**
@@ -351,7 +352,8 @@ abstract class BaseController
 
     /**
      * @param $message
-     * @param int $statusCode
+     * @param array $data
+     * @param int $statusCode HTTP
      * @return JsonResponse
      */
     protected function jsonSuccessResponse(
