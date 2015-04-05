@@ -13,7 +13,6 @@ $app = new \JSomerstone\DaysWithout\Application(
 );
 
 $request = Request::createFromGlobals();
-
 /**
  * FRONT-PAGE
  */

@@ -47,6 +47,7 @@ class Application extends \Silex\Application
             ->register(new SessionServiceProvider())
             ->register(new StorageServiceProvider($mongoClient, $databaseName))
             ->register(new ValidationServiceProvider($inputValidator, $validationRulePath))
+            ->register(new AuthenticationServiceProvider())
             ->register(new MonologServiceProvider(), array(
                 'monolog.logfile' => $this->getConfigOrFail('monolog:logfile'),
                 'monolog.level' => $this->getConfig('monolog:level', 300),

@@ -1,6 +1,7 @@
 <?php
 namespace JSomerstone\DaysWithout\Controller;
 
+use Symfony\Component\HttpFoundation\Session\Session;
 use JSomerstone\DaysWithout\Exception\PublicException;
 use JSomerstone\DaysWithout\Exception\SessionException;
 use JSomerstone\DaysWithout\Storage\UserStorage,
@@ -34,6 +35,11 @@ trait SessionTrait
         );
     }
 
+    protected function logoutUser()
+    {
+        $this->getSession()->remove('user');
+    }
+
     /**
      * @param UserModel $user
      * @return mixed
@@ -60,6 +66,15 @@ trait SessionTrait
     protected function getAuthenticationService()
     {
         return $this->get(AuthenticationServiceProvider::SERVICE);
+    }
+
+    /**
+     *
+     * @return Session
+     */
+    protected function getSession()
+    {
+        return $this->get('session');
     }
 
     /**

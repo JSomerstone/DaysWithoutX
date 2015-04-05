@@ -230,6 +230,21 @@ $(function() {
         );
     });
 
+    $('#login-button').click(function(){
+        var post = {
+            nick: $('#login-nick').val(),
+            password: $('#login-password').val()
+        }
+        $.post(
+            'api/login',
+            post,
+            dwo.createApiCallback({
+                container: '#login-dialog-msg-container',
+                onSuccess: function(){ window.location = '/';}
+            })
+        );
+    });
+
     $('#logout-button').click(function(){
         $.post(
             'api/logout',

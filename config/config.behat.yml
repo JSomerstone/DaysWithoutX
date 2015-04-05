@@ -5,3 +5,6 @@ dwo:
     debug: true
     log:
       file: /tmp/test-dwo.log
+
+imports:
+  - { resource: monolog.yml }

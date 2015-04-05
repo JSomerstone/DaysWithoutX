@@ -8,8 +8,10 @@ Background:
     And user "Mee" has protected counter "Foobar" with "19" days
 
 Scenario: Successful login
-  When user "Mee" tries to log in with password "fuubar123"
-  Then response says "Welcome Mee"
+  Given user "Mee" tries to log in with password "fuubar123"
+    And response says "Welcome Mee"
+  When "/" page is loaded
+  Then page has "Welcome Mee"
 
 Scenario: Failed login attempt
   When user "Mee" tries to log in with password "WR0n6!"
@@ -21,11 +23,9 @@ Scenario: Failed login attempt - non-existing user
 
 Scenario: Login & Logout
   Given user "Mee" tries to log in with password "fuubar123"
-    And "/" page is loaded
-    And page has "Welcome Mee"
-  When "/logout" page is loaded
-  Then user is redirected to "/"
-    And page has "Logged out"
+    And response says "Welcome Mee"
+  When user logs out
+  Then response says "Logged out"
 
 Scenario: Resetting counter without logging in is unauthorised
   Given "/foobar/mee" page is loaded

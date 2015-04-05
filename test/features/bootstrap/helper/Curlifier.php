@@ -201,13 +201,15 @@ class Curlifier
             CURLOPT_URL       => $url,
             CURLOPT_REFERER   => $referer,
             CURLOPT_USERAGENT => $userAgent,
-            CURLOPT_COOKIE    => self::unparseCookies($cookies)
+            CURLOPT_COOKIE    => self::unparseCookies($cookies),
+            CURLOPT_POST      => ! empty($post)
         );
+
         if ( ! empty($post))
         {
-            $overrides[CURLOPT_POST] = empty($post);
             $overrides[CURLOPT_POSTFIELDS] = http_build_query($post);
         }
+
         foreach ($overrides as $curlOpt => $value)
         {
             $settings[$curlOpt] = $value;
@@ -219,22 +221,31 @@ class Curlifier
         {
             throw new CurlifierException($error);
         }
-
         $headerSize = \curl_getinfo($this->curlHandler, CURLINFO_HEADER_SIZE);
         $this->lastHeader = substr($response, 0, $headerSize);
         $this->lastBody = substr( $response, $headerSize );
         $this->lastHttpdCode = \curl_getinfo($this->curlHandler, CURLINFO_HTTP_CODE);
         $this->lastUrl = \curl_getinfo($this->curlHandler, CURLINFO_EFFECTIVE_URL);
 
-        $this->getCookieFromHeader();
+        $this->parseCookieFromHeader($this->lastHeader);
         return $this;
     }
 
-    private function getCookieFromHeader()
+    private function parseCookieFromHeader($headerString)
     {
-        if (empty($this->lastHeader))
+        if (empty($headerString))
             return;
-        // TODO: parse "Set-Cookie: "-headers and set them
+
+        $matches = array();
+        preg_match(
+            '/Set-Cookie: (?P<name>[A-Z]+)=(?P<value>[a-zA-z0-9]+); /',
+            $headerString,
+            $matches
+        );
+        if (isset($matches['name']))
+        {
+            $this->addCookie($matches['name'], $matches['value']);
+        }
     }
 
     /**

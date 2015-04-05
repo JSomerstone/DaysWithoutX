@@ -10,38 +10,16 @@ class SessionController extends BaseController
 {
     use SessionTrait;
 
-    public function loginPageAction()
-    {
-        $this->setForm($this->getLoginForm());
-
-        return $this->render(
-            'JSomerstoneDaysWithout:Default:login.html.twig',
-            $this->response
-        );
-    }
-
-    public function signupPageAction()
-    {
-        return $this->render(
-            'JSomerstoneDaysWithout:Default:signup.html.twig',
-            $this->response
-        );
-    }
-
     public function logoutAction()
     {
-        return $this->invokeMethod(
-            function ()
+        return $this->invokeMethod(function(){
+            if ($this->isLoggedIn())
             {
-                if ($this->isLoggedIn())
-                {
-                    $this->setLoggedInUser(null);
-                    session_destroy();
-                    return $this->jsonSuccessResponse('Logged out');
-                }
-                return $this->jsonErrorResponse('Not logged in');
+                $this->logoutUser();
+                return $this->jsonSuccessResponse('Logged out');
             }
-        );
+            return $this->jsonErrorResponse('Not logged in');
+        });
     }
 
     /**
@@ -61,7 +39,8 @@ class SessionController extends BaseController
                     $this->getLogger()->addNotice('Login unsuccessful, nick:'.$nick);
                     return $this->jsonErrorResponse('Wrong Nick and/or password');
                 }
-                $this->setLoggedInUser($userObject);
+                $this->getSession()->set('user', $userObject);
+                session_regenerate_id(true);
                 return $this->jsonSuccessResponse("Welcome $nick");
             }
         );

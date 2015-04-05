@@ -171,13 +171,21 @@ class FeatureContext extends BehatContext
     /**
      * @When /^user "([^"]*)" tries to log in with password "([^"]*)"$/
      */
-    public function useTriesToLogInWithPassword($userName, $password)
+    public function userTriesToLogInWithPassword($userName, $password)
     {
         $post = array(
             'nick' => $userName,
             'password' => $password,
         );
         $this->response = $this->handlePostRequest('/api/login', $post);
+    }
+
+    /**
+     * @When /^user logs out$/
+     */
+    public function userLogsOut()
+    {
+        $this->response = $this->handlePostRequest('/api/logout', array('logout' => true));
     }
 
     /**
@@ -189,7 +197,9 @@ class FeatureContext extends BehatContext
     {
         $this->curl->setUrl(self::BASE_URL . $url)
             ->setPost($post)
-            ->setGet();
+            ->setGet()
+            ->request();
+
 
         return $this->curl->request()->getBody();
     }
@@ -381,7 +391,7 @@ class FeatureContext extends BehatContext
             throw new \Exception("System doesn't have use '$nick'");
         }
         $this->pageIsLoaded('/login');
-        $this->useTriesToLogInWithPassword($nick, $this->systemUsers[$nick]);
+        $this->userTriesToLogInWithPassword($nick, $this->systemUsers[$nick]);
     }
 
     /**
@@ -481,18 +491,5 @@ class FeatureContext extends BehatContext
     private static function getCounterName($counterHeadline)
     {
         return StringFormatter::getUrlSafe($counterHeadline);
-    }
-
-    private function getRequestTokenFromResponse(Response $response)
-    {
-        $matches = array();
-        preg_match(
-            '/name="form\[_token\]" value="(?P<token>[0-9a-z]+)"/',
-            $response->getContent(),
-            $matches
-        );
-        return isset($matches['token'])
-            ? $matches['token']
-            : null;
     }
 }
