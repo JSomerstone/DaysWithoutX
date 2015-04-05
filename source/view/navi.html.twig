@@ -3,8 +3,8 @@
         <a href="/"> Home</a>
     </li>
     {% if loggedIn %}
-        <li {% if url == '/logout' %} class="active"{% endif %}>
-            <a href="/logout" >Logout</a>
+        <li {% if url == '#logout' %} class="active"{% endif %}>
+            <a href="#logout" class="nogo" data-toggle="modal" data-target="#logout-dialog" >Logout</a>
         </li>
     {% else %}
         <li {% if url == '#login' %} class="active"{% endif %}>

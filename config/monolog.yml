@@ -1,0 +1,3 @@
+monolog:
+  logfile: '/tmp/dwo.log'
+  level: 200

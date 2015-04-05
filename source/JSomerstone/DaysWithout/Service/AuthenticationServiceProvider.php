@@ -1,20 +1,36 @@
 <?php
 namespace JSomerstone\DaysWithout\Service;
 
+use Silex\Application;
+use Silex\ServiceProviderInterface;
+
 use JSomerstone\DaysWithout\Storage\UserStorage,
     JSomerstone\DaysWithout\Model\UserModel,
     JSomerstone\DaysWithout\Model\CounterModel;
 
-class AuthenticationService
+class AuthenticationServiceProvider implements ServiceProviderInterface
 {
-    /**
-     * @var JSomerstone\DaysWithout\Storage\UserStorage
-     */
-    private $userStorage;
+    const SERVICE = 'authentication';
 
-    public function __construct(UserStorage $userStorage)
+    /**
+     * @var Application
+     */
+    public $application;
+
+    /**
+     * @param Application $app
+     */
+    public function register(Application $app)
     {
-        $this->userStorage = $userStorage;
+        $app[self::SERVICE] = $this;
+        $this->application = $app;
+    }
+
+    /**
+     * @param Application $app
+     */
+    public function boot(Application $app)
+    {
     }
 
     /**
@@ -24,10 +40,7 @@ class AuthenticationService
      */
     public function authenticate($nick, $password)
     {
-        $user = new UserModel($nick);
-        $user->setPassword($password);
-
-        return $this->authenticateUser($user);
+        return $this->authenticateUser(new UserModel($nick, $password));
     }
 
     /**
@@ -36,12 +49,20 @@ class AuthenticationService
      */
     public function authenticateUser(UserModel $user)
     {
-        if ( ! $this->userStorage->exists($user->getNick())) {
+        if ( ! $this->getUserStorage()->exists($user->getNick())) {
             return false;
         }
 
-        $persisted = $this->userStorage->load($user->getNick());
+        $persisted = $this->getUserStorage()->load($user->getNick());
         return ($persisted->getPassword() === $user->getPassword());
+    }
+
+    /**
+     * @return UserStorage
+     */
+    private function getUserStorage()
+    {
+        return $this->application['storage.user'];
     }
 
     /**

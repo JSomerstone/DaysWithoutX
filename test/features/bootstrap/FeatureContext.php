@@ -183,12 +183,14 @@ class FeatureContext extends BehatContext
     /**
      * @param $url
      * @param array $post
-     * @return Response
+     * @return string
      */
     private function handlePostRequest($url, array $post)
     {
         $this->curl->setUrl(self::BASE_URL . $url)
-            ->setPost($post);
+            ->setPost($post)
+            ->setGet();
+
         return $this->curl->request()->getBody();
     }
 
@@ -410,7 +412,9 @@ class FeatureContext extends BehatContext
      */
     public function userIsRedirectedTo($redirUrl)
     {
-        throw new Exception('Unimplemented');
+        #throw new Exception('Unimplemented');
+        D($this->curl->getHttpCode(), $this->curl->getBody());
+
         $this->pageIsLoaded($redirUrl);
     }
 

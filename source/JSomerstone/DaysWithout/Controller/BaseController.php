@@ -5,7 +5,8 @@ use JSomerstone\DaysWithout\Model\CounterModel;
 use JSomerstone\DaysWithout\Lib\StringFormatter;
 use JSomerstone\DaysWithout\Model\UserModel;
 use JSomerstone\DaysWithout\Application,
-    JSomerstone\DaysWithout\Lib\InputValidator;
+    JSomerstone\DaysWithout\Lib\InputValidator,
+    JSomerstone\DaysWithout\Service\AuthenticationServiceProvider;
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -132,22 +133,10 @@ abstract class BaseController
         $this->getLogger()->addAlert(
             $e->getMessage(),
             array(
-                'controller' => __CLASS__,
-                'method' => __METHOD__
+                'exception' => get_class($e),
+                'trace' => $e->getTraceAsString()
             )
         );
-
-        if( true === $this->get('debug'))
-        {
-            $this->getLogger()->addDebug(
-                $e->getMessage(),
-                array(
-                    'controller' => __CLASS__,
-                    'method' => __METHOD__,
-                    'callstack' => get_call_stack()
-                )
-            );
-        }
     }
 
     protected function addMessage($msg)
@@ -279,11 +268,16 @@ abstract class BaseController
         return $this->get('storage.counter');
     }
 
+    /**
+     * @param $callable
+     * @return Response
+     * @throws InvalidArgumentException
+     */
     protected function invokeMethod($callable)
     {
-        if (!is_callable($callable))
+        if ( ! is_callable($callable))
         {
-            throw new InvalidArgumentException('Service definition is not a Closure or invokable object.');
+            throw new InvalidArgumentException('Unable to invoke controller method');
         }
         try
         {

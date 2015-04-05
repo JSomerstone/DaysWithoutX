@@ -1,8 +1,9 @@
+imports:
+  - { resource: monolog.yml }
+
 dwo:
     storage:
         server: localhost:27017
         database: dayswithout-test
+
     debug: true
-    log:
-      file: /tmp/dwo.log
-      level: 200

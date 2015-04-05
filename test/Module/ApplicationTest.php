@@ -74,7 +74,7 @@ class ApplicationTest  extends \PHPUnit_Framework_TestCase
     public function testGetConfigWithValue(Application $app)
     {
         $config = $app->getConfig('dwo:storage:database');
-        $this->assertEquals('dayswithout', $config);
+        $this->assertEquals('dayswithout-test', $config);
     }
 
     /**
@@ -115,6 +115,19 @@ class ApplicationTest  extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(
             '\Monolog\Logger',
             $app->getLogger()
+        );
+    }
+
+    /**
+     * @param Application $app
+     * @test
+     * @depends testApplicationInit
+     */
+    public function testGetAuthenticationService(Application $app)
+    {
+        $this->assertInstanceOf(
+            '\JSomerstone\DaysWithout\Service\AuthenticationServiceProvider',
+            $app->getAuthenticationService()
         );
     }
 

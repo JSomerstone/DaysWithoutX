@@ -28,40 +28,42 @@ class SessionController extends BaseController
         );
     }
 
-
-
-
     public function logoutAction()
     {
-        $user = $this->get('session')->get('user');
-        if ($user)
-        {
-            $this->setLoggedInUser(null);
-            $this->addMessage('Logged out');
-        }
-        return $this->redirect($this->generateUrl('dwo_frontpage'));
+        return $this->invokeMethod(
+            function ()
+            {
+                if ($this->isLoggedIn())
+                {
+                    $this->setLoggedInUser(null);
+                    session_destroy();
+                    return $this->jsonSuccessResponse('Logged out');
+                }
+                return $this->jsonErrorResponse('Not logged in');
+            }
+        );
     }
 
-    public function loginAction(Request $request)
+    /**
+     * @param string $nick
+     * @param string $password
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function loginAction($nick, $password)
     {
-        $form = $this->getLoginForm();
-        $form->handleRequest($request);
-
-        if ( ! $form->isValid())
-        {
-            return $this->redirect($this->generateUrl('dwo_loginpage'));
-        }
-
-        $user = $form->getData();
-
-        if ( ! $this->authenticateUser($user))
-        {
-            $this->addError('Wrong Nick and/or password');
-            return $this->redirect($this->generateUrl('dwo_loginpage'));
-        }
-        $this->setLoggedInUser($user);
-        $this->addMessage('Welcome ' . $user->getNick());
-
-        return $this->getFrontPageRedirection();
+        return $this->invokeMethod(
+            function () use ($nick, $password)
+            {
+                $this->getInputValidator()->validateField('nick', $nick);
+                $userObject = new UserModel($nick, $password);
+                if ( ! $this->authenticateUser($userObject))
+                {
+                    $this->getLogger()->addNotice('Login unsuccessful, nick:'.$nick);
+                    return $this->jsonErrorResponse('Wrong Nick and/or password');
+                }
+                $this->setLoggedInUser($userObject);
+                return $this->jsonSuccessResponse("Welcome $nick");
+            }
+        );
     }
 }

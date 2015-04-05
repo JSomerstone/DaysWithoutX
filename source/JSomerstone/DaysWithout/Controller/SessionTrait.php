@@ -5,7 +5,7 @@ use JSomerstone\DaysWithout\Exception\PublicException;
 use JSomerstone\DaysWithout\Exception\SessionException;
 use JSomerstone\DaysWithout\Storage\UserStorage,
     JSomerstone\DaysWithout\Model\UserModel,
-    JSomerstone\DaysWithout\Service\AuthenticationService;
+    JSomerstone\DaysWithout\Service\AuthenticationServiceProvider;
 
 trait SessionTrait
 {
@@ -47,22 +47,19 @@ trait SessionTrait
      * @param UserModel $user
      * @return bool
      */
-    protected  function authenticateUser(UserModel $user)
+    protected function authenticateUser(UserModel $user)
     {
         return $this->getAuthenticationService()
             ->authenticateUser($user);
     }
 
     /**
-     * @return \JSomerstone\DaysWithout\Service\AuthenticationService
+     *
+     * @return AuthenticationServiceProvider
      */
-    private function getAuthenticationService()
+    protected function getAuthenticationService()
     {
-        if ( ! $this->authenticationService)
-        {
-            $this->authenticationService = $this->get('dayswithout.service.authentication');
-        }
-        return $this->authenticationService;
+        return $this->get(AuthenticationServiceProvider::SERVICE);
     }
 
     /**

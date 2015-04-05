@@ -6,6 +6,7 @@ use \DerAlex\Silex\YamlConfigServiceProvider,
     \Silex\Provider\SessionServiceProvider,
     \Silex\Provider\MonologServiceProvider,
     \JSomerstone\DaysWithout\Service\StorageServiceProvider,
+    \JSomerstone\DaysWithout\Service\AuthenticationServiceProvider,
     \JSomerstone\DaysWithout\Service\ValidationServiceProvider;
 use JSomerstone\DaysWithout\Controller\ApiController;
 use JSomerstone\DaysWithout\Controller\CounterController;
@@ -47,9 +48,9 @@ class Application extends \Silex\Application
             ->register(new StorageServiceProvider($mongoClient, $databaseName))
             ->register(new ValidationServiceProvider($inputValidator, $validationRulePath))
             ->register(new MonologServiceProvider(), array(
-                'monolog.logfile' => $this->getConfigOrFail('dwo:log:file'),
-                'monolog.level' => $this->getConfig('dwo:log:level', 300),
-                'monolog.name' => $this->getConfig('dwo:log:name', 'dwo')
+                'monolog.logfile' => $this->getConfigOrFail('monolog:logfile'),
+                'monolog.level' => $this->getConfig('monolog:level', 300),
+                'monolog.name' => 'dwo [' . uniqid() .']'
             ));
 
         $this->registerAs('controller.api', new ApiController())
@@ -145,6 +146,14 @@ class Application extends \Silex\Application
     public function getLogger()
     {
         return $this['monolog'];
+    }
+
+    /**
+     * @return AuthenticationServiceProvider
+     */
+    public function getAuthenticationService()
+    {
+        return $this['authentication'];
     }
 
     /**

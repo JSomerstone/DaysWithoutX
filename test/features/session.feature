@@ -8,27 +8,19 @@ Background:
     And user "Mee" has protected counter "Foobar" with "19" days
 
 Scenario: Successful login
-  Given "/#login" page is loaded
   When user "Mee" tries to log in with password "fuubar123"
-  Then user is redirected to "/"
-    And page has "Welcome Mee"
-    And page has link "Logout" to "#logout"
+  Then response says "Welcome Mee"
 
 Scenario: Failed login attempt
-  Given "/login" page is loaded
   When user "Mee" tries to log in with password "WR0n6!"
-  Then user is redirected to "/login"
-    And page has "Wrong Nick and/or password"
+  Then response says "Wrong Nick and/or password"
 
 Scenario: Failed login attempt - non-existing user
-  Given "/login" page is loaded
   When user "Anon" tries to log in with password "irrelevat"
-  Then user is redirected to "/login"
-    And page has "Wrong Nick and/or password"
+  Then response says "Wrong Nick and/or password"
 
 Scenario: Login & Logout
-  Given "/login" page is loaded
-    And user "Mee" tries to log in with password "fuubar123"
+  Given user "Mee" tries to log in with password "fuubar123"
     And "/" page is loaded
     And page has "Welcome Mee"
   When "/logout" page is loaded

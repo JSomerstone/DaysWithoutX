@@ -1,0 +1,13 @@
+{% extends 'modal/dialog.html.twig' %}
+
+{% set modal_id = 'logout-dialog' %}
+{% set modal_title = 'Logout' %}
+
+{% block modal_body %}
+    <p>Are you sure you want to logout?</p>
+{% endblock %}
+
+{% block modal_footer %}
+    <button type="button" id="logout-button" class="btn btn-success">Yes</button>
+    <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+{% endblock %}

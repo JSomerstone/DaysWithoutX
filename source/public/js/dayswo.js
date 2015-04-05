@@ -1,20 +1,24 @@
 dwo = {
     message : {
-        info : function(msg)
+        defaultContainer : "#notification-container",
+        info : function(msg, containerId)
         {
-            $('#notification-container').html(
+            containerId = containerId || dwo.message.defaultContainer;
+            $(containerId).html(
                 dwo.message.render('alert-info', '', msg)
             );
         },
-        warning : function(msg)
+        warning : function(msg, containerId)
         {
-            $('#notification-container').html(
+            containerId = containerId || dwo.message.defaultContainer;
+            $(containerId).html(
                 dwo.message.render('alert-warning', 'Notice:', msg)
             );
         },
-        error: function(msg)
+        error: function(msg, containerId)
         {
-            $('#notification-container').html(
+            containerId = containerId || dwo.message.defaultContainer;
+            $(containerId).html(
                 dwo.message.render('alert-danger', 'Error:', msg)
             );
         },
@@ -28,19 +32,28 @@ dwo = {
 
     },
 
-    createApiCallback : function(onSuccess, onFailure)
+    createApiCallback : function(options)
     {
+        var options = {
+            container : options.container || dwo.message.defaultContainer,
+            onSuccess :  options.onSuccess || function(){},
+            onFailure :  options.onFailure || function(){}
+        }
         return function(data)
         {
             var response = jQuery.parseJSON(data);
+            if (console)
+            {
+                console.log(response)
+            }
             if ( response.success )
             {
-                dwo.message.info(response.message);
-                onSuccess(response);
+                dwo.message.info(response.message, options.container);
+                options.onSuccess(response);
             }
             else {
-                dwo.message.error(response.message);
-                onFailure(response);
+                dwo.message.error(response.message, options.container);
+                options.onFailure(response);
             }
         }
     },
@@ -113,16 +126,12 @@ dwo = {
         }
     },
 
-    openDialog: function(dialog)
+    openDialog: function(name)
     {
-        switch (dialog)
+        var dialog = $('#' + name + '-dialog');
+        if (dialog)
         {
-            case 'login':
-                $('#login-dialog').modal();
-                break;
-            case 'signup':
-                $('#signup-dialog').modal();
-                break;
+            dialog.modal();
         }
     }
 }
@@ -198,7 +207,6 @@ $(function() {
                 password: $('#reset-password').val()
             };
 
-        console.log(counter, owner, postParameters);
         $.post(
             dwo.formApiUrl('counter/reset', counter, owner),
             postParameters,
@@ -215,12 +223,21 @@ $(function() {
         $.post(
             'api/signup',
             post,
-            dwo.createApiCallback(
-                function(response){
-                    window.location = '/';
-                },
-                function(response){}
-            )
+            dwo.createApiCallback({
+                container: '#signup-dialog-msg-container',
+                onSuccess: function(){ window.location = '/';}
+            })
+        );
+    });
+
+    $('#logout-button').click(function(){
+        $.post(
+            'api/logout',
+            {},
+            dwo.createApiCallback({
+                container: '#logout-dialog-msg-container',
+                onSuccess: function(){ window.location = '/';}
+            })
         );
     });
 });

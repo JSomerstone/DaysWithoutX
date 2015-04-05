@@ -46,6 +46,10 @@
             </div>
         </div>
     </div>
-    {% include 'modal/login.html.twig' %}
-    {% include 'modal/signup.html.twig' %}
+    {% if loggedIn %}
+        {% include 'modal/logout.html.twig' %}
+    {% else %}
+        {% include 'modal/login.html.twig' %}
+        {% include 'modal/signup.html.twig' %}
+    {% endif %}
 {% endblock %}

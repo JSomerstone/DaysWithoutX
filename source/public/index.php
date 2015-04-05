@@ -41,6 +41,11 @@ $app->post('/api/login', function(Request $request) use ($app)
         $request->get('password')
     );
 });
+$app->post('/api/logout', function() use ($app)
+{
+    $controller = $app['controller.session'];
+    return $controller->logoutAction();
+});
 
 
 $app->get('/api/list/newest/{page}', function ($page) use ($app) {
