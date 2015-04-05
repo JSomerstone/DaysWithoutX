@@ -62,3 +62,6 @@ table.counter-list td.counter-list-daycount {
 div.jumbotron {
     background-color: mediumpurple;
 }
+#notification-container {
+    position: fixed;
+}

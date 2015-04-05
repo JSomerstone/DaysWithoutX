@@ -21,17 +21,20 @@ $app->get('/', function() use ($app)
     $controller = $app['controller.default'];
     return $controller->indexAction();
 });
-$app->get('/debug', function() use ($app)
+
+/**
+ * SHOW COUNTER
+ */
+$app->get('/{counter}/{owner}', function($counter, $owner) use ($app)
 {
-    return $app->getTwig()
-        ->render('form/field.html.twig',
-            array(
-                'field' => $app->getValidator()->getValidationRule('nick')
-            )
-        );
+    $controller = $app['controller.counter'];
+    return $controller->viewCounter($counter, $owner);
 });
 
 
+/**
+ * SIGN-UP
+ */
 $app->post('/api/signup', function(Request $request) use ($app)
 {
     $controller = $app['controller.api'];
@@ -41,6 +44,10 @@ $app->post('/api/signup', function(Request $request) use ($app)
         $request->get('password-confirm')
     );
 });
+
+/**
+ * LOGIN
+ */
 $app->post('/api/login', function(Request $request) use ($app)
 {
     $controller = $app['controller.session'];
@@ -49,11 +56,35 @@ $app->post('/api/login', function(Request $request) use ($app)
         $request->get('password')
     );
 });
+
+/**
+ * LOGOUT
+ */
 $app->post('/api/logout', function(Request $request) use ($app)
 {
-    $app->getLogger()->addInfo(var_export($request->cookies, true));
     $controller = $app['controller.session'];
     return $controller->logoutAction($request);
+});
+
+/**
+ * GET COUNTER
+ */
+$app->get('/api/counter/{counter}/{owner}', function($counter, $owner) use ($app)
+{
+    $controller = $app['controller.counter'];
+    return $controller->getCounter($counter, $owner);
+});
+
+/**
+ * POST COUNTER
+ */
+$app->post('/api/counter', function(Request $request) use ($app)
+{
+    $controller = $app['controller.counter'];
+    return $controller->createAction(
+        $request->get('headline'),
+       $request->get('visibility')
+    );
 });
 
 

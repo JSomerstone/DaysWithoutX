@@ -15,3 +15,9 @@ password:
 headline:
   regexp: '/^.{1,100}$/'
   title: 'Max 100 chars with one or more of a-z'
+
+visibility:
+  white-list:
+    - 'public'
+    - 'protected'
+    - 'private'

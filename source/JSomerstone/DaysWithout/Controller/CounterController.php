@@ -13,54 +13,50 @@ class CounterController extends BaseController
 {
     use SessionTrait;
 
-    public function createAction(Request $request)
+    /**
+     * @param string $headline
+     * @param string $visibility
+     * @return JsonResponse
+     */
+    public function createAction($headline, $visibility)
     {
-        $headline = $request->get('headline');
-        $public =  ! is_null($request->get('public'));
-        $protected = ! is_null($request->get('protected'));
-        $private = ! is_null($request->get('private'));
-        $counterStorage = $this->getCounterStorage();
-
-        try
+        return $this->invokeMethod(function() use ($headline, $visibility)
         {
-            $this->getInputValidator()->validateField('headline', $headline);
-        }
-        catch ( InputValidatorException $e )
-        {
-            $this->addError("Headline for counter was invalid");
-            return $this->getFrontPageRedirection();
-        }
+            $this->getInputValidator()->validateFields([
+                'headline' => $headline,
+                'visibility' => $visibility
+            ]);
 
-        $counter = new CounterModel($headline);
-        if ( $this->isLoggedIn() )
-        {
-            $counter->setOwner($this->getLoggedInUser());
+            $counterStorage = $this->getCounterStorage();
+            $counter = new CounterModel($headline);
 
-            if ($protected)
+            if ( $this->isLoggedIn() )
             {
-                $counter->setProtected();
-            } else if ($private)
-            {
-                $counter->setPrivate();
+                $counter->setOwner($this->getLoggedInUser())
+                    ->setVisibility($visibility);
+            } else {
+                $counter->setPublic();
             }
-        }
 
-        if ($public)
-        {
-            $counter->setPublic();
-        }
-
-        if ( $counterStorage->exists($counter->getName(), $counter->getOwnerId()))
-        {
-            $this->addNotice('Already existed, showing it');
-        }
-        else
-        {
-            $counterStorage->store($counter);
-            $this->addMessage('Counter created');
-        }
-
-        return $this->redirectToCounter($counter);
+            if ( $counterStorage->exists($counter->getName(), $counter->getOwnerId()))
+            {
+                return $this->jsonSuccessResponse(
+                    'Already existed, showing it',
+                    $counter->toArray(),
+                    JsonResponse::HTTP_MOVED_PERMANENTLY
+                );
+            }
+            else
+            {
+                $counterStorage->store($counter);
+                $this->getLogger()->addInfo("counter created", ['headline' => $headline, 'owner' => $counter->getOwner()]);
+                return $this->jsonSuccessResponse(
+                    null,
+                    $counter->toArray(),
+                    JsonResponse::HTTP_CREATED
+                );
+            }
+        });
     }
 
     /**
@@ -82,7 +78,6 @@ class CounterController extends BaseController
             }
             else
             {
-
                 return $this->render(
                     'default/404.html.twig',
                     [],
@@ -90,12 +85,6 @@ class CounterController extends BaseController
                 );
             }
         });
-        $this->applyToResponse(array(
-            'name' => $name,
-            'owner' => $owner,
-            'found' => $this->getCounterStorage()->exists($name, $owner)
-        ));
-
     }
 
     /**

@@ -293,7 +293,7 @@ abstract class BaseController
             $this->logException($e);
             return $this->jsonWarningResponse(
                 $e->getMessage(),
-                $e->getf,
+                $e->getData(),
                 JsonResponse::HTTP_BAD_REQUEST);
         }
         catch (PublicException $e)

@@ -3,6 +3,10 @@ dwo = {
         defaultContainer : "#notification-container",
         info : function(msg, containerId)
         {
+            if ( ! msg)
+            {
+                return;
+            }
             containerId = containerId || dwo.message.defaultContainer;
             $(containerId).html(
                 dwo.message.render('alert-info', '', msg)
@@ -10,6 +14,10 @@ dwo = {
         },
         warning : function(msg, containerId)
         {
+            if ( ! msg)
+            {
+                return;
+            }
             containerId = containerId || dwo.message.defaultContainer;
             $(containerId).html(
                 dwo.message.render('alert-warning', 'Notice:', msg)
@@ -17,6 +25,10 @@ dwo = {
         },
         error: function(msg, containerId)
         {
+            if ( ! msg)
+            {
+                return;
+            }
             containerId = containerId || dwo.message.defaultContainer;
             $(containerId).html(
                 dwo.message.render('alert-danger', 'Error:', msg)
@@ -211,7 +223,7 @@ $(function() {
             'password-confirm': $('#signup-dialog #passwordConfirmField').val()
         }
         $.post(
-            'api/signup',
+            '/api/signup',
             post,
             dwo.createApiCallback({
                 container: '#signup-dialog-msg-container',
@@ -226,7 +238,7 @@ $(function() {
             password: $('#login-password').val()
         }
         $.post(
-            'api/login',
+            '/api/login',
             post,
             dwo.createApiCallback({
                 container: '#login-dialog-msg-container',
@@ -237,12 +249,38 @@ $(function() {
 
     $('#logout-button').click(function(){
         $.post(
-            'api/logout',
+            '/api/logout',
             {},
             dwo.createApiCallback({
                 container: '#logout-dialog-msg-container',
                 onSuccess: function(){ window.location = '/';}
             })
         );
+    });
+
+    $('#counter-form button').click(function(event){
+
+        event.preventDefault();
+        var post = {
+            visibility : event.originalEvent.toElement.value,
+            headline: $('#headline-field').val()
+        };
+        console.log(post);
+        $.post(
+            '/api/counter',
+            post,
+            dwo.createApiCallback({
+                onSuccess: function(response)
+                {
+                    console.log(response.data.name, response.data.owner);
+                    window.location = '/' + response.data.name + '/' + response.data.owner;
+                }
+            })
+        );
+        /**
+         *
+        $("input[type=submit]", $(this).parents("form")).removeAttr("clicked");
+            $(this).attr("clicked", "true");
+         */
     });
 });

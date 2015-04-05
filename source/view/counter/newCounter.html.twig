@@ -4,12 +4,13 @@
         <div class="col-xs-12">
             <input
                 name="headline"
+                id="headline-field"
                 type="text"
                 class="form-control mandatory input-lg"
                 placeholder="... {{ succession }}?"
-                required="1"
+                required
                 value="{{ counter_title }}"
-                >
+            >
         </div>
     </div>
     <div class="form-group">
@@ -17,7 +18,7 @@
             <button
                     name="public"
                     class="btn-lg btn-success btn-block"
-                    value="Public"
+                    value="public"
                     title="Anyone can see & reset the counter"
                     >
                 <i class="fa fa-group"></i> Public</button>
@@ -33,6 +34,7 @@
             <div class="col-sm-8">
                 <button
                         name="protected"
+                        value="protected"
                         class="btn-lg btn-warning btn-block"
                         title="Anyone can see, only You can reset"
                         ><i class="fa fa-user"></i> Protected</button>
@@ -45,6 +47,7 @@
             <div class="col-sm-8">
                 <button
                         name="private"
+                        value="private"
                         class="btn-lg btn-danger btn-block"
                         title="Anyone can see, only You can reset"
                         ><i class="fa fa-eye"></i> Private</button>
