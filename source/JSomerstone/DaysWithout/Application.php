@@ -37,6 +37,16 @@ class Application extends \Silex\Application
     {
         parent::__construct($values);
 
+        if ( ! is_readable($configPath))
+        {
+            throw new \Exception('Cannot read configuration from '.$configPath);
+        }
+
+        if ( ! file_exists($viewPath))
+        {
+            throw new \Exception('Views not found from '.$viewPath);
+        }
+
         $this->register(new YamlConfigServiceProvider($configPath));
 
         $mongoClient = new \MongoClient($this->getConfigOrFail('dwo:storage:server'));

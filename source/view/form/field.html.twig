@@ -1,0 +1,15 @@
+{% if field['max-length'] is defined %}
+    maxlength="{{ field['max-length'] }}"
+{% endif %}
+{% if field['pattern'] is defined %}
+    pattern="{{ field['pattern'] }}"
+{% endif %}
+{% if field['min'] is defined %}
+    min="{{ field['min'] }}"
+{% endif %}
+{% if field['max'] is defined %}
+    max="{{ field['max'] }}"
+{% endif %}
+{% if field['non-empty'] is defined and field['non-empty'] == true %}
+    required
+{% endif %}

@@ -1,13 +1,17 @@
 <?php
 namespace JSomerstone\DaysWithout\Controller;
 
+use JSomerstone\DaysWithout\Lib\InputValidatorException;
 use JSomerstone\DaysWithout\Model\CounterModel;
 use JSomerstone\DaysWithout\Lib\StringFormatter;
 use JSomerstone\DaysWithout\Model\UserModel;
 use JSomerstone\DaysWithout\Application,
     JSomerstone\DaysWithout\Lib\InputValidator,
     JSomerstone\DaysWithout\Service\AuthenticationServiceProvider;
+use JSomerstone\DaysWithout\Exception\PublicException,
+    JSomerstone\DaysWithout\Lib\InputValidatorValueException;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class BaseController
@@ -283,59 +287,126 @@ abstract class BaseController
         {
             return $callable();
         }
+        catch (InputValidatorValueException $e)
+        {
+            $this->logException($e);
+            return $this->jsonWarningResponse(
+                $e->getMessage(),
+                $e->getf,
+                JsonResponse::HTTP_BAD_REQUEST);
+        }
         catch (PublicException $e)
         {
             $this->logException($e);
-            return $this->jsonErrorResponse($e->getMessage());
+            return $this->jsonWarningResponse(
+                $e->getMessage(),
+                array(),
+                JsonResponse::HTTP_BAD_REQUEST
+            );
         }
         catch (SessionException $e)
         {
             $this->logException($e);
-            return $this->jsonErrorResponse('Unauthorized action');
+            return $this->jsonErrorResponse(
+                'Unauthorized action',
+                array(),
+                JsonResponse::HTTP_FORBIDDEN
+            );
         }
         catch (\Exception $e)
         {
             $this->logException($e);
-            return $this->jsonErrorResponse('System error');
+            return $this->jsonErrorResponse(
+                'System error',
+                array(),
+                JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
     }
 
     /**
      * @param $success
+     * @param string $level
      * @param null $message
-     * @param null $redirUrl
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @param int $status
+     * @param array $data
+     * @return JsonResponse
      */
-    protected function jsonResponse($success, $message = null, $redirUrl = null)
+    protected function jsonResponse(
+        $success,
+        $level = 'info',
+        $message = null,
+        $status = JsonResponse::HTTP_OK,
+        $data = array()
+    )
     {
-        $jsonResponse = new Response();
-        $jsonResponse->setContent(json_encode([
+        return new JsonResponse(array(
             'success' => $success,
             'message' => $message,
-            'redirection' => $redirUrl
-        ]));
-        return $jsonResponse;
+            'level' => $level,
+            'status' => $status,
+            'data' => $data
+        ));
     }
 
     /**
      * @param $message
-     * @param null $redirect
-     * @return Response
+     * @param int $statusCode
+     * @return JsonResponse
      */
-    protected function jsonSuccessResponse($message, $redirect = null)
+    protected function jsonSuccessResponse(
+        $message,
+        $data = array(),
+        $statusCode = JsonResponse::HTTP_OK
+    )
     {
-        $this->addMessage($message);
-        return $this->jsonResponse(true, $message, $redirect);
+        return $this->jsonResponse(
+            true,
+            'info',
+            $message,
+            $statusCode,
+            $data
+        );
     }
+
     /**
      * @param $message
-     * @param null $redirect
-     * @return Response
+     * @param int $statusCode
+     * @return JsonResponse
      */
-    protected function jsonErrorResponse($message, $redirect = null)
+    protected function jsonErrorResponse(
+        $message,
+        $data = array(),
+        $statusCode = JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+    )
     {
-        $this->addError($message);
-        return $this->jsonResponse(false, $message, $redirect);
+        return $this->jsonResponse(
+            false,
+            'error',
+            $message,
+            $statusCode,
+            $data
+        );
+    }
+
+    /**
+     * @param $message
+     * @param int $statusCode
+     * @return JsonResponse
+     */
+    protected function jsonWarningResponse(
+        $message,
+        $data = array(),
+        $statusCode = JsonResponse::HTTP_BAD_REQUEST
+    )
+    {
+        return $this->jsonResponse(
+            false,
+            'warning',
+            $message,
+            $statusCode,
+            $data
+        );
     }
 
     /**

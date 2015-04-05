@@ -39,24 +39,34 @@ dwo = {
             onSuccess :  options.onSuccess || function(){},
             onFailure :  options.onFailure || function(){}
         }
-        return function(data)
+        return function(response)
         {
-            var response = jQuery.parseJSON(data);
             if (console)
             {
                 console.log(response)
             }
-            if ( response.success )
+            switch (response.level)
             {
-                dwo.message.info(response.message, options.container);
-                options.onSuccess(response);
+                case 'info':
+                    dwo.message.info(response.message, options.container);
+                    break;
+                case 'error':
+                    dwo.message.error(response.message, options.container);
+                    break;
+                case 'warning':
+                    dwo.message.warning(response.message, options.container);
+                    break;
             }
-            else {
-                dwo.message.error(response.message, options.container);
+
+            if (response.success)
+            {
+                options.onSuccess(response);
+            } else {
                 options.onFailure(response);
             }
         }
     },
+
     handleApiResponse : function(data)
     {
         var response = jQuery.parseJSON(data);
@@ -144,26 +154,6 @@ $(function() {
         var href = $(this).attr("href");
         history.pushState({}, '', href);
         dwo.openDialog(href.substring(1));
-    });
-
-    /**
-     * Delete-counter-functionality
-     */
-    $('a.login').click(function()
-    {
-        var link = $(this),
-            counter = link.attr('counter'),
-            owner = link.attr('owner'),
-            confirmed = confirm('You´re about to remove a counter - this cannot be undone. Are you sure?');
-
-        if (confirmed)
-        {
-            $.post(
-                dwo.formApiUrl('counter/delete', counter, owner),
-                {},
-                dwo.handleApiResponse
-            );
-        }
     });
 
     /**

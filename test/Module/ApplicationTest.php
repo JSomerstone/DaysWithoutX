@@ -4,7 +4,11 @@ namespace Module;
 use JSomerstone\DaysWithout\Application,
     JSomerstone\DaysWithout\Service\StorageServiceProvider;
 
-
+/**
+ * Class ApplicationTest
+ * @package Module
+ * @covers JSomerstone\DaysWithout\Application
+ */
 class ApplicationTest  extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -131,5 +135,45 @@ class ApplicationTest  extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @test
+     * @depends testApplicationInit
+     */
+    public function nonExistingConfigCausesFailure()
+    {
+        $this->setExpectedException('Exception');
+        $application = new Application(
+            '/non/existing',
+            '/vagrant/source/view',
+            '/vagrant/source/JSomerstone/DaysWithout/Resources/validation.yml'
+        );
+    }
 
+    /**
+     * @test
+     * @depends testApplicationInit
+     */
+    public function nonExistingViewPathCausesFailure()
+    {
+        $this->setExpectedException('Exception');
+        $application = new Application(
+            '/vagrant/config/config.yml',
+            '/non/existing',
+            '/vagrant/source/JSomerstone/DaysWithout/Resources/validation.yml'
+        );
+    }
+
+    /**
+     * @test
+     * @depends testApplicationInit
+     */
+    public function nonExistingValidationRulesCausesFailure()
+    {
+        $this->setExpectedException('Exception');
+        $application = new Application(
+            '/vagrant/config/config.yml',
+            '/vagrant/source/view',
+            '/non/existing'
+        );
+    }
 }

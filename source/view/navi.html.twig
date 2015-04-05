@@ -1,16 +1,16 @@
 <ul class="nav nav-pills">
-    <li {% if url == '/' %} class="active"{% endif %}>
+    <li class="active">
         <a href="/"> Home</a>
     </li>
     {% if loggedIn %}
-        <li {% if url == '#logout' %} class="active"{% endif %}>
+        <li >
             <a href="#logout" class="nogo" data-toggle="modal" data-target="#logout-dialog" >Logout</a>
         </li>
     {% else %}
-        <li {% if url == '#login' %} class="active"{% endif %}>
+        <li>
             <a href="#login" class="nogo" data-toggle="modal" data-target="#login-dialog" >Login</a>
         </li>
-        <li {% if url == '#signup' %} class="active"{% endif %}>
+        <li>
             <a href="#signup" class="nogo" data-toggle="modal" data-target="#signup-dialog" >Sign up</a>
         </li>
     {% endif %}

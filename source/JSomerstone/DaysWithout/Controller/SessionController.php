@@ -2,6 +2,7 @@
 namespace JSomerstone\DaysWithout\Controller;
 
 use JSomerstone\DaysWithout\Model\UserModel;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Session\Session,
     Symfony\Component\HttpFoundation\Request;
 use JSomerstone\DaysWithout\Exception\PublicException;
@@ -37,7 +38,10 @@ class SessionController extends BaseController
                 if ( ! $this->authenticateUser($userObject))
                 {
                     $this->getLogger()->addNotice('Login unsuccessful, nick:'.$nick);
-                    return $this->jsonErrorResponse('Wrong Nick and/or password');
+                    return $this->jsonWarningResponse(
+                        'Wrong Nick and/or password',
+                        JsonResponse::HTTP_FORBIDDEN
+                    );
                 }
                 $this->getSession()->set('user', $userObject);
                 session_regenerate_id(true);

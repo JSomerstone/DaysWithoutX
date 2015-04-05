@@ -46,7 +46,6 @@ class InputValidatorTest extends \PHPUnit_Framework_TestCase
                     'type' => 'int',
                     'regexp' => '/^[0-9]+$/',
                     'message' => '',
-                    'custom' => 'isEmail',
                     'min' => -PHP_INT_MAX,
                     'min-length' => 1,
                     'max' => PHP_INT_MAX,
@@ -119,8 +118,8 @@ class InputValidatorTest extends \PHPUnit_Framework_TestCase
                 'six+one'
             ),
 
-            'custom' => array(
-                array('custom' => 'isEmail'),
+            'email' => array(
+                array('email' => 1),
                 'fuu@bar.com',
                 'fuu at bar dot com'
             ),

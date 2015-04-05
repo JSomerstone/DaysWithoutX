@@ -21,6 +21,15 @@ $app->get('/', function() use ($app)
     $controller = $app['controller.default'];
     return $controller->indexAction();
 });
+$app->get('/debug', function() use ($app)
+{
+    return $app->getTwig()
+        ->render('form/field.html.twig',
+            array(
+                'field' => $app->getValidator()->getValidationRule('nick')
+            )
+        );
+});
 
 
 $app->post('/api/signup', function(Request $request) use ($app)
@@ -40,10 +49,11 @@ $app->post('/api/login', function(Request $request) use ($app)
         $request->get('password')
     );
 });
-$app->post('/api/logout', function() use ($app)
+$app->post('/api/logout', function(Request $request) use ($app)
 {
+    $app->getLogger()->addInfo(var_export($request->cookies, true));
     $controller = $app['controller.session'];
-    return $controller->logoutAction();
+    return $controller->logoutAction($request);
 });
 
 

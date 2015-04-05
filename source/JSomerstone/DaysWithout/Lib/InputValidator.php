@@ -91,107 +91,20 @@ class InputValidator
     {
         $validationRules = $this->getValidationRule($fieldName);
 
-        $validationErrors = array();
 
         foreach ($validationRules as $ruleName => $ruleValue)
         {
             $validator = RuleFactory::getRuleFor($ruleName, $ruleValue);
             if ( ! $validator->validate($value))
             {
-                $validationErrors[$fieldName] = $validator->getErrorMessage();
+                throw new InputValidatorValueException(
+                    $validator->getErrorMessage(),
+                    $fieldName,
+                    $ruleName,
+                    $ruleValue
+                );
             }
         }
-
-        if ( ! empty($validationErrors))
-        {
-            throw new InputValidatorValueException(
-                $fieldName,
-                $validationErrors
-            );
-        }
-    }
-
-    /**
-     * @param string $pattern
-     * @param string $actualValue
-     * @return bool
-     */
-    private static function validateAgainstRegexp($pattern, $actualValue)
-    {
-        return (bool)preg_match(
-            $pattern,
-            $actualValue
-        );
-    }
-
-    /**
-     * @param string $method Custom method of InputValidator to validate value against
-     * @param mixed $value
-     * @return bool
-     * @throws InputValidatorException
-     */
-    private function validateAgainstCustomMethod($method, $value)
-    {
-        if ( ! method_exists($this, $method))
-        {
-            throw new InputValidatorException(
-                "Non-existing custom validation method:$method"
-            );
-        }
-
-        return (bool)self::$method($value);
-    }
-
-    private function validateAgainstWhiteList($whiteList, $actualValue)
-    {
-        return in_array($actualValue, $whiteList);
-    }
-
-    private static function isEmail($value)
-    {
-        return (bool)preg_match('/.+@[a-z0-9]+([a-z0-9.]+)?/', $value);
-    }
-
-    /**
-     * @param int $minValue
-     * @param int $actualValue
-     * @return bool
-     */
-    private function validateAgainstMin($minValue, $actualValue)
-    {
-        return $actualValue >= $minValue;
-    }
-
-    /**
-     * @param int $minLength
-     * @param string $actualValue
-     * @return bool
-     */
-    private function validateAgainstMinLength($minLength, $actualValue)
-    {
-        return mb_strlen($actualValue) >= $minLength;
-    }
-
-    /**
-     * @param int $maxValue
-     * @param int $actualValue
-     * @return bool
-     * @throws \InputValidatorException
-     */
-    private function validateAgainstMax($maxValue, $actualValue)
-    {
-        return $actualValue <= $maxValue;
-    }
-
-
-    /**
-     * @param int $maxLength
-     * @param string $actualValue
-     * @return bool
-     */
-    private function validateAgainstMaxLength($maxLength, $actualValue)
-    {
-        return mb_strlen($actualValue) <= $maxLength;
     }
 
     /**
@@ -230,37 +143,41 @@ class InputValidatorValueException extends PublicException
     private $invalidField;
 
     /**
-     * @var array
+     * @var string
      */
-    private $rules;
+    private $rule;
 
-    public function __construct($publicMessage, $fieldName, $rules = array())
+    /**
+     * @var mixed
+     */
+    private $ruleValue;
+
+    public function __construct($publicMessage, $fieldName, $ruleName = null, $ruleValue = null)
     {
         $this->invalidField = $fieldName;
-        $this->rules = $rules;
+        $this->rule = $ruleName;
+        $this->ruleValue = $ruleValue;
 
-        $message = "Input validation failed";
-        parent::__construct($message);
+        parent::__construct($publicMessage);
     }
 
-    public function getField()
+    public function getData()
     {
-        return $this->invalidField;
-    }
-
-    public function getRules()
-    {
-        return $this->rules;
+        return array(
+            'message' => $this->message,
+            'field' => $this->invalidField,
+            'rule' => $this->rule,
+            'ruleValue' => $this->ruleValue
+        );
     }
 
     public function __toString()
     {
-        return sprintf(
-            '%s:%s, field:%s, rules:%s',
-            __CLASS__,
-            $this->getMessage(),
-            $this->invalidField,
-            implode(',',$this->rules)
-        );
+        $string = __CLASS__ . ': ';
+        foreach ($this->getData() as $key => $value)
+        {
+            $string .= "$key:$value, ";
+        }
+        return $string;
     }
 }
