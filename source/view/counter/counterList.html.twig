@@ -13,7 +13,7 @@
                     </a>
                 </td>
                 <td>
-                    {% include 'counter/visibilityIcon.html.twig' %}
+                    {% include 'counter/visibilityIcon.html.twig' with { counter: counter } %}
                 </td>
                 {% if counter.owner and showUser %}
                 <td>

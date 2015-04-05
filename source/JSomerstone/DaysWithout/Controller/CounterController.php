@@ -73,7 +73,7 @@ class CounterController extends BaseController
             {
                 return $this->render(
                     'counter/index.html.twig',
-                    array( 'counter' => $counter->toArray())
+                    array( 'counter' => $counter )
                 );
             }
             else
@@ -170,6 +170,10 @@ class CounterController extends BaseController
         });
     }
 
+    /**
+     * @param $user
+     * @return mixed|\Symfony\Component\HttpFoundation\RedirectResponse
+     */
     public function showUsersCountersAction($user)
     {
         $userStorage  = $this->getUserStorage();
@@ -177,22 +181,24 @@ class CounterController extends BaseController
         if ( ! $owner)
         {
             $this->addError('User not found');
-            return $this->getFrontPageRedirection();
+            return $this->render(
+                'default/404.html.twig',
+                [],
+                Response::HTTP_NOT_FOUND
+            );
         }
 
         $showPrivateCounters = ($this->isLoggedIn() && $owner->isSameAs($this->getLoggedInUser()));
 
-        $this->applyToResponse([
-            'owner' => $owner,
-            'counters' => $this->getCounterStorage()->getUsersCounters(
-                $owner->getNick(),
-                $showPrivateCounters
-            )
-        ]);
-
         return $this->render(
-            'JSomerstoneDaysWithout:Counter:usersCounters.html.twig',
-            $this->response
+            'counter/usersCounters.html.twig',
+            [
+                'owner' => $owner,
+                'counters' => $this->getCounterStorage()->getUsersCounters(
+                    $owner->getNick(),
+                    $showPrivateCounters
+                )
+            ]
         );
     }
 

@@ -23,6 +23,15 @@ $app->get('/', function() use ($app)
 });
 
 /**
+ * USERS COUNTER-LIST
+ */
+$app->get('/user/{nick}', function($nick) use ($app)
+{
+    $controller = $app['controller.counter'];
+    return $controller->showUsersCountersAction($nick);
+});
+
+/**
  * SHOW COUNTER - public
  */
 $app->get('/{counter}/', function($counter) use ($app)
