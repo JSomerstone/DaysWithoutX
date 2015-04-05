@@ -58,12 +58,22 @@ abstract class BaseController
         return $this->app[$name];
     }
 
-    public function render($view, array $parameters = array(), Response $response = null)
+    /**
+     * @param $view
+     * @param array $parameters
+     * @return mixed
+     */
+    public function render($view, array $parameters = array())
     {
         $loggedInUser = $this->getSession()->get('user');
         $parameters['user'] = $loggedInUser;
         $parameters['loggedIn'] = $loggedInUser ? true : false;
         $this->setValidationRulesForView($parameters);
+
+        return $this->get('twig')->render(
+            $view,
+            $parameters
+        );
     }
 
     private function setValidationRulesForView(&$parameters)
@@ -71,8 +81,7 @@ abstract class BaseController
         $validationRules = $this->getInputValidator()->getValidationRules();
         foreach($validationRules as $fieldName => $rules)
         {
-            $parameters['field'][$fieldName]['pattern'] = $rules['pattern'];
-            $parameters['field'][$fieldName]['title'] = $rules['message'];
+            $parameters['field'][$fieldName] = $rules;
         }
     }
 

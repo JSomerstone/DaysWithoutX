@@ -62,6 +62,14 @@ class InputValidator
     }
 
     /**
+     * @return array
+     */
+    public function getValidationRules()
+    {
+        return $this->validationRules;
+    }
+
+    /**
      * @param string $field
      * @return array
      * @throws InputValidatorException

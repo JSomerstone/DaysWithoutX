@@ -19,24 +19,8 @@ $request = Request::createFromGlobals();
  */
 $app->get('/', function() use ($app)
 {
-    return $app->getTwig()->render(
-        'default/index.html.twig',
-        array(
-            'title' => 'Days Without ?',
-            'succession' => 'Random succession goes here',
-            'counter_title' => null,
-            'field' => array(
-                'headline' => array(
-                    'pattern' => '/^.+$/',
-                    'title' => 'Without what?'
-                )
-            ),
-            'loggedIn' => false,
-            'url' => '/',
-            'latest' => $app->getStorageService()->getCounterStorage()->getLatestCounters(10),
-            'resentResets' => $app->getStorageService()->getCounterStorage()->getResentResetsCounters(10),
-        )
-    );
+    $controller = $app['controller.default'];
+    return $controller->indexAction();
 });
 
 $api = $app['controllers_factory'];

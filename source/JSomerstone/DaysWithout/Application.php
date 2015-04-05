@@ -53,7 +53,7 @@ class Application extends \Silex\Application
             ));
 
         $this->registerAs('controller.api', new ApiController())
-            ->registerAs('controller.default', new CounterController())
+            ->registerAs('controller.default', new DefaultController())
             ->registerAs('controller.counter', new CounterController())
             ->registerAs('controller.session', new SessionController());
     }
