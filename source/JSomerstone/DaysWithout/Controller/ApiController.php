@@ -28,25 +28,15 @@ class ApiController extends BaseController
      */
     public function signupAction($nick, $password, $passwordConfirmation)
     {
-        try
-        {
-            $this->validateSignup($nick, $password, $passwordConfirmation);
-            $user = $this->signUpUser($nick, $password);
-            $this->setLoggedInUser($user);
-        }
-        catch (PublicException $e)
-        {
-            $this->getLogger()->addNotice((string)$e, array(__CLASS__, __METHOD__, get_class($e)));
-            return $this->jsonErrorResponse($e->getMessage());
-        }
-        catch (\Exception $e)
-        {
-            $this->getLogger()->addError($e->getMessage(), array(__CLASS__, __METHOD__, get_class($e)));
-            $this->addError('Unexpected exception occurred');
-            return $this->jsonErrorResponse($e->getMessage());
-        }
-
-        return $this->jsonSuccessResponse("Welcome $nick");
+        return $this->invokeMethod(
+            function () use ($nick, $password, $passwordConfirmation)
+            {
+                $this->validateSignup($nick, $password, $passwordConfirmation);
+                $user = $this->signUpUser($nick, $password);
+                $this->setLoggedInUser($user);
+                return $this->jsonSuccessResponse("Welcome $nick");
+            }
+        );
     }
 
     private function validateSignup($nick, $password, $passwordConfirmation)

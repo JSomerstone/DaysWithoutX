@@ -23,9 +23,8 @@ $app->get('/', function() use ($app)
     return $controller->indexAction();
 });
 
-$api = $app['controllers_factory'];
 
-$api->post('/signup', function(Request $request) use ($app)
+$app->post('/api/signup', function(Request $request) use ($app)
 {
     $controller = $app['controller.api'];
     return $controller->signupAction(
@@ -34,9 +33,17 @@ $api->post('/signup', function(Request $request) use ($app)
         $request->get('password-confirm')
     );
 });
+$app->post('/api/login', function(Request $request) use ($app)
+{
+    $controller = $app['controller.session'];
+    return $controller->loginAction(
+        $request->get('nick'),
+        $request->get('password')
+    );
+});
 
 
-$api->get('/list/newest/{page}', function ($page) use ($app) {
+$app->get('/api/list/newest/{page}', function ($page) use ($app) {
 
     if ( ! preg_match('/^[1-9]([0-9]+)?$/', $page))
     {
@@ -53,7 +60,7 @@ $api->get('/list/newest/{page}', function ($page) use ($app) {
 })
 ->value('page', 1);
 
-$api->get('/list/newest/{page}', function ($page) use ($app)
+$app->get('/api/list/newest/{page}', function ($page) use ($app)
 {
     if ( ! preg_match('/^[1-9]([0-9]+)?$/', $page))
     {
@@ -67,5 +74,4 @@ $api->get('/list/newest/{page}', function ($page) use ($app)
 })
 ->value('page', 1);
 
-$app->mount('/api', $api);
 $app->run($request);

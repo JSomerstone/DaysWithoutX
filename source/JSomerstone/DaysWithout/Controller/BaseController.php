@@ -276,10 +276,34 @@ abstract class BaseController
      */
     protected function getCounterStorage()
     {
-        if ( ! isset($this->counterStorage)) {
-            $this->counterStorage = $this->get('storage.counter');
+        return $this->get('storage.counter');
+    }
+
+    protected function invokeMethod($callable)
+    {
+        if (!is_callable($callable))
+        {
+            throw new InvalidArgumentException('Service definition is not a Closure or invokable object.');
         }
-        return $this->counterStorage;
+        try
+        {
+            return $callable();
+        }
+        catch (PublicException $e)
+        {
+            $this->logException($e);
+            return $this->jsonErrorResponse($e->getMessage());
+        }
+        catch (SessionException $e)
+        {
+            $this->logException($e);
+            return $this->jsonErrorResponse('Unauthorized action');
+        }
+        catch (\Exception $e)
+        {
+            $this->logException($e);
+            return $this->jsonErrorResponse('System error');
+        }
     }
 
     /**

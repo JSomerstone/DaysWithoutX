@@ -174,13 +174,10 @@ class FeatureContext extends BehatContext
     public function useTriesToLogInWithPassword($userName, $password)
     {
         $post = array(
-            'form' => array(
-                'nick' => $userName,
-                'password' => $password,
-                '_token' => $this->requestToken
-            )
+            'nick' => $userName,
+            'password' => $password,
         );
-        $this->response = $this->handlePostRequest('/login', $post);
+        $this->response = $this->handlePostRequest('/api/login', $post);
     }
 
     /**
