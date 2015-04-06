@@ -136,4 +136,98 @@ class InputValidatorTest extends \PHPUnit_Framework_TestCase
             ),
         );
     }
+
+    public function testGetters()
+    {
+        $rules = array( 'nameoffield' => array('non-empty' => 1, 'min' => 4, 'max' => 10) );
+        $inputValidator = new InputValidator($rules);
+
+        $this->assertEquals(
+            $rules,
+            $inputValidator->getValidationRules()
+        );
+
+        $this->assertEquals(
+            $rules['nameoffield'],
+            $inputValidator->getValidationRule('nameoffield')
+        );
+    }
+
+    public function testRequestingNonExistingRuleFails()
+    {
+        $inputValidator = new InputValidator();
+        $this->setExpectedException('JSomerstone\DaysWithout\Lib\InputValidatorException');
+        $inputValidator->getValidationRule('x');
+    }
+
+    public function testValidatingMultipleFields()
+    {
+        $rules = array(
+            'param-one' => array('non-empty' => true),
+            'param-two' => array('type' => 'string'),
+        );
+        $inputValidator = new InputValidator($rules);
+
+        $post = array(
+            'param-one' => 1,
+            'param-two' => 'some text'
+        );
+
+        $inputValidator->validateFields($post);
+    }
+
+    public function testValidatationFails()
+    {
+        $rules = array(
+            'required' => array('non-empty' => true),
+        );
+        $inputValidator = new InputValidator($rules);
+
+        try {
+
+            $inputValidator->validateField('required', null);
+        } catch (\Exception $e)
+        {
+            $this->assertInstanceOf(
+                'JSomerstone\DaysWithout\Lib\InputValidatorValueException',
+                $e
+            );
+            $this->assertEquals('required: Value was empty', $e->getMessage());
+            $expected = array(
+                'message' => "required: Value was empty",
+                'field' => "required",
+                'rule' => "non-empty",
+                'ruleValue' => true
+            );
+            $this->assertEquals($expected, $e->getData());
+        }
+    }
+
+    public function testPasswordValidation()
+    {
+        $rule = array('password' => array('type' => 'string', 'non-empty' => true));
+
+        $validator = new InputValidator($rule);
+        $passwordOne = 'Foobar123';
+        $passwordTwo = 'Foobar123';
+
+        $validator->validatePassword($passwordOne, $passwordTwo);
+
+        $this->setExpectedException('JSomerstone\DaysWithout\Lib\InputValidatorValueException');
+        $validator->validatePassword($passwordOne, '');
+    }
+
+    public function testValidateHeadline()
+    {
+        $rule = array('password' => array('type' => 'string', 'non-empty' => true));
+
+        $validator = new InputValidator($rule);
+        $passwordOne = 'Foobar123';
+        $passwordTwo = 'Foobar123';
+
+        $validator->validatePassword($passwordOne, $passwordTwo);
+
+        $this->setExpectedException('JSomerstone\DaysWithout\Lib\InputValidatorValueException');
+        $validator->validatePassword($passwordOne, '');
+    }
 }

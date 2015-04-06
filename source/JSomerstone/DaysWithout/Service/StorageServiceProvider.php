@@ -9,8 +9,10 @@ class StorageServiceProvider implements ServiceProviderInterface
 {
     const SERVICE = 'storage';
 
-    private $mongoClient;
-    private $database;
+    /**
+     * @var Application
+     */
+    private $app;
 
     /**
      * @var CounterStorage
@@ -43,6 +45,7 @@ class StorageServiceProvider implements ServiceProviderInterface
         $app[self::SERVICE] = $this;
         $app['storage.user'] = $this->userStorage;
         $app['storage.counter'] = $this->counterStorage;
+        $this->app = $app;
     }
 
     /**

@@ -24,7 +24,7 @@
 
     <filter>
         <whitelist>
-            <directory>/vagrant/source</directory>
+            <directory>/vagrant/source/JSomerstone</directory>
         </whitelist>
     </filter>
 

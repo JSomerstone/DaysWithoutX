@@ -14,6 +14,8 @@ use JSomerstone\DaysWithout\Controller\DefaultController;
 use JSomerstone\DaysWithout\Controller\SessionController;
 use JSomerstone\DaysWithout\Lib\InputValidator,
     JSomerstone\DaysWithout\Service\ContextService;
+use JSomerstone\DaysWithout\Storage\CounterStorage;
+use JSomerstone\DaysWithout\Storage\UserStorage;
 
 class Application extends \Silex\Application
 {
@@ -41,7 +43,6 @@ class Application extends \Silex\Application
         {
             throw new \Exception('Cannot read configuration from '.$configPath);
         }
-
         if ( ! file_exists($viewPath))
         {
             throw new \Exception('Views not found from '.$viewPath);
@@ -52,12 +53,13 @@ class Application extends \Silex\Application
         $mongoClient = new \MongoClient($this->getConfigOrFail('dwo:storage:server'));
         $databaseName = $this->getConfigOrFail('dwo:storage:database');
         $inputValidator = new InputValidator();
+        $storageService = new StorageServiceProvider($mongoClient, $databaseName);
 
         $this->register(new TwigServiceProvider(), array('twig.path' => $viewPath))
             ->register(new SessionServiceProvider())
-            ->register(new StorageServiceProvider($mongoClient, $databaseName))
+            ->register($storageService)
             ->register(new ValidationServiceProvider($inputValidator, $validationRulePath))
-            ->register(new AuthenticationServiceProvider())
+            ->register(new AuthenticationServiceProvider($storageService->getUserStorage()))
             ->register(new MonologServiceProvider(), array(
                 'monolog.logfile' => $this->getConfigOrFail('monolog:logfile'),
                 'monolog.level' => $this->getConfig('monolog:level', 300),

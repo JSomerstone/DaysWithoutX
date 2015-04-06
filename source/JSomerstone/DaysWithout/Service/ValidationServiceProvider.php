@@ -42,7 +42,12 @@ class ValidationServiceProvider implements ServiceProviderInterface
     public function register(Application $app)
     {
         $app[self::SERVICE] = $this->inputValidator;
-        $app['validator.rules'] = Yaml::parse(file_get_contents($this->rulePath));
+        $validationRules = Yaml::parse(file_get_contents($this->rulePath));
+        foreach($validationRules as $field => $ruleSet)
+        {
+            $this->inputValidator->setValidationRule($field, $ruleSet);
+        }
+        $app['validator.rules'] = $validationRules;
     }
 
     /**
@@ -50,9 +55,5 @@ class ValidationServiceProvider implements ServiceProviderInterface
      */
     public function boot(Application $app)
     {
-        foreach($app['validator.rules'] as $field => $ruleSet)
-        {
-            $this->inputValidator->setValidationRule($field, $ruleSet);
-        }
     }
 }

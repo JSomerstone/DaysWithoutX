@@ -15,7 +15,20 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
     /**
      * @var Application
      */
-    public $application;
+    private $application;
+
+    /**
+     * @var UserStorage
+     */
+    private $userStorage;
+
+    /**
+     * @param UserStorage $userStorage
+     */
+    public function __construct(UserStorage $userStorage)
+    {
+        $this->userStorage = $userStorage;
+    }
 
     /**
      * @param Application $app
@@ -49,20 +62,12 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
      */
     public function authenticateUser(UserModel $user)
     {
-        if ( ! $this->getUserStorage()->exists($user->getNick())) {
+        if ( ! $this->userStorage->exists($user->getNick())) {
             return false;
         }
 
-        $persisted = $this->getUserStorage()->load($user->getNick());
+        $persisted = $this->userStorage->load($user->getNick());
         return ($persisted->getPassword() === $user->getPassword());
-    }
-
-    /**
-     * @return UserStorage
-     */
-    private function getUserStorage()
-    {
-        return $this->application['storage.user'];
     }
 
     /**

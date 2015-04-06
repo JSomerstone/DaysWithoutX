@@ -3,6 +3,8 @@ namespace Module;
 
 use JSomerstone\DaysWithout\Application,
     JSomerstone\DaysWithout\Service\StorageServiceProvider;
+use JSomerstone\DaysWithout\Model\CounterModel;
+use JSomerstone\DaysWithout\Model\UserModel;
 
 /**
  * Class ApplicationTest
@@ -133,6 +135,23 @@ class ApplicationTest  extends \PHPUnit_Framework_TestCase
             '\JSomerstone\DaysWithout\Service\AuthenticationServiceProvider',
             $app->getAuthenticationService()
         );
+    }
+
+    /**
+     * @param Application $app
+     * @test
+     * @depends testApplicationInit
+     */
+    public function authenticationService(Application $app)
+    {
+        $service = $app->getAuthenticationService();
+        $fakeUser = new UserModel('NonExisting', uniqid());
+        $fakeCounter = new CounterModel('NonExisting');
+        $fakeCounter->setOwner($fakeUser)->setPrivate();
+
+        $this->assertFalse($service->authenticateUser($fakeUser));
+        $this->assertFalse($service->authenticate('foobar','123'));
+        $this->assertTrue($service->authoriseUserForCounter($fakeUser, $fakeCounter));
     }
 
     /**

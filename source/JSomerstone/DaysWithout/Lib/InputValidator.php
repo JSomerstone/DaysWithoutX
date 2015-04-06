@@ -123,12 +123,6 @@ class InputValidator
         }
         return $this->validateField('password', $password);
     }
-
-    public function validateHeadline($headline)
-    {
-        $urlSafe = StringFormatter::getUrlSafe($headline);
-        return self::validateString('/^[a-z0-9-]+$/', $urlSafe);
-    }
 }
 
 class InputValidatorException extends \Exception
