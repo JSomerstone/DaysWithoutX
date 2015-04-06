@@ -72,16 +72,4 @@ class UserStorage extends BaseStorage
         }
         return $this;
     }
-
-    /**
-     * Authenticates the user
-     * @param UserModel $user
-     * @return bool
-     */
-    public function authenticate(userModel $user)
-    {
-        $persisted = $this->load($user->getNick());
-        return ($persisted->getPassword() === $user->getPassword());
-    }
-
 }

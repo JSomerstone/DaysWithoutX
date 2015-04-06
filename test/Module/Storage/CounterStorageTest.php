@@ -149,6 +149,25 @@ class CounterStorageTest  extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $list, var_export($list, true));
     }
 
+    /**
+     * @test
+     */
+    public function getResentResetCountersAreFilteredByVisibility()
+    {
+        $owner = new UserModel('Irrelevant');
+        $private = new CounterModel('Private', date('Y-m-d', strtotime('-1 days')), $owner);
+        $private->setPrivate();
+        $protected = new CounterModel('Protected', date('Y-m-d', strtotime('-2 days')), $owner);
+        $protected->setProtected();
+        $public = new CounterModel('Public', date('Y-m-d', strtotime('-3 days')), $owner);
+        $public->setPublic();
+
+        $this->counterStorage->store($private)->store($protected)->store($public);
+
+        $list = $this->counterStorage->getResentResetsCounters(10);
+        $this->assertCount(2, $list, var_export($list, true));
+    }
+
 
 
     /**

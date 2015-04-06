@@ -67,31 +67,6 @@ class UserModel implements ModelInterface
     }
 
     /**
-     * @param CounterModel $counter
-     */
-    public function addCounter(CounterModel $counter)
-    {
-        $this->counters[$counter->getName()] = $counter;
-    }
-
-    /**
-     * @param $name
-     * @return CounterModel|null
-     */
-    public function getCounter($name)
-    {
-        return isset($this->counters[$name]) ? $this->counters[$name] : null;
-    }
-
-    /**
-     * @return array
-     */
-    public function getCounters()
-    {
-        return $this->counters;
-    }
-
-    /**
      * @param $password
      * @throws \LogicException if "nick" is not set
      */
@@ -110,31 +85,6 @@ class UserModel implements ModelInterface
     public function getPassword()
     {
         return $this->password;
-    }
-
-    /**
-     * @param $plainTextPassword
-     * @return bool
-     */
-    public function authenticate($plainTextPassword)
-    {
-        return $this->password
-            === self::hashPassword($plainTextPassword, $this->nick);
-    }
-
-    /**
-     * @param object $userAsJson
-     * @return UserModel
-     */
-    public function fromJsonObject($userAsJson)
-    {
-        if ($userAsJson->nick)
-            $this->nick = $userAsJson->nick;
-        if ($userAsJson->id)
-            $this->id = $userAsJson->id;
-        if ($userAsJson->password)
-            $this->password = $userAsJson->password;
-        return $this;
     }
 
     /**
@@ -176,30 +126,6 @@ class UserModel implements ModelInterface
     public function getSalt()
     {
         return hash('sha256', $this->nick);
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getUsername()
-    {
-        return $this->getNick();
-    }
-
-    /**
-     * @return array|\Symfony\Component\Security\Core\Role\Role[]
-     */
-    public function getRoles()
-    {
-        return array(self::ROLE_USER);
-    }
-
-    /**
-     * Removes sensitive data from object
-     */
-    public function eraseCredentials()
-    {
-        $this->password = null;
     }
 
     /**

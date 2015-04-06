@@ -28,21 +28,6 @@ class CounterStorage extends BaseStorage
     }
 
     /**
-     * @param $name
-     * @param string|null $owner
-     * @param string|null $comment
-     * @throws StorageException
-     */
-    public function reset($name, $owner = null, $comment = null)
-    {
-        if ( ! $this->exists($name, $owner))
-        {
-            throw new StorageException("Non-existing counter: $name/$owner");
-        }
-        $this->store($this->load($name, $owner)->reset($comment));
-    }
-
-    /**
      * @param string $name
      * @param string $owner optional
      * @return array
