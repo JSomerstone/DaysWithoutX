@@ -156,7 +156,7 @@ class CounterController extends BaseController
             $counter = $storage->load($name, $owner);
             if ( ! $this->authoriseUserForCounter( $counter, $this->getLoggedInUser()))
             {
-                return $this->jsonErrorResponse('Unauthorized');
+                return $this->jsonErrorResponse('Unauthorized action');
             }
             else
             {

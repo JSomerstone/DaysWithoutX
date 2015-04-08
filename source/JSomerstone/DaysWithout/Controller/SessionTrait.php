@@ -38,6 +38,7 @@ trait SessionTrait
     protected function logoutUser()
     {
         $this->getSession()->remove('user');
+        session_destroy();
     }
 
     /**

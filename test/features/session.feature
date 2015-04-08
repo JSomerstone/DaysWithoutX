@@ -11,7 +11,7 @@ Scenario: Successful login
   Given user "Mee" tries to log in with password "fuubar123"
     And response says "Welcome Mee"
   When "/" page is loaded
-  Then page has "Welcome Mee"
+  Then page has "Logout"
 
 Scenario: Failed login attempt
   When user "Mee" tries to log in with password "WR0n6!"

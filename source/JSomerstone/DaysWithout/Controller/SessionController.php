@@ -14,12 +14,8 @@ class SessionController extends BaseController
     public function logoutAction()
     {
         return $this->invokeMethod(function(){
-            if ($this->isLoggedIn())
-            {
-                $this->logoutUser();
-                return $this->jsonSuccessResponse('Logged out');
-            }
-            return $this->jsonErrorResponse('Not logged in');
+            $this->logoutUser();
+            return $this->jsonSuccessResponse('Logged out');
         });
     }
 
