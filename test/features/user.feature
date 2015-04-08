@@ -25,8 +25,8 @@ Scenario: User opens protected counter
 
 Scenario: User creates protected counter
   Given user "Mee" is logged in
-  When "Mee" posts protected counter "being sober"
-  Then user is redirected to "/being-sober/Mee"
+  When user posts protected counter "being sober"
+    Then response says "Counter created"
 
 Scenario: User page lists users counters
   Given user "Alpha" with password "fuubar123"

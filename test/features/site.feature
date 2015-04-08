@@ -11,8 +11,8 @@ Scenario: Front page shows expected
 
 Scenario: User creates new counter
     Given "/" page is loaded
-    When user posts new counter "Smoking"
-    Then user is redirected to "/smoking"
+    When user posts public counter "Smoking"
+      Then response says "Counter created"
 
 Scenario: User views existing counter
     Given public counter "Foobar" with "19" days
