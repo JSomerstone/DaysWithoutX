@@ -197,37 +197,61 @@ class FeatureContext extends BehatContext
     {
         $this->curl->setUrl(self::BASE_URL . $url)
             ->setPost($post)
-            ->setGet()
-            ->request();
-
+            ->setGet();
 
         return $this->curl->request()->getBody();
     }
 
     /**
-     * @When /^user posts new counter "([^"]*)"$/
+     * @When /^user posts (public|protected|private) counter "([^"]*)"$/
      */
-    public function userPostsNewCounter($counterHeadline)
-    {
-        $post = array(
-            'headline' => $counterHeadline,
-            'public' => '',
-        );
-
-        $this->response = $this->handlePostRequest('/create', $post);
-    }
-
-    /**
-     * @When /^"([^"]*)" posts (public|protected|private) counter "([^"]*)" with password "([^"]*)"$/
-     * @When /^"([^"]*)" posts (public|protected|private) counter "([^"]*)"$/
-     */
-    public function UserPostsPrivateCounter($nick, $visibility, $headline, $password = null)
+    public function UserPostsCounter($visibility, $headline)
     {
         $post = array(
             'headline' => $headline,
-            $visibility => '',
+            'visibility' => $visibility,
         );
-        $this->response = $this->handlePostRequest('/create', $post);
+        $this->response = $this->handlePostRequest('/api/counter', $post);
+
+    }
+
+    /**
+     * @When /^counter "([^"]*)" is loaded$/
+     */
+    public function counterIsLoaded($counterId)
+    {
+        $this->pageIsLoaded("/api/counter/$counterId");
+    }
+
+    /**
+     * @When /^counter "([^"]*)" by "([^"]*)" is loaded$/
+     */
+    public function counterByUserIsLoaded($counterId, $owner)
+    {
+        $this->pageIsLoaded("/api/counter/$counterId/$owner");
+
+    }
+
+    /**
+     * @Then /^counter has properties:$/
+     */
+    public function counterHasProperties(TableNode $table)
+    {
+        $response = $this->curl->getJsonResponse();
+        $counter = $response['data'];
+
+        $content = $table->getHash();
+        foreach($content as $row)
+        {
+            if ( ! isset($counter[$row['Setting']]))
+            {
+                throw new \Exception("Missing '" . $row['Setting'].'\' from '. $this->response);
+            }
+            if ($counter[$row['Setting']] != $row['Value'])
+            {
+                throw new \Exception('\'' . $counter[$row['Setting']] .'\' !=  \''. $row['Value']. '\'');
+            }
+        }
     }
 
     /**
@@ -489,5 +513,13 @@ class FeatureContext extends BehatContext
     private static function getCounterName($counterHeadline)
     {
         return StringFormatter::getUrlSafe($counterHeadline);
+    }
+
+    /**
+     * @Then /^printout$/
+     */
+    public function printout()
+    {
+        echo $this->response;
     }
 }

@@ -126,8 +126,9 @@ $app->post('/api/counter/{counter}/{owner}', function($counter, $owner, Request 
 $app->post('/api/counter', function(Request $request) use ($app)
 {
     $controller = $app['controller.counter'];
+
     return $controller->createAction(
-        $request->get('headline'),
+       $request->get('headline'),
        $request->get('visibility')
     );
 });

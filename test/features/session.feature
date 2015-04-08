@@ -10,8 +10,6 @@ Background:
 Scenario: Successful login
   Given user "Mee" tries to log in with password "fuubar123"
     And response says "Welcome Mee"
-  When "/" page is loaded
-  Then page has "Logout"
 
 Scenario: Failed login attempt
   When user "Mee" tries to log in with password "WR0n6!"
@@ -37,11 +35,19 @@ Scenario: Resetting counter while logged in is allowed
   When user resets counter "Foobar" by "Mee"
   Then response says "Counter reset"
 
-Scenario: Counters created without signing in are public
-  When "Mee" posts private counter "Going to be public"
-  Then user is redirected to "/going-to-be-public"
-
 Scenario: Private counters created when logged in are private
   Given user "Mee" is logged in
-  When "Mee" posts private counter "Going to be private"
-  Then user is redirected to "/going-to-be-private/Mee"
+    And user posts private counter "Going to be private"
+    And response says "Counter created"
+  When counter "going-to-be-private" by "Mee" is loaded
+  Then counter has properties:
+    | Setting        | Value   |
+    | visibility     | private |
+
+  Scenario: Counters created without signing in are public
+    Given user posts private counter "going-to-be-public"
+    And response says "Counter created"
+    When counter "going-to-be-public" is loaded
+    Then counter has properties:
+      | Setting        | Value   |
+      | visibility     | public |

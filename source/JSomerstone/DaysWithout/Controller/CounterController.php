@@ -49,9 +49,9 @@ class CounterController extends BaseController
             else
             {
                 $counterStorage->store($counter);
-                $this->getLogger()->addInfo("counter created", ['headline' => $headline, 'owner' => $counter->getOwner()]);
+                $this->getLogger()->addInfo("counter created", $counter->toArray());
                 return $this->jsonSuccessResponse(
-                    null,
+                    'Counter created',
                     $counter->toArray(),
                     JsonResponse::HTTP_CREATED
                 );
@@ -125,6 +125,7 @@ class CounterController extends BaseController
                 return $this->jsonSuccessResponse('',$counter->toArray());
 
             } else {
+                $this->getLogger()->addNotice("Counter not found, name:$name, owner:$owner");
                 return $this->jsonErrorResponse(
                     'Counter not found',
                     array(),
