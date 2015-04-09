@@ -100,12 +100,9 @@ class CounterController extends BaseController
             return false;
         }
         $counterModel = $storage->load($name, $owner);
-        if ( $counterModel->isPrivate() )
+        if ( $counterModel->isPrivate() && ! $counterModel->isOwnedBy($this->getLoggedInUser()))
         {
-            if ( ! $this->isLoggedIn() || $this->getLoggedInUser()->getNick() !== $owner)
-            {
-                return false;
-            }
+            return false;
         }
         return $counterModel;
     }
@@ -123,7 +120,6 @@ class CounterController extends BaseController
             if ($counter)
             {
                 return $this->jsonSuccessResponse('',$counter->toArray());
-
             } else {
                 $this->getLogger()->addNotice("Counter not found, name:$name, owner:$owner");
                 return $this->jsonErrorResponse(
@@ -259,32 +255,26 @@ class CounterController extends BaseController
     /**
      * @param string $name
      * @param string|null $owner
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return JsonResponse
      */
     public function deleteAction($name, $owner = null)
     {
-        $counter = $this->getCounterStorage()->load($name, $owner);
-
-        if ( ! $counter)
+        return $this->invokeMethod(function() use ($name, $owner)
         {
-            return $this->jsonResponse( false, "Counter not found" );
-        }
-        else if ( ! $this->isLoggedIn() || ! $counter->isOwnedBy($this->getLoggedInUser()))
-        {
-            return $this->jsonResponse( false, "Unauthorized action" );
-        }
+            $counter = $this->loadCounter($name, $owner);
 
-        $this->getCounterStorage()->remove($counter);
-        $this->addNotice('Counter Removed');
+            if ( ! $counter)
+            {
+                return $this->jsonWarningResponse('Counter not found', JsonResponse::HTTP_NOT_FOUND);
+            }
+            else if ( ! $this->isLoggedIn() || ! $counter->isOwnedBy($this->getLoggedInUser()))
+            {
+                return $this->jsonErrorResponse("Unauthorized action", JsonResponse::HTTP_UNAUTHORIZED);
+            }
 
-        $redirUrl = isset($owner)
-            ? $this->generateUrl('dwo_list_user_counters', array('user' => $owner))
-            : $this->generateUrl('dwo_frontpage');
+            $this->getCounterStorage()->remove($counter);
 
-        return $this->jsonResponse(
-            true,
-            "Counter removed",
-            $redirUrl
-        );
+            return $this->jsonSuccessResponse("Counter removed");
+        });
     }
 }

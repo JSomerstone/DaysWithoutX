@@ -441,8 +441,8 @@ class FeatureContext extends BehatContext
      */
     public function userDeletesCounter($counter, $owner)
     {
-        $url = sprintf("/delete/%s/%s", $counter, $owner);
-        $this->response = $this->handlePostRequest($url, array());
+        $url = sprintf("/api/counter/delete/%s/%s", $counter, $owner);
+        $this->response = $this->handlePostRequest($url, array('confirm' => 1));
     }
 
     /**

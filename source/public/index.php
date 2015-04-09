@@ -121,6 +121,15 @@ $app->post('/api/counter/{counter}/{owner}', function($counter, $owner, Request 
 })->value('owner', null);
 
 /**
+ * DELETE COUNTER
+ */
+$app->post('/api/counter/delete/{counter}/{owner}', function($counter, $owner) use ($app)
+{
+    $controller = $app['controller.counter'];
+    return $controller->deleteAction($counter, $owner);
+})->value('owner', null);
+
+/**
  * POST COUNTER
  */
 $app->post('/api/counter', function(Request $request) use ($app)

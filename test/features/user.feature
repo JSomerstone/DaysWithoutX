@@ -36,7 +36,7 @@ Scenario: User page lists users counters
     | Mee       | Last     | 99   |
     | Alpha     | Second   | 1    |
     |           | Third    | 1    |
-  When "/user/Mee/counters" page is loaded
+  When "/user/Mee" page is loaded
   Then page has "First"
     And page has "Last"
     But page doesn't have "Second"
@@ -50,8 +50,8 @@ Scenario: Front page has link to user's counters
     | Alpha     | Second   | 2    |
     |           | Third    | 3    |
   When "/" page is loaded
-  Then page has "/user/Mee/counters"
-    And page has "/user/Alpha/counters"
+  Then page has "/user/Mee"
+    And page has "/user/Alpha"
 
 Scenario: Only public/protected counters shown for others
   Given user "Alpha" with password "fuubar123"
@@ -61,7 +61,7 @@ Scenario: Only public/protected counters shown for others
     | Alpha     | PublicOne    | 2    | public    |
     | Alpha     | ProtectedOne | 3    | protected |
     | Alpha     | PrivateOne   | 4    | private   |
-  When "/user/Alpha/counters" page is loaded
+  When "/user/Alpha" page is loaded
   Then page has "PublicOne"
     And page has "ProtectedOne"
     But page doesn't have "PrivateOne"
@@ -74,7 +74,7 @@ Scenario: All counters are shown to owner
     | Alpha     | PublicOne    | 2    | public     |
     | Alpha     | ProtectedOne | 3    | protected  |
     | Alpha     | PrivateOne   | 4    | private    |
-  When "/user/Alpha/counters" page is loaded
+  When "/user/Alpha" page is loaded
   Then page has "PublicOne"
     And page has "ProtectedOne"
     And page has "PrivateOne"
@@ -82,7 +82,7 @@ Scenario: All counters are shown to owner
 Scenario: Protected counter has link to its owner
   Given user "Mee" has protected counter "Foobar" with "19" days
   When "/foobar/Mee" page is loaded
-  Then page has "/user/Mee/counters"
+  Then page has "/user/Mee"
 
 Scenario: User can view his own private counter
   Given user "Mee" has private counter "My own" with "7" days
@@ -96,8 +96,7 @@ Scenario: Other people cannot see private counters
     And user "Someone" has private counter "My own" with "7" days
     And user "Mee" is logged in
   When "/my-own/Someone" page is loaded
-  Then user is redirected to "/"
-    And page has "Counter did not exist"
+    Then page has "Page not found"
 
 Scenario: Counter has link to delete counter
   Given user "Mee" has private counter "removable" with "7" days
@@ -115,14 +114,14 @@ Scenario: Counter has link to delete counter - only for the owner
 Scenario: Counter-list has link to delete counter
   Given user "Mee" has private counter "removable" with "7" days
   And user "Mee" is logged in
-  When "/user/Mee/counters" page is loaded
+  When "/user/Mee" page is loaded
   Then page has "Delete"
 
 Scenario: Counter-list has link to delete counter - only for the owner
   Given user "Yuu" with password "irrelevant"
   And user "Yuu" has private counter "removable" with "7" days
   And user "Mee" is logged in
-  When "/user/Yuu/counters" page is loaded
+  When "/user/Yuu" page is loaded
   Then page doesn't have "Delete"
 
 Scenario: Counter can be removed
@@ -141,8 +140,15 @@ Scenario: 0-Counter can be removed
 
 Scenario: User cannot remove other users counters
   Given user "Bertha" with password "irrelevant"
-    And user "Bertha" has private counter "removable" with "47" days
+    And user "Bertha" has protected counter "removable" with "47" days
     And user "Mee" is logged in
   When user deletes counter "removable" by "Bertha"
     Then json response has message "Unauthorized action"
     And counter "removable" by "Bertha" exists
+
+Scenario: Delete action doesn't reveal existence of private counter
+  Given user "Bertha" with password "irrelevant"
+    And user "Bertha" has private counter "Sex with an ex" with "3" days
+    And user "Mee" is logged in
+  When user deletes counter "Sex with an ex" by "Bertha"
+    Then json response has message "Counter not found"
