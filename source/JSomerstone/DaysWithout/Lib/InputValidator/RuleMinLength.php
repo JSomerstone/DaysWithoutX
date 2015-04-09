@@ -10,7 +10,7 @@ class RuleMinLength extends BaseRule implements RuleInterface
 
     public function getErrorMessage()
     {
-        return "Was shorter than " . $this->ruleValue;
+        return "Must be at least $this->ruleValue characters";
     }
 
 }

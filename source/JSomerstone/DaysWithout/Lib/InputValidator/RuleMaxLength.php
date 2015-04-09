@@ -10,7 +10,7 @@ class RuleMaxLength extends BaseRule implements RuleInterface
 
     public function getErrorMessage()
     {
-        return "Was longer than " . $this->ruleValue;
+        return "Cannot be longer than $this->ruleValue characters";
     }
 
 }
