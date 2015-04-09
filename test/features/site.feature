@@ -16,6 +16,7 @@ Scenario: User creates new counter
 
 Scenario: User views existing counter
     Given public counter "Foobar" with "19" days
+      And "/foobar" page is loaded
     Then the page exists
       And the counter is "19"
       And page has "Days without Foobar"
