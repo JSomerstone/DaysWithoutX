@@ -105,11 +105,11 @@ $app->get('/api/counter/{counter}/{owner}', function($counter, $owner) use ($app
 /**
  * RESET COUNTER
  */
-$app->post('/api/counter/{counter}/', function($counter, Request $request) use ($app)
+$app->post('/api/counter/{counter}', function($counter, Request $request) use ($app)
 {
     $controller = $app['controller.counter'];
     return $controller->resetAction($counter, null, $request->get('comment'));
-})->value('owner', '');
+});
 
 /**
  * RESET COUNTER
@@ -118,7 +118,7 @@ $app->post('/api/counter/{counter}/{owner}', function($counter, $owner, Request 
 {
     $controller = $app['controller.counter'];
     return $controller->resetAction($counter, $owner, $request->get('comment'));
-});
+})->value('owner', null);
 
 /**
  * POST COUNTER

@@ -273,20 +273,6 @@ class FeatureContext extends BehatContext
     }
 
     /**
-     * @When /^"([^"]*)" resets counter "([^"]*)" with password "([^"]*)"$/
-     */
-    public function resetsCounterWithPassword($username, $counterName, $password)
-    {
-        $this->userResetsCounter(
-            $counterName,
-            $username,
-            null,
-            $username,
-            $password
-        );
-    }
-
-    /**
      * @When /^user "([^"]*)" signs up with passwords "([^"]*)" and "([^"]*)"$/
      */
     public function userSignsUpWithPasswordsAnd($nick, $password1, $password2)
