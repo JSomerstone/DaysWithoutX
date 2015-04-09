@@ -22,12 +22,6 @@
                     </a>
                 </td>
                 {% endif %}
-
-                {% if counter.owner and counter.owner.nick == user and showContext %}
-                    <td>
-                        {% include 'counter/context-menu.html.twig' %}
-                    </td>
-                {% endif %}
             </tr>
         {% endfor %}
     </tbody>

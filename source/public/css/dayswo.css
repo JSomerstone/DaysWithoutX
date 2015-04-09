@@ -64,4 +64,5 @@ div.jumbotron {
 }
 #notification-container {
     position: fixed;
+    z-index: 10;
 }

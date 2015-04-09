@@ -1,0 +1,22 @@
+{% extends 'modal/dialog.html.twig' %}
+
+{% set modal_id = 'delete-counter-dialog' %}
+{% set modal_title = 'Delete counter' %}
+
+{% block modal_body %}
+    <p>
+        <b>You are about to delete counter "{{ counter.days }} days without {{ counter.headline }}".</b><br>
+        Are you <i>absolutely</i> certain you want to do this? This action cannot be un-done.
+    </p>
+    <div class="form-group">
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" id="confirm-delete" value="1" > I know what I'm doing<br>
+            </label>
+        </div>
+        <input type="hidden" id="counter-indicator" value="{{ counter.name }}">
+        <input type="hidden" id="owner-indicator" value="{{ counter.owner }}">
+    </div>
+    <button type="button" id="delete-button" disabled class="btn btn-danger">Yes - Delete</button>
+    <button type="button" class="btn btn-success" data-dismiss="modal">No - Cancel</button>
+{% endblock %}

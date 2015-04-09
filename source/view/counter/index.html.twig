@@ -60,7 +60,7 @@
             <div class="row">
                 {% if counter.resettable %}
                     <div class="row col-sm-10 col-sm-offset-1">
-                        {% if (user == counter.owner) or counter.public %}
+                        {% if (user == counter.ownerId) or counter.public %}
                             <button class="btn btn-big btn-danger btn-block" data-toggle="modal" data-target="#reset-dialog">
                                 Reset
                             </button>
@@ -97,5 +97,8 @@
             {% endif %}
         </div>
     </div>
+    {% if counter.owner and counter.owner.nick == user %}
+        {% include 'modal/delete-counter.html.twig' %}
+    {% endif %}
 {% endblock %}
 

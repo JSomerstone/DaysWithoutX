@@ -47,9 +47,10 @@ dwo = {
     createApiCallback : function(options)
     {
         var options = {
-            container : options.container || dwo.message.defaultContainer,
-            onSuccess :  options.onSuccess || function(){},
-            onFailure :  options.onFailure || function(){}
+            container   : options.container || dwo.message.defaultContainer,
+            onSuccess   : options.onSuccess || function(){},
+            onFailure   : options.onFailure || function(){},
+            delay       : options.delay || 1000
         }
         return function(response)
         {
@@ -72,9 +73,9 @@ dwo = {
 
             if (response.success)
             {
-                options.onSuccess(response);
+                setTimeout( function(){options.onSuccess(response)}, options.delay);
             } else {
-                options.onFailure(response);
+                setTimeout( function(){options.onFailure(response)}, options.delay);
             }
         }
     },
@@ -102,6 +103,17 @@ dwo = {
             url += "/" + owner;
 
         return url;
+    },
+
+    formUrl : function(options)
+    {
+        var options = [
+            options.action || null,
+            options.counter || null,
+            options.user || null
+        ].filter(function(v){ return v?true:false;});
+
+        return '/' + options.join('/');
     },
 
     convertTimestamp : function (dateString)
@@ -169,26 +181,6 @@ $(function() {
     });
 
     /**
-     * Delete-counter-functionality
-     */
-    $('a.delete-link').click(function()
-    {
-        var link = $(this),
-            counter = link.attr('counter'),
-            owner = link.attr('owner'),
-            confirmed = confirm('You´re about to remove a counter - this cannot be undone. Are you sure?');
-
-        if (confirmed)
-        {
-            $.post(
-                dwo.formApiUrl('counter/delete', counter, owner),
-                {},
-                dwo.handleApiResponse
-            );
-        }
-    });
-
-    /**
      * Convert timestamp of reset-history into human readable format
      */
     $('span.timestamp').html(function()
@@ -212,7 +204,9 @@ $(function() {
         $.post(
             dwo.formApiUrl('counter/reset', counter, owner),
             postParameters,
-            dwo.handleApiResponse
+            dwo.createApiCallback({
+                onSuccess: function(){ history.go(0); }
+            })
         );
     });
 
@@ -258,6 +252,9 @@ $(function() {
         );
     });
 
+    /**
+     * Create counter functionality
+     */
     $('#counter-form button').click(function(event){
 
         event.preventDefault();
@@ -272,8 +269,7 @@ $(function() {
             dwo.createApiCallback({
                 onSuccess: function(response)
                 {
-                    console.log(response.data.name, response.data.owner);
-                    window.location = '/' + response.data.name + '/' + response.data.owner;
+                    window.location = dwo.formUrl({ counter: response.data.name, user: response.data.owner });
                 }
             })
         );
@@ -290,11 +286,43 @@ $(function() {
             comment: $('#reset-comment').val()
         }
         $.post(
-            '/api/counter/' + $('#counter-name').val() + '/' + $('#counter-owner').val(),
+            dwo.formApiUrl('counter', $('#counter-name').val(), $('#counter-owner').val()),
             post,
             dwo.createApiCallback({
                 container: '#reset-dialog-msg-container',
                 onSuccess: function(){ history.go(0); }
+            })
+        );
+    });
+
+    /**
+     * Delete-counter-functionality
+     */
+    $('#confirm-delete').click(function(){
+        $('#delete-button').prop('disabled', ! this.checked);
+    });
+
+    $('#delete-button').click(function(){
+        var post = {
+                confirm: $('#confirm-delete').val()
+            },
+            counter =  $('#counter-indicator').val(),
+            owner =  $('#owner-indicator').val();
+
+        $.post(
+            dwo.formApiUrl('counter/delete', counter, owner),
+            post,
+            dwo.createApiCallback({
+                container: '#delete-counter-dialog-msg-container',
+                delay: 500,
+                onSuccess: function(){
+                    if (owner)
+                    {
+                        window.location = dwo.formUrl({action: 'user', user: owner});
+                    } else {
+                        window.location = '/';
+                    }
+                }
             })
         );
     });
