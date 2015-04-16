@@ -111,19 +111,6 @@ Scenario: Counter has link to delete counter - only for the owner
   When "/removable/Yuu" page is loaded
   Then page doesn't have "Delete"
 
-Scenario: Counter-list has link to delete counter
-  Given user "Mee" has private counter "removable" with "7" days
-  And user "Mee" is logged in
-  When "/user/Mee" page is loaded
-  Then page has "Delete"
-
-Scenario: Counter-list has link to delete counter - only for the owner
-  Given user "Yuu" with password "irrelevant"
-  And user "Yuu" has private counter "removable" with "7" days
-  And user "Mee" is logged in
-  When "/user/Yuu" page is loaded
-  Then page doesn't have "Delete"
-
 Scenario: Counter can be removed
   Given user "Mee" has private counter "removable" with "7" days
     And user "Mee" is logged in

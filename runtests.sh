@@ -1,5 +1,6 @@
 #!/bin/bash
 clear
+cd /vagrant/test
 phpunit
 
-bin/behat --format progress features/
+php behat.phar --format progress features/

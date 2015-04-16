@@ -19,7 +19,7 @@ class ApplicationTest  extends \PHPUnit_Framework_TestCase
     public function testApplicationInit()
     {
         $application = new Application(
-            '/vagrant/config/config.yml',
+            '/vagrant/config/config.behat.yml',
             '/vagrant/source/view',
             '/vagrant/source/JSomerstone/DaysWithout/Resources/validation.yml'
         );

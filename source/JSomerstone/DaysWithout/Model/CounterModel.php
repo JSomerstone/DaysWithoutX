@@ -183,6 +183,14 @@ class CounterModel implements ModelInterface
     }
 
     /**
+     * @return string
+     */
+    public function getVisibility()
+    {
+        return $this->visiblity;
+    }
+
+    /**
      * @return array list of reset-entries ['timestamp' => 'yyyy-mm-dd HH:MM:ss', 'days' => #, 'comment' => '']
      */
     public function getHistory()
