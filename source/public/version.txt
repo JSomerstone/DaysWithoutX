@@ -1,3 +1,8 @@
+3.0.0
+- Migrated from Symfony2 framework to Silex
+- Providing API
+- Redid the UI to use new API
+
 2.5.0
 - Possibility to comment resets
 - Displaying reset history
