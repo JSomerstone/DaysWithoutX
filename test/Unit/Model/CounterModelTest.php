@@ -220,7 +220,8 @@ class CounterModelTest extends \PHPUnit_Framework_TestCase
             [
                 'timestamp' => date('Y-m-d H:i:s'),
                 'days' => 1,
-                'comment' => null
+                'comment' => null,
+                'user' => null,
             ]
         );
 
@@ -240,7 +241,30 @@ class CounterModelTest extends \PHPUnit_Framework_TestCase
             [
                 'timestamp' => date('Y-m-d H:i:s'),
                 'days' => 1,
-                'comment' => 'Flesh is weak'
+                'comment' => 'Flesh is weak',
+                'user' => null,
+            ]
+        );
+
+        $actualHistory = $counter->getHistory();
+        $this->assertEquals($expectedHistory, $actualHistory);
+    }
+
+    /**
+     * @test
+     */
+    public function userResettingCounterIsStored()
+    {
+        $user = new UserModel('RandomDude');
+        $counter = new CounterModel('Without history', $this->yesterday);
+        $counter->reset('Flesh is weak', $user);
+
+        $expectedHistory = array(
+            [
+                'timestamp' => date('Y-m-d H:i:s'),
+                'days' => 1,
+                'comment' => 'Flesh is weak',
+                'user' => $user->getNick(),
             ]
         );
 

@@ -78,14 +78,16 @@ class CounterModel implements ModelInterface
 
     /**
      * @param string|null $comment optional, comment about reset
+     * @param UserModel $userModel optional, user who reset the counter
      * @return \JSomerstone\DaysWithout\Model\CounterModel
      */
-    public function reset($comment = null)
+    public function reset($comment = null, UserModel $userModel = null)
     {
         array_unshift($this->history, [
             'timestamp' => date('Y-m-d H:i:s'),
             'days' => $this->getDays(),
-            'comment' => $comment
+            'comment' => $comment,
+            'user' => is_null($userModel) ? null : $userModel->getNick()
         ]);
         $this->reseted = date('Y-m-d');
         return $this;

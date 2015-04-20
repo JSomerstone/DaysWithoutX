@@ -209,8 +209,9 @@ class CounterStorageTest  extends \PHPUnit_Framework_TestCase
      */
     public function counterResetHistoryIsPreserved()
     {
+        $userModel = new UserModel('Dude');
         $counter = new CounterModel('withHistory', date('Y-m-d', strtotime('-13 days')));
-        $counter->reset('This comment should be preserved');
+        $counter->reset('This comment should be preserved', $userModel);
         $historyBefore = $counter->getHistory();
         $this->counterStorage->store($counter);
 
@@ -231,7 +232,7 @@ class CounterStorageTest  extends \PHPUnit_Framework_TestCase
         $counter = new CounterModel('withHistory', date('Y-m-d', strtotime('-13 days')));
         $this->counterStorage->store($counter);
 
-        $counter->reset('This comment should be preserved');
+        $counter->reset('This comment should be preserved', null);
         $this->counterStorage->store($counter);
 
         $historyAfter = $this->counterStorage->load($counter->getName(), $counter->getOwnerId())->getHistory();
