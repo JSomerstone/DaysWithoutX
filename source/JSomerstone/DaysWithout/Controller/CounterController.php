@@ -151,13 +151,14 @@ class CounterController extends BaseController
                 return $this->jsonErrorResponse('Counter not found');
             }
             $counter = $storage->load($name, $owner);
-            if ( ! $this->authoriseUserForCounter( $counter, $this->getLoggedInUser()))
+            $user = $this->getLoggedInUser();
+            if ( ! $this->authoriseUserForCounter( $counter, $user))
             {
                 return $this->jsonErrorResponse('Unauthorized action');
             }
             else
             {
-                $counter->reset($comment);
+                $counter->reset($comment, $user);
                 $storage->store($counter);
                 return $this->jsonSuccessResponse(
                     'Counter reset',
