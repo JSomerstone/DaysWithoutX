@@ -13,6 +13,8 @@ password:
   title: 'Password must be at least 8 characters long'
 
 headline:
+  min-length: 0
+  max-length: 100
   regexp: '/^.{1,100}$/'
   title: 'Max 100 chars with one or more of a-z'
 
@@ -21,7 +23,8 @@ name:
   non-empty: true
 
 comment:
-  regexp: '/^.{0,128}$/'
+  min-length: 0
+  max-length: 128
 
 visibility:
   white-list:

@@ -8,6 +8,7 @@
 - name: Checkout project
   git: repo=https://github.com/JSomerstone/DaysWithoutX.git
        dest={{application_path}}
+       creates={{application_path}}/README.md
   tags: app
   notify: compose project
 

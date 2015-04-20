@@ -31,6 +31,9 @@
       - composer
       - app
 
+- name: composer self-update
+  shell: /usr/local/bin/composer self-update
+
 - name: update pear channels
   shell: pear channel-discover {{ item }}
   register: channel_result
