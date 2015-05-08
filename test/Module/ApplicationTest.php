@@ -145,7 +145,7 @@ class ApplicationTest  extends \PHPUnit_Framework_TestCase
     public function authenticationService(Application $app)
     {
         $service = $app->getAuthenticationService();
-        $fakeUser = new UserModel('NonExisting', uniqid());
+        $fakeUser = new UserModel('NonExisting', null, uniqid());
         $fakeCounter = new CounterModel('NonExisting');
         $fakeCounter->setOwner($fakeUser)->setPrivate();
 

@@ -31,3 +31,6 @@ visibility:
     - 'public'
     - 'protected'
     - 'private'
+
+email:
+  email: 1

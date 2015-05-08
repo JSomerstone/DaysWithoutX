@@ -230,4 +230,29 @@ class InputValidatorTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('JSomerstone\DaysWithout\Lib\InputValidatorValueException');
         $validator->validatePassword($passwordOne, '');
     }
+
+    /**
+     * @test
+     */
+    public function testEmailValidation()
+    {
+        $validEmails = array(
+            'fuu.bar@dev.null',
+            'fuu-bar@123.123.123.123',
+        );
+
+        $rule = array('email' => array(
+            'non-empty' => true,
+            'regexp' => '/\@/',
+            'min-length' => 4,
+            'max-length' => 160
+        ));
+
+        $validator = new InputValidator($rule);
+
+        foreach($validEmails as $email)
+        {
+            $validator->validateField('email', $email);
+        }
+    }
 }

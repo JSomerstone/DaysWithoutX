@@ -103,6 +103,6 @@ trait SessionTrait
                 'Wrong username and/or password given'
             );
         }
-        return new UserModel($userName, $password);
+        return new UserModel($userName, null, $password);
     }
 }

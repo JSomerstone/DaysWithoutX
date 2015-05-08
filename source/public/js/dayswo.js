@@ -214,7 +214,7 @@ $(function() {
         var post = {
             nick: $('#signup-dialog #nickField').val(),
             password: $('#signup-dialog #passwordField').val(),
-            'password-confirm': $('#signup-dialog #passwordConfirmField').val()
+            email: $('#signup-dialog #emailField').val()
         }
         $.post(
             '/api/signup',

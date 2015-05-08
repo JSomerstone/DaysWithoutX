@@ -58,7 +58,7 @@ $app->post('/api/signup', function(Request $request) use ($app)
     return $controller->signupAction(
         $request->get('nick'),
         $request->get('password'),
-        $request->get('password-confirm')
+        $request->get('email')
     );
 });
 

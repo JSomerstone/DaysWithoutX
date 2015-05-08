@@ -53,7 +53,7 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
      */
     public function authenticate($nick, $password)
     {
-        return $this->authenticateUser(new UserModel($nick, $password));
+        return $this->authenticateUser(new UserModel($nick, null, $password));
     }
 
     /**

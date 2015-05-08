@@ -72,8 +72,8 @@ class AuthenticationServiceTest extends \PHPUnit_Framework_TestCase
     public function testAuthenticateUser()
     {
         $authenticator = new AuthenticationServiceProvider($this->getUserStorageMock());
-        $okUser = new UserModel($this->username, $this->userPass);
-        $notOkUser = new UserModel(uniqid(), uniqid());
+        $okUser = new UserModel($this->username,  null, $this->userPass);
+        $notOkUser = new UserModel(uniqid(),  null, uniqid());
 
         $this->assertTrue(
             $authenticator->authenticateUser($okUser)
@@ -91,8 +91,8 @@ class AuthenticationServiceTest extends \PHPUnit_Framework_TestCase
     public function testAuthenticateUserForCounter()
     {
         $authenticator = new AuthenticationServiceProvider($this->getUserStorageMock());
-        $okUser = new UserModel($this->username, $this->userPass);
-        $anotherUser = new UserModel(uniqid('name'), uniqid('password'));
+        $okUser = new UserModel($this->username, null, $this->userPass);
+        $anotherUser = new UserModel(uniqid('name'), null, uniqid('password'));
 
         $counterA = new CounterModel('Counter A');
         $counterA->setOwner($okUser)->setPrivate();
@@ -127,7 +127,7 @@ class AuthenticationServiceTest extends \PHPUnit_Framework_TestCase
      */
     protected function getUserStorageMock()
     {
-        $fakeUser = new UserModel($this->username, $this->userPass);
+        $fakeUser = new UserModel($this->username,  null, $this->userPass);
 
         $mock = $this->getMockBuilder('JSomerstone\DaysWithout\Storage\UserStorage')
             ->disableOriginalConstructor()

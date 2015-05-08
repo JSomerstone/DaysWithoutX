@@ -56,7 +56,7 @@ POST: /api/signup
 | ------------- | ------------- | --------- | -------------------- |
 | nick          | string        | true      | '/^[a-zA-Z]{3,48}$/' |
 | password      | string        | true      |                      |
-| password-confirm | string     | true      | must be same as 'password' |
+| email         | string        | true      | valid email          |
 
 *Response*
 ```

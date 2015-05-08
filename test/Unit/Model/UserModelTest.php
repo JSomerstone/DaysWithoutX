@@ -19,7 +19,7 @@ class UserModelTest extends \PHPUnit_Framework_TestCase
         $nick = 'Dude';
         $password = 'S3cr37P4zzwörd!';
 
-        $user = new UserModel($nick, $password);
+        $user = new UserModel($nick, null, $password);
 
         $this->assertEquals($nick, $user->getNick());
         $this->assertNotEquals($password, $user->getPassword());
@@ -79,5 +79,16 @@ class UserModelTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($original->isSameAs($clone));
         $this->assertFalse($original->isSameAs($someOneElse));
+    }
+
+    /**
+     * @test
+     */
+    public function settingEmailSuccees()
+    {
+        $user = new UserModel();
+
+        $user->setEmail('dude@dev.null');
+        $this->assertEquals('dude@dev.null', $user->getEmail());
     }
 }

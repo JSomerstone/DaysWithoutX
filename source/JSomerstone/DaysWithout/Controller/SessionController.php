@@ -30,7 +30,7 @@ class SessionController extends BaseController
             function () use ($nick, $password)
             {
                 $this->getInputValidator()->validateField('nick', $nick);
-                $userObject = new UserModel($nick, $password);
+                $userObject = new UserModel($nick, null, $password);
                 if ( ! $this->authenticateUser($userObject))
                 {
                     $this->getLogger()->addNotice('Login unsuccessful, nick:'.$nick);

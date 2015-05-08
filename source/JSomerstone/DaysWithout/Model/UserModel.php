@@ -17,15 +17,17 @@ class UserModel implements ModelInterface
 
     private $password;
 
-    private $counters = array();
+    private $email;
 
     /**
      * @param string $nick
+     * @param string $email optional
      * @param string $password optional
      */
-    public function __construct($nick = null, $password = null)
+    public function __construct($nick = null, $email = null, $password = null)
     {
         $this->nick = $nick;
+        $this->email = $email;
         $this->id = StringFormatter::getUrlSafe($nick);
         $this->password = is_null($password)
             ? null
@@ -47,6 +49,22 @@ class UserModel implements ModelInterface
     public function getNick()
     {
         return $this->nick;
+    }
+
+    /**
+     * @param string $email
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEmail()
+    {
+        return $this->email;
     }
 
     /**
@@ -94,8 +112,9 @@ class UserModel implements ModelInterface
     {
         return array(
             'nick' => $this->nick,
+            'email' => $this->email,
             'id' => $this->id,
-            'password' => $this->password
+            'password' => $this->password,
         );
     }
 
@@ -105,12 +124,13 @@ class UserModel implements ModelInterface
      */
     public function fromArray(array $user)
     {
-        if (isset($user['id']))
-            $this->id = $user['id'];
-        if (isset($user['nick']))
-            $this->nick = $user['nick'];
-        if (isset($user['password']))
-            $this->password = $user['password'];
+        foreach(array('id', 'nick', 'email', 'password') as $property)
+        {
+            if ( isset($user[$property]))
+            {
+                $this->$property = $user[$property];
+            }
+        }
 
         return $this;
     }

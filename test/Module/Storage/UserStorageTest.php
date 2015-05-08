@@ -69,7 +69,7 @@ class UserStorageTest  extends \PHPUnit_Framework_TestCase
      */
     public function loadReturnsPersistedUser()
     {
-        $user = new UserModel('JSomerstone', uniqid());
+        $user = new UserModel('JSomerstone', null, uniqid());
 
         $this->userStorage->store($user);
 

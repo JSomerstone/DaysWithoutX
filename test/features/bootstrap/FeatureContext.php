@@ -273,14 +273,14 @@ class FeatureContext extends BehatContext
     }
 
     /**
-     * @When /^user "([^"]*)" signs up with passwords "([^"]*)" and "([^"]*)"$/
+     * @When /^user "([^"]*)" signs up with password "([^"]*)" and email "([^"]*)"$/
      */
-    public function userSignsUpWithPasswordsAnd($nick, $password1, $password2)
+    public function userSignsUpWithPasswordsAnd($nick, $password1, $email)
     {
         $post = array(
             'nick' => $nick,
             'password' => $password1,
-            'password-confirm' => $password2,
+            'email' => $email,
             'send' => '',
         );
         $this->response = $this->handlePostRequest('/api/signup', $post);
@@ -331,7 +331,7 @@ class FeatureContext extends BehatContext
         $this->storeCounter(
             $headline,
             time() - 60 * 60 * 24 * $days,
-            new UserModel($nick, self::$testUserPassword),
+            new UserModel($nick, null, self::$testUserPassword),
             $visibility
         );
     }
@@ -381,10 +381,11 @@ class FeatureContext extends BehatContext
 
     /**
      * @Given /^user "([^"]*)" with password "([^"]*)"$/
+     * @Given /^user "([^"]*)" with password "([^"]*)" and email "([^"]*)"$/
      */
-    public function userWithPassword($nick, $password)
+    public function userWithPassword($nick, $password, $email = 'webadmin@dayswithout.info')
     {
-        $this->user = new UserModel($nick, $password);
+        $this->user = new UserModel($nick, $email, $password);
         $this->userStorage->store($this->user);
         $this->systemUsers[$nick] = $password;
     }

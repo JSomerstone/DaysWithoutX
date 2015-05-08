@@ -18,33 +18,33 @@ class ApiController extends BaseController
     /**
      * @param string $nick
      * @param string $password
-     * @param string $passwordConfirmation
+     * @param string $email
      * @return Response
      */
-    public function signupAction($nick, $password, $passwordConfirmation)
+    public function signupAction($nick, $password, $email)
     {
         return $this->invokeMethod(
-            function () use ($nick, $password, $passwordConfirmation)
+            function () use ($nick, $password, $email)
             {
-                $this->validateSignup($nick, $password, $passwordConfirmation);
-                $user = $this->signUpUser($nick, $password);
+                $this->validateSignup($nick, $password, $email);
+                $user = $this->signUpUser($nick, $email, $password);
                 $this->setLoggedInUser($user);
                 return $this->jsonSuccessResponse("Welcome $nick");
             }
         );
     }
 
-    private function validateSignup($nick, $password, $passwordConfirmation)
+    private function validateSignup($nick, $password, $email)
     {
         $this->getInputValidator()
             ->validateFields(array(
                 'nick' => $nick,
-                'password' => $password
-            ))
-            ->validatePassword($password, $passwordConfirmation);
+                'password' => $password,
+                'email' => $email
+            ));
     }
 
-    private function signUpUser($nick, $password)
+    private function signUpUser($nick, $email, $password)
     {
         $userStorage = $this->getUserStorage();
         if ($userStorage->exists($nick))
@@ -53,7 +53,7 @@ class ApiController extends BaseController
                 "Unfortunately nick '$nick' is already taken"
             );
         }
-        $user = new UserModel($nick, $password);
+        $user = new UserModel($nick, $email, $password);
         $userStorage->store($user);
         return $user;
     }

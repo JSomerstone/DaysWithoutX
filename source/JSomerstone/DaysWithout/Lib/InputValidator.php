@@ -98,7 +98,7 @@ class InputValidator
             if ( ! $validator->validate($value))
             {
                 throw new InputValidatorValueException(
-                    $fieldName . ': ' . $validator->getErrorMessage(),
+                    $fieldName . ' ' . $validator->getErrorMessage(),
                     $fieldName,
                     $ruleName,
                     $ruleValue
