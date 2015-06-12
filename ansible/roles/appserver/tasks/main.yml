@@ -70,3 +70,6 @@
     owner={{owner}}
     group={{apache_user}}
   tags: app
+
+- name: Configure app
+  shell: cp {{application_path}}/config/config.vagrant.yml {{application_path}}/config/config.yml creates={{application_path}}/config/config.yml

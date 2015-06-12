@@ -2,13 +2,19 @@
 # prod/tasks/main
 #########################
 
+- name: Install packages
+  apt: package={{ item }} state=present update_cache=yes
+  with_items:
+      - git
+
 - name: Create dir
   file: path={{application_path}} state=directory owner=root group={{apache_user}}
 
 - name: Checkout project
   git: repo=https://github.com/JSomerstone/DaysWithoutX.git
        dest={{application_path}}
-       creates={{application_path}}/README.md
+       force=true
+       update=no
   tags: app
   notify: compose project
 
