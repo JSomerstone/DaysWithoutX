@@ -10,10 +10,12 @@
   - gcc
   - php5-dev
   - php-pear
+  - openssl
+  - libpcre3-dev
   tags: mongo-php
 
 - name: set pecl php.ini location
-  shell: pecl config-set php_ini /etc/php.ini
+  shell: pecl config-set php_ini /etc/php5/cli/php.ini
   tags: mongo-php
 
 - name: determine php extensions directory
@@ -22,16 +24,16 @@
   tags: mongo-php
 
 - name: install MongoClient for php
-  shell: printf "\n" | pecl install mongo creates={{php_extension_dir.stdout_lines[0]}}/mongo.so
+  shell: printf "\n" | pecl install mongodb creates={{php_extension_dir.stdout_lines[0]}}/mongodb.so
   tags: mongo-php
 
 - name: make mongo.so executable
-  file: path={{php_extension_dir.stdout_lines[0]}}/mongo.so mode=0755
+  file: path={{php_extension_dir.stdout_lines[0]}}/mongodb.so mode=0755
   tags: mongo-php
 
 - name: add mongo extension to php.ini configuration
   lineinfile: dest={{item}}
-              line="extension=mongo.so"
+              line="extension=mongodb.so"
               state=present
   with_items:
       - /etc/php5/apache2/php.ini

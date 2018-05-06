@@ -37,11 +37,10 @@
 - name: update pear channels
   shell: pear channel-discover {{ item }}
   register: channel_result
-  changed_when: "'initialized' not in channel_result.stdout"
-  failed_when: "'already initialized' not in channel_result.stdout"
+  changed_when: "'succeeded' in channel_result.stdout"
+  failed_when: "'failed' in channel_result.stdout"
   with_items:
       - pear.symfony-project.com
-      - components.ez.no
       - pear.symfony.com
   tags: pear
 

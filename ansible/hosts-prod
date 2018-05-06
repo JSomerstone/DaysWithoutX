@@ -1,1 +1,1 @@
-production ansible_ssh_host=dayswithout.info ansible_ssh_user=root
+production ansible_ssh_host=104.167.101.103 ansible_ssh_user=root
