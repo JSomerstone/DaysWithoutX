@@ -4,9 +4,9 @@
 - name: install deps
   apt: package={{item}} state=present update_cache=yes
   with_items:
-    - php5-dev
+    - php-dev
     - php-pear
-    - php5-curl
+    - php-curl
     - curl
     - git
     - npm

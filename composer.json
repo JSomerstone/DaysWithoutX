@@ -5,6 +5,7 @@
         "twig/twig": "~1.0",
         "deralex/yaml-config-service-provider": "1.0.x-dev",
         "twitter/bootstrap": "dev-master",
-        "monolog/monolog": "~1.13"
+        "monolog/monolog": "~1.13",
+        "mongodb/mongodb": "^1.3"
     }
 }
