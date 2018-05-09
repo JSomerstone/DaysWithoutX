@@ -50,7 +50,7 @@ class Application extends \Silex\Application
 
         $this->register(new YamlConfigServiceProvider($configPath));
 
-        $mongoClient = new \MongoClient($this->getConfigOrFail('dwo:storage:server'));
+        $mongoClient = new \MongoDB\Client("mongodb://" . $this->getConfigOrFail('dwo:storage:server'));
         $databaseName = $this->getConfigOrFail('dwo:storage:database');
         $inputValidator = new InputValidator();
         $storageService = new StorageServiceProvider($mongoClient, $databaseName);

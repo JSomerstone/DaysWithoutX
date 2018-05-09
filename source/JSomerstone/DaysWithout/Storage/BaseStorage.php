@@ -15,7 +15,7 @@ abstract class BaseStorage
     const IN = '$in';
 
     /**
-     * @var \MongoClient
+     * @var \MongoDb\Client
      */
     protected $mongoClient;
 
@@ -25,11 +25,11 @@ abstract class BaseStorage
     protected $database;
 
     /**
-     * @param \MongoClient $mongoClient
+     * @param \MongoDb\Client $mongoClient
      * @param $database
      * @throws StorageException
      */
-    public function __construct(\MongoClient $mongoClient, $database)
+    public function __construct(\MongoDb\Client $mongoClient, $database)
     {
         $this->mongoClient = $mongoClient;
         $this->database = $mongoClient->$database;

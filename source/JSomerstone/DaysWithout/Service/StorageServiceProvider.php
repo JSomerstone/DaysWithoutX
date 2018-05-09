@@ -5,6 +5,8 @@ use Silex\ServiceProviderInterface;
 use JSomerstone\DaysWithout\Storage\CounterStorage,
     JSomerstone\DaysWithout\Storage\UserStorage;
 
+use MongoDB\Client;
+
 class StorageServiceProvider implements ServiceProviderInterface
 {
     const SERVICE = 'storage';
@@ -25,16 +27,13 @@ class StorageServiceProvider implements ServiceProviderInterface
     private $userStorage;
 
     /**
-     * @param \MongoClient $mongoClient
+     * @param \MongoDB\Client $mongoClient
      * @param string $databaseName
      */
-    public function __construct(\MongoClient $mongoClient, $databaseName)
+    public function __construct(Client $mongoClient, $databaseName)
     {
-        $this->mongoClient = $mongoClient;
-        $this->database = $databaseName;
-
-        $this->userStorage = new UserStorage($this->mongoClient, $this->database);
-        $this->counterStorage = new CounterStorage($this->mongoClient, $this->database);
+        $this->userStorage = new UserStorage($mongoClient, $databaseName);
+        $this->counterStorage = new CounterStorage($mongoClient, $databaseName);
     }
 
     /**
